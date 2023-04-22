@@ -1,0 +1,78 @@
+.page_container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    background-color: #e4e4e4;
+    overflow: hidden;
+}
+
+.header_content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    padding: 1.5em;
+}
+.header_content i {
+    font-size: 25px;
+}
+.header_content i:hover {
+    color: black;
+    cursor: pointer;
+}
+.header_content span {
+    font-size: 24px;
+    color: black;
+}
+
+.list {
+    /* height: 200px; */
+    /* flex: 0 1 auto; */
+    list-style: none;
+    padding: 0;
+    margin: 20px auto;
+    width: 50%;
+    border-radius: 4px;
+
+    background-color: white;
+    -webkit-box-shadow: 0 3px 24px 0 rgba(0,0,0,.12);
+            box-shadow: 0 3px 24px 0 rgba(0,0,0,.12);
+
+    cursor: pointer;
+    user-select: none;
+    overflow: auto;
+}
+.list li {
+    display: flex;
+    flex-direction: row;
+}
+.list li img {
+    margin: 16px;
+    width: 40px;
+    height: 40px;
+    font-size: 8px;
+}
+.list li:nth-child(n+2) {
+    border-top: silver 1px solid;
+}
+.list li div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+}
+.list .wallet_name {
+    font-weight: bold;
+}
+
+@media screen and (max-width: 480px) {
+    .list {
+        width: 90%;
+    }
+}

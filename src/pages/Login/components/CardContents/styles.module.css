@@ -1,0 +1,57 @@
+.form_login {
+    display: block;
+}
+
+.forgot_password_container,
+.error_message_container {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.forgot_password_container span {
+    cursor: pointer;
+}
+
+.login_button_container {
+    display: flex;
+    flex-direction: column;
+}
+
+.form_forgot_password {
+    display: flex;
+    flex-direction: column;
+}
+
+.form_forgot_password > div {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.reset_password_container,
+.go_back_login_container {
+    padding-top: 15px;
+}
+
+.create_account_container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+    margin-top: 15px;
+    font-size: 18px;
+}
+
+/* Register form */
+.new_account_header {
+    display: block;
+    margin-top: 20px;
+}
+
+.create_account_button_container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}

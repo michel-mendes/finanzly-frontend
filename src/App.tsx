@@ -1,0 +1,41 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import './App.css'
+
+// Contexts
+import { useAuthContext } from './contexts/Auth'
+
+// Pages
+import { DashboardPage } from './pages/Dashboard'
+import { LoginPage } from './pages/Login'
+import { WalletsPage } from './pages/Wallets'
+import { CategoriesPage } from './pages/Categories'
+import { TransactionsPage } from './pages/Transactions'
+
+// Shared Components
+import { LoadingOverlay } from './shared_components/LoadingPageOverlay'
+
+function App() {
+
+  const { loggedUser, loadingUser } = useAuthContext()
+
+  if (loadingUser) {
+    return <LoadingOverlay />
+  }
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path='/'             element={<Navigate to="/login" />} />
+        <Route path='/login'        element={!loggedUser ? <LoginPage /> : <Navigate to="/dashboard" /> } />
+        <Route path='/dashboard'    element={loggedUser ? <DashboardPage /> : <Navigate to="/login" /> } />
+        <Route path='/wallets'      element={loggedUser ? <WalletsPage /> : <Navigate to="/login" /> } />
+        <Route path='/categories'   element={loggedUser ? <CategoriesPage /> : <Navigate to="/login" /> } />
+        <Route path='/transactions' element={loggedUser ? <TransactionsPage /> : <Navigate to="/login" /> } />
+        <Route path='*'             element={ <><h1>Página não encontrada <br /> Usuário está logado: {loggedUser ? "SIM" : "NAO"}</h1><br></br><h2>Dados do usuário:</h2><pre>{JSON.stringify(loggedUser, undefined, 4)}</pre></> } />
+      </Routes>
+    </BrowserRouter>
+  )
+
+}
+
+export default App

@@ -1,0 +1,38 @@
+.page_container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    background-color: #e4e4e4;
+    overflow: hidden;
+}
+
+.header_content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    padding: 1.5em;
+}
+.header_content i {
+    font-size: 25px;
+}
+.header_content i:hover {
+    color: black;
+    cursor: pointer;
+}
+.header_content span {
+    font-size: 24px;
+    color: black;
+}
+
+.list_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}

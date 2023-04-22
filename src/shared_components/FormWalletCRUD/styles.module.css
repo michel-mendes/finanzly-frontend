@@ -1,0 +1,34 @@
+.form {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 600px;
+}
+
+.form > div:first-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1 0 150px;
+}
+.form > div:first-child label {
+    width: 100%;
+}
+
+.form div:last-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1 0 300px;
+    flex-wrap: wrap;
+}
+.form div:last-child label {
+    width: 100%;
+}
+
+@media screen and (max-width: 480px) {
+    .form {
+        width: 100%;
+    }
+}
