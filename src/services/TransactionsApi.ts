@@ -53,7 +53,7 @@ export class TransactionsApi {
         try {
             // id, fromUser and actualBalance can't be sent
             // other properties are destructured in "newData"
-            const { id, fromUser, ...newData } = data
+            const { id, fromUser, fromWallet, csvImportId, creditValue, debitValue, ...newData } = data
 
             const updatedTransaction: ITransaction = (await this.api().put(`${appConfigs.transactionUpdateEndpoint}${transactionId}`, newData)).data
 
@@ -65,6 +65,7 @@ export class TransactionsApi {
 
     async deleteTransaction(transactionId: string): Promise<ITransaction | IApiErrorResponse> {
         try {
+            alert(`${appConfigs.transactionDeleteEndpoint}${transactionId}`)
             const deletedTransaction: ITransaction = (await this.api().delete(`${appConfigs.transactionDeleteEndpoint}${transactionId}`)).data
 
             return deletedTransaction

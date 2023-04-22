@@ -31,12 +31,59 @@ export function useTransactions() {
         setTransactionsList([])
     }
 
+    async function newTransaction(data: ITransaction): Promise<boolean> {
+        const newTransaction = await api.createTransaction(data)
+
+        if ("error" in newTransaction) {
+            alert(`Erro ao inserir nova transação:\n\n${newTransaction.error}`)
+            return false
+        }
+
+        setTransactionsList([...transactionsList, newTransaction])
+        return true
+    }
+
+    async function updateTransaction(data: ITransaction): Promise<boolean> {
+        const updatedTransaction = await api.updateTransaction(data.id!, data)
+
+        if ("error" in updatedTransaction) {
+            alert(`Erro ao editar transação:\n\n${updatedTransaction.error}`)
+            return false
+        }
+
+        const updatedTransactionsList = transactionsList.map(transaction => {
+            return (transaction.id == updatedTransaction.id) ? updatedTransaction : transaction
+        })
+
+        setTransactionsList(updatedTransactionsList)        
+        return true
+    }
+
+    async function deleteTransaction(transaction: ITransaction): Promise<boolean> {
+        const deletedTransaction = await api.deleteTransaction(transaction.id!)
+
+        if ("error" in deletedTransaction) {
+            alert(`Erro ao deletar transação:\n\n${deletedTransaction.error}`)
+            return false
+        }
+
+        const updatedTransactionsList = transactionsList.filter(transaction => {
+            return (transaction.id !== deletedTransaction.id)
+        })
+
+        setTransactionsList(updatedTransactionsList)
+        return true
+    }
+
     return {
         draftTransaction, setDraftTransaction,
         transactionsList, setTransactionsList,
         loadingTransactions, setLoadingTransactions,
         
         getTransactionsFromWallet,
+        newTransaction,
+        updateTransaction,
+        deleteTransaction,
         clearTransactionsList
     }
 }
