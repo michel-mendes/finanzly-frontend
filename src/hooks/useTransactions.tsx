@@ -13,26 +13,30 @@ export function useTransactions() {
     const [transactionsList, setTransactionsList] = useState<ITransaction[]>([])
     const [loadingTransactions, setLoadingTransactions] = useState(true)
 
-    useEffect(() => {
-        async function fetchTransactions() {
-            setLoadingTransactions(true)
+    async function getTransactionsFromWallet(walletId: string) {
+        setLoadingTransactions(true)
+        
+        const walletTransactions = await api.getTransactionsFromWallet(walletId)
 
-            const transactions = await api.getAllTransactions()
-
-            if ("error" in transactions) {
-                alert(`Erro ao atualizar lista de transações:\n\n${transactions.error}`)
-                console.log(transactions)
-                return
-            }
-
-            setTransactionsList(transactions)
-            setLoadingTransactions(false)
+        if ("error" in walletTransactions) {
+            alert(`Erro ao atualizar transções da carteira:\n\n${walletTransactions.error}`)
+            return
         }
 
-        fetchTransactions()
-    }, [])
+        setTransactionsList(walletTransactions)
+        setLoadingTransactions(false)
+    }
 
-    
+    function clearTransactionsList() {
+        setTransactionsList([])
+    }
 
-    return { draftTransaction, setDraftTransaction, transactionsList, setTransactionsList, loadingTransactions, setLoadingTransactions }
+    return {
+        draftTransaction, setDraftTransaction,
+        transactionsList, setTransactionsList,
+        loadingTransactions, setLoadingTransactions,
+        
+        getTransactionsFromWallet,
+        clearTransactionsList
+    }
 }

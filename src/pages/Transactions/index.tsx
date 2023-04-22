@@ -5,14 +5,12 @@ import { RiArrowDropDownFill } from "react-icons/ri"
 
 // Hooks
 import { useWallets } from "../../hooks/useWallets"
+import { useCategories } from "../../hooks/useCategories"
 import { useTransactions } from "../../hooks/useTransactions"
 
 // Components
 import { PageHeaderDesktop } from "../../shared_components/PageHeaderDesktop"
 import { WalletSelector } from "./WalletSelector"
-
-// Services
-import { TransactionsApi } from "../../services/TransactionsApi"
 
 // Interfaces
 import { ITransaction, IWallet } from "../../services/types"
@@ -23,19 +21,16 @@ function TransactionsPage() {
     const navigate = useNavigate()
 
     const { walletsList } = useWallets()
-    const { transactionsList } = useTransactions()
+    const { categoriesList } = useCategories()
+    const { transactionsList, getTransactionsFromWallet, clearTransactionsList } = useTransactions()
     
     const [activeWallet, setActiveWallet] = useState<IWallet | null>(null)
 
-    // useEffect(() => {
-    //     async function getWalletTransactions() {
-    //         try {
-    //             const transactions = await 
-    //         } catch (error: any) {
-    //             alert(`Erro ao atualizar lista de transações:\n\n${error}`)
-    //         }
-    //     }
-    // }, [activeWallet])
+    useEffect(() => {
+        
+        (!activeWallet) ? clearTransactionsList() : getTransactionsFromWallet(activeWallet.id!)
+
+    }, [activeWallet])
 
     return (
         <div className={styles.page_container}>
@@ -68,10 +63,16 @@ function TransactionsPage() {
 
             <p>Transações</p>
             {
-                transactionsList.map(transaction => {
+                transactionsList.map((transaction, index) => {
+                    const category = categoriesList.find(item => { return (item.id == transaction.fromCategory) })
+
                     return (
                         <div key={transaction.id}>
-                            <p>{transaction.description}</p>
+                            <p>Transação número: {index + 1}</p>
+                            <p>Data: {new Date(transaction.date!).toLocaleDateString()}</p>
+                            <p>Descrição: {transaction.description}</p>
+                            <p>Valor: {transaction.value}</p>
+                            <p>{category?.transactionType}</p>
                         </div>
                     )
                 })
