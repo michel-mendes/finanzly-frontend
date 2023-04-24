@@ -1,0 +1,31 @@
+.container {
+    position: relative;
+}
+.container input {
+    width: 100%;
+    border: none;
+}
+
+.dropdown_button {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: calc(100% - 20px);
+
+    font-size: 20px;
+    cursor: pointer;
+    border: 1px solid gray;
+}
+
+.results {
+    position: absolute;
+    left: 0;
+    right: 0;
+    max-height: 300px;
+
+    background-color: white;
+    border: 1px solid gray;
+    overflow-y: auto;
+    z-index: 1;
+}

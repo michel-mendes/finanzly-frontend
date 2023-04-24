@@ -133,7 +133,7 @@ function TransactionsPage() {
                     }
                 }}
             >
-                <FormTransactionCRUD transactionData={draftTransaction} setTransactionData={setDraftTransaction}/>
+                <FormTransactionCRUD transactionData={draftTransaction} setTransactionData={setDraftTransaction} categoriesList={categoriesList}/>
             </ModalSaveCancel>
         </div>
     )

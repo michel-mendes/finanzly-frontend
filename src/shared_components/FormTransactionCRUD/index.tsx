@@ -1,26 +1,41 @@
-import { Dispatch, SetStateAction } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 
-import { ITransaction } from "../../services/types"
+import { ICategory, ITransaction } from "../../services/types"
 import { InputEdit } from "../InputEdit"
+import { SearchDropDown } from "../SearchDropDown"
 
 interface IFormTransactionCrudProps {
     transactionData: ITransaction | null;
     setTransactionData: Dispatch<SetStateAction<ITransaction | null>>;
+    categoriesList: ICategory[];
 }
 
-function FormTransactionCRUD({transactionData, setTransactionData}: IFormTransactionCrudProps) {
+function FormTransactionCRUD({transactionData, setTransactionData, categoriesList}: IFormTransactionCrudProps) {
+    
+    const [selectedCategoryName, setSelectedCategoryName] = useState("")
+    
     function handleInputChange(value: string | number, propName: keyof ITransaction) {
         setTransactionData({...transactionData, [propName]: value})
     }
     
     return (
         <form>
-            <InputEdit
+            {/* <InputEdit
                 fieldName="fromCategory"
                 inputType="text"
                 placeholder="Nome da categoria"
                 value={transactionData?.fromCategory}
                 onChange={(value) => {handleInputChange(value, "fromCategory")}}
+            /> */}
+
+            <SearchDropDown
+                results={categoriesList}
+                value={selectedCategoryName}
+                renderItem={(item) => <p>{item.categoryName} {(item.transactionType == "C") ? "Receita" : "Despesa"}</p>}
+                onSelect={(item) => {
+                    handleInputChange(item.id!, "fromCategory")
+                    setSelectedCategoryName(item.categoryName!)
+                }}
             />
 
             <InputEdit

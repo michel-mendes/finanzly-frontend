@@ -65,7 +65,6 @@ export class TransactionsApi {
 
     async deleteTransaction(transactionId: string): Promise<ITransaction | IApiErrorResponse> {
         try {
-            alert(`${appConfigs.transactionDeleteEndpoint}${transactionId}`)
             const deletedTransaction: ITransaction = (await this.api().delete(`${appConfigs.transactionDeleteEndpoint}${transactionId}`)).data
 
             return deletedTransaction
