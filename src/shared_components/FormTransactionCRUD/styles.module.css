@@ -1,0 +1,24 @@
+.form {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 700px;
+    gap: 20px;
+}
+
+.form > div {
+    flex: 1 0 300px;
+}
+
+.form > label:nth-child(2){
+    flex: 1 0 20px;
+}
+.form > label:nth-child(3){
+    flex: 1 0 300px;
+}
+.form > label:nth-child(4){
+    flex: 1 0 100px;
+}
+.form > label:nth-child(5){
+    flex: 1 0 400px;
+}

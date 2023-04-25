@@ -4,6 +4,8 @@ import { ICategory, ITransaction } from "../../services/types"
 import { InputEdit } from "../InputEdit"
 import { SearchDropDown } from "../SearchDropDown"
 
+import styles from "./styles.module.css"
+
 interface IFormTransactionCrudProps {
     transactionData: ITransaction | null;
     setTransactionData: Dispatch<SetStateAction<ITransaction | null>>;
@@ -19,7 +21,7 @@ function FormTransactionCRUD({transactionData, setTransactionData, categoriesLis
     }
     
     return (
-        <form>
+        <form className={styles.form}>
             {/* <InputEdit
                 fieldName="fromCategory"
                 inputType="text"
@@ -29,9 +31,11 @@ function FormTransactionCRUD({transactionData, setTransactionData, categoriesLis
             /> */}
 
             <SearchDropDown
+                fieldName="fromCategory"
+                placeholder="Escolha a categoria"
                 results={categoriesList}
                 value={selectedCategoryName}
-                renderItem={(item) => <p>{item.categoryName} {(item.transactionType == "C") ? "Receita" : "Despesa"}</p>}
+                renderItem={(item) => <p><span>{item.categoryName}</span><span>{(item.transactionType == "C") ? "Receita" : "Despesa"}</span></p>}
                 onSelect={(item) => {
                     handleInputChange(item.id!, "fromCategory")
                     setSelectedCategoryName(item.categoryName!)

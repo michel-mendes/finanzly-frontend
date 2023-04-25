@@ -4,19 +4,21 @@ import { RiArrowDropDownFill } from "react-icons/ri"
 import styles from "./styles.module.css"
 
 interface ISearchDropDownProps<Type> {
-    results?:               Type[];
+    fieldName: string;
+    placeholder: string;
+    results?: Type[];
     renderItem(item: Type): JSX.Element;
-    onChange?:              React.ChangeEventHandler;
-    onSelect?:              (item: Type) => void;
-    value?:                 string;
+    onChange?: React.ChangeEventHandler;
+    onSelect?: (item: Type) => void;
+    value?: string;
 }
 
-function SearchDropDown<Type extends object>({results = [], renderItem, value, onChange, onSelect}: ISearchDropDownProps<Type>) {
-    
+function SearchDropDown<Type extends object>({ results = [], renderItem, value, placeholder, fieldName, onChange, onSelect }: ISearchDropDownProps<Type>) {
+
     const [focusedIndex, setFocusedIndex] = useState(-1)
     const [showResults, setShowResults] = useState(false)
     const [defaultValue, setDefaultValue] = useState("")
-    
+
     const resultContainer = useRef<HTMLDivElement>(null)
 
     function handleSelection(selectedIndex: number) {
@@ -34,11 +36,11 @@ function SearchDropDown<Type extends object>({results = [], renderItem, value, o
         setShowResults(false)
     }, [])
 
-    function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-        const {key} = event
+    function handleKeyDown(event: React.KeyboardEvent<HTMLLabelElement>) {
+        const { key } = event
         let nextIndexCount = 0
 
-        switch(key) {
+        switch (key) {
             // Move down
             case "ArrowDown":
                 nextIndexCount = (focusedIndex + 1) % results.length
@@ -76,57 +78,63 @@ function SearchDropDown<Type extends object>({results = [], renderItem, value, o
         })
     }, [focusedIndex])
 
-    useEffect(() => {
-        if (results.length > 0 && !showResults) setShowResults(true)
+    // useEffect(() => {
+    //     if (results.length > 0 && !showResults) setShowResults(true)
 
-        if (results.length <= 0) setShowResults(false)
-    }, [results])
+    //     if (results.length <= 0) setShowResults(false)
+    // }, [results])
 
     useEffect(() => {
         if (value) setDefaultValue(value)
     }, [value])
 
-       
+    const inputId = `input_${fieldName}`
+
     return (
-        <div className={styles.container}>
-            <div tabIndex={1} onBlur={resetSearchComplete} onKeyDown={handleKeyDown} className="relative" >
+        <div className={styles.input_container}>
+            <label htmlFor={inputId} tabIndex={1} onBlur={resetSearchComplete} onKeyDown={handleKeyDown}>
+                <span>{placeholder}</span>
+
                 <input
+                    type="text"
+                    name={fieldName}
+                    id={inputId}
+                    placeholder=" "
                     value={defaultValue}
                     onChange={handleChange}
-                    type="text"
-                    className=""
-                    placeholder="Faça sua pesquisa..."
+                    autoComplete="off"
+                    required
                 />
-                
-                <i onClick={() => {setShowResults(!showResults)}} className={styles.dropdown_button}><RiArrowDropDownFill/></i>
+            </label>
 
-                {/* Search reaults container */}
-                {
-                    (!showResults) ? null : (
-                        <div className={styles.results}>
-                            {
-                                results.map((result, index) => {
-                                    return (
-                                        <div
-                                            key={index}
-                                            onMouseDown={() => handleSelection(index)}
-                                            ref={(index === focusedIndex) ? resultContainer : null}
-                                            style={{
-                                                backgroundColor: (index === focusedIndex) ? "rgba(0, 0, 0, 0.1)" : ""
-                                            }}
-                                            className=""
-                                        >
-                                            {
-                                                renderItem(result)
-                                            }
-                                        </div>
-                                    )
-                                })
-                            }
-                        </div>
-                    )
-                }
-            </div>
+            <i className={styles.dropdown_button} onClick={() => { setShowResults(!showResults) }}>
+                <RiArrowDropDownFill />
+            </i>
+
+            {/* Search reaults container */}
+            {
+                (!showResults) ? null : (
+                    <div className={styles.results}>
+                        {
+                            results.map((result, index) => {
+                                return (
+                                    <div
+                                        className={styles.result_item}
+                                        key={index}
+                                        onMouseDown={() => handleSelection(index)}
+                                        ref={(index === focusedIndex) ? resultContainer : null}
+                                        is-focused={index === focusedIndex ? "true" : "false"}
+                                    >
+                                        {
+                                            renderItem(result)
+                                        }
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                )
+            }
         </div>
     )
 }
