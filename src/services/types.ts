@@ -23,7 +23,9 @@ export interface ITransaction {
     fromUser?:          string;
     date?:              Date;
     description?:       string;
+    description_Upper?: string;
     extraInfo?:         string;
+    extraInfo_Upper?:   string;
     value?:             number;
     creditValue?:       number;
     debitValue?:        number;

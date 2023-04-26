@@ -100,7 +100,7 @@ function TransactionsPage() {
                         />
                     </div>
 
-                    <button onClick={handleNewTransactionClick}>Nova transação</button>
+                    <button onClick={handleNewTransactionClick} disabled={activeWallet === null}>Nova transação</button>
                 </div>
             </PageHeaderDesktop>
 
@@ -116,6 +116,7 @@ function TransactionsPage() {
                             <p>Descrição: {transaction.description}</p>
                             <p>Valor: {transaction.value}</p>
                             <p>{category?.transactionType}</p>
+                            <p>Descrição Upper: {transaction.description_Upper}</p>
                         </div>
                     )
                 })
