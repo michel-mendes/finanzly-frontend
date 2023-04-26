@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react"
+import moment from "moment"
 
 import { ICategory, ITransaction } from "../../services/types"
 import { InputEdit } from "../InputEdit"
@@ -14,7 +15,8 @@ interface IFormTransactionCrudProps {
 
 function FormTransactionCRUD({transactionData, setTransactionData, categoriesList}: IFormTransactionCrudProps) {
     
-    const [selectedCategoryName, setSelectedCategoryName] = useState("")
+    const defaultCategory = categoriesList.find(category => {return category.id == transactionData?.fromCategory})
+    const [selectedCategoryName, setSelectedCategoryName] = useState(defaultCategory?.categoryName || "")
     
     function handleInputChange(value: string | number, propName: keyof ITransaction) {
         setTransactionData({...transactionData, [propName]: value})
@@ -22,14 +24,7 @@ function FormTransactionCRUD({transactionData, setTransactionData, categoriesLis
     
     return (
         <form className={styles.form}>
-            {/* <InputEdit
-                fieldName="fromCategory"
-                inputType="text"
-                placeholder="Nome da categoria"
-                value={transactionData?.fromCategory}
-                onChange={(value) => {handleInputChange(value, "fromCategory")}}
-            /> */}
-
+            
             <SearchDropDown
                 fieldName="fromCategory"
                 placeholder="Escolha a categoria"
@@ -46,7 +41,7 @@ function FormTransactionCRUD({transactionData, setTransactionData, categoriesLis
                 fieldName="date"
                 inputType="date"
                 placeholder="Data"
-                value={transactionData?.date?.toString()}
+                value={moment(transactionData?.date).format("YYYY-MM-DD")}
                 onChange={(value) => {handleInputChange(value, "date")}}
             />
 

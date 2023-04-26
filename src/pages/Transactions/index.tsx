@@ -112,7 +112,7 @@ function TransactionsPage() {
                     return (
                         <div key={transaction.id} onClick={() => {handleListItemClick(transaction)}}>
                             <p>Transação número: {index + 1}</p>
-                            <p>Data: {new Date(transaction.date!).toLocaleDateString()}</p>
+                            <p>Data: {new Date(transaction.date!).toLocaleString()}</p>
                             <p>Descrição: {transaction.description}</p>
                             <p>Valor: {transaction.value}</p>
                             <p>{category?.transactionType}</p>
