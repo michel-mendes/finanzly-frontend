@@ -36,3 +36,20 @@
     flex-direction: row;
     gap: 20px;
 }
+
+.list {
+    background-color: white;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.group_container {
+    border: silver 1px solid;
+}
+
+.group_container li {
+    display: flex;
+    justify-content: space-around;
+}

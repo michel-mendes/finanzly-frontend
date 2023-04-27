@@ -19,6 +19,9 @@ import { ModalSaveCancel } from "../../shared_components/Modal"
 
 // Interfaces
 import { ITransaction, IWallet } from "../../services/types"
+interface IGroupedTransactions {
+    [key: string]: ITransaction[]
+}
 
 import styles from "./styles.module.css"
 import { FormTransactionCRUD } from "../../shared_components/FormTransactionCRUD"
@@ -39,6 +42,8 @@ function TransactionsPage() {
         deleteTransaction,
         clearTransactionsList
     } = useTransactions()
+    
+    const [groupedTransactions, setGroupedTransactions] = useState<IGroupedTransactions>({})
     
     const { isOpen, showModal, closeModal } = useModal()
     const [isEditing, setIsEditing] = useState(false)
@@ -86,6 +91,20 @@ function TransactionsPage() {
         }
     }
 
+    useEffect(() => {
+        const groups: IGroupedTransactions = {}
+
+        transactionsList.forEach(transaction => {
+            const date = String(transaction.date);
+
+            (!groups[date]) ? groups[date] = [] : null
+
+            groups[date].push(transaction)
+        })
+
+        setGroupedTransactions(groups)
+    }, [transactionsList])
+
     return (
         <div className={styles.page_container}>
             <PageHeaderDesktop>
@@ -105,22 +124,31 @@ function TransactionsPage() {
             </PageHeaderDesktop>
 
             <p>Transações</p>
-            {
-                transactionsList.map((transaction, index) => {
-                    const category = categoriesList.find(item => { return (item.id == transaction.fromCategory) })
 
-                    return (
-                        <div key={transaction.id} onClick={() => {handleListItemClick(transaction)}}>
-                            <p>Transação número: {index + 1}</p>
-                            <p>Data: {new Date(transaction.date!).toLocaleString()}</p>
-                            <p>Descrição: {transaction.description}</p>
-                            <p>Valor: {transaction.value}</p>
-                            <p>{category?.transactionType}</p>
-                            <p>Descrição Upper: {transaction.description_Upper}</p>
+            <ul className={styles.list}>
+                {
+                    Object.keys(groupedTransactions).map(groupName => (
+                        <div key={groupName} className={styles.group_container}>
+                            <span>Data: {new Date(groupName).toLocaleDateString()}, Qtde transações: {groupedTransactions[groupName].length}</span>
+
+                            {
+                                groupedTransactions[groupName].map((transaction, index) => {
+                                    const category = categoriesList.find(item => { return (item.id == transaction.fromCategory) })
+
+                                    return (
+                                        <li key={transaction.id}>
+                                            <span>Descrição: {transaction.description}</span>
+                                            <span>Valor: {transaction.value}</span>
+                                            <span>{category?.transactionType == "C" ? "Receita" : "Despesa"}</span>
+                                            <span>Descrição Upper: {transaction.description_Upper}</span>
+                                        </li>
+                                    )
+                                })
+                            }
                         </div>
-                    )
-                })
-            }
+                    ))
+                }
+            </ul>
 
             <ModalSaveCancel
                 isOpen={isOpen}
