@@ -49,7 +49,7 @@ function WalletsPage() {
   // Get wallets list when the page is loaded
   useEffect(() => {
     async function updateList() {
-      const wallets = await walletsApi.getWalletsFromUser(loggedUser!.id)
+      const wallets = await walletsApi.getWalletsFromUser()
 
       if ("error" in wallets) {
         alert("Erro ao carregar lista de carteiras")

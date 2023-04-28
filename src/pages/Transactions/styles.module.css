@@ -8,7 +8,7 @@
     left: 0;
 
     background-color: #e4e4e4;
-    /* overflow: hidden; */
+    overflow: hidden;
 }
 
 .header_content {
@@ -38,18 +38,211 @@
 }
 
 .list {
-    background-color: white;
     list-style: none;
+    padding-left: 15%;
+    padding-right: 15%;
+    /* margin: 0 auto; */
     display: flex;
     flex-direction: column;
     gap: 30px;
+    /* width: 75%; */
+
+    overflow: auto;
 }
 
-.group_container {
+/* .group_container {
     border: silver 1px solid;
+} */
+
+.group_container .group_header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: white;
+    width: 200px;
+
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    
+    -webkit-box-shadow: 0 2px 24px 0 rgba(0,0,0,.12);
+            box-shadow: 0 2px 24px 0 rgba(0,0,0,.12);
 }
 
-.group_container li {
+.group_container .group_header .date_container{
     display: flex;
-    justify-content: space-around;
+    flex-direction: row;
 }
+.group_container .group_header .date_container .day_number_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 30px;
+    color: black;
+}
+.group_container .group_header .date_container span:last-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 11px;
+    text-align: left;
+}
+
+/* .group_container .group_header .date_balance_container{
+    display: flex;
+    justify-content: right;
+    align-items: center;
+} */
+
+.group_container .group_body {
+    display: inherit;
+}
+
+.item {
+    display: flex;
+    height: 68px;
+}
+
+.signal_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.signal_container > span:first-child,
+.signal_container > span:last-child {
+    /* border: red 1px solid; */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 40px;
+}
+
+.signal_container i {
+    /* border: blue 1px solid; */
+    flex: 1 auto;
+    height: 25px;
+}
+
+.signal_container i[has-border="true"] {
+    border-left: 1px silver dashed;
+}
+
+.signal_container > span:nth-child(2) {
+    border: solid 1px transparent;
+    border-radius: 100%;
+    width: 23px;
+    flex: 1 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+    font-weight: bold;
+    background-color: white;
+
+    -webkit-box-shadow: 0 2px 24px 0 rgba(0,0,0,.12);
+            box-shadow: 0 2px 24px 0 rgba(0,0,0,.12);
+}
+
+.signal_container > span:nth-child(2)[transaction-type="D"] {
+    border-color: red;
+    color: red;
+}
+.signal_container > span:nth-child(2)[transaction-type="C"] {
+    border-color: blue;
+    color: blue;
+}
+
+.item_content {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    background-color: white;
+    
+    -webkit-box-shadow: 0 2px 24px 0 rgba(0,0,0,.12);
+            box-shadow: 0 2px 24px 0 rgba(0,0,0,.12);
+}
+
+.item:first-child .item_content {
+    border-top-right-radius: 5px;
+}
+.item:last-child .item_content {
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.transaction_category_name {
+    font-weight: bold;
+    font-size: 12px;
+    color: black;
+}
+
+.transaction_description,
+.transaction_extra_info,
+.transaction_value {
+    font-size: 11px;
+}
+
+.transaction_value[transaction-type="D"] {
+    color: red;
+}
+.transaction_value[transaction-type="C"] {
+    color: blue;
+}
+
+.item_icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.item_icon img {
+    height: 40px;
+    width: 40px;
+}
+
+.item_data {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1 auto;
+}
+
+.item_data > p {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.item_data > p {
+    margin: 0;
+    flex: 1 auto;
+}
+
+/* .group_container li > span:first-child {
+    border: 2px solid transparent;
+    border-radius: 100%;
+    width: 20px;
+    height: 20px;
+    font-size: 18px;
+    font-weight: 500;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.group_container li > span[transaction-type="C"] {
+    color: blue;
+    border-color: blue;
+}
+.group_container li > span[transaction-type="D"] {
+    color: red;
+    border-color: red;
+} */
