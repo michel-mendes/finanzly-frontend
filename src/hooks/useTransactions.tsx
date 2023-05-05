@@ -31,24 +31,24 @@ export function useTransactions() {
         setTransactionsList([])
     }
 
-    async function newTransaction(data: ITransaction): Promise<boolean> {
+    async function newTransaction(data: ITransaction): Promise<ITransaction | null> {
         const newTransaction = await api.createTransaction(data)
 
         if ("error" in newTransaction) {
             alert(`Erro ao inserir nova transação:\n\n${newTransaction.error}`)
-            return false
+            return null
         }
 
         setTransactionsList([...transactionsList, newTransaction])
-        return true
+        return newTransaction
     }
 
-    async function updateTransaction(data: ITransaction): Promise<boolean> {
+    async function updateTransaction(data: ITransaction): Promise<ITransaction | null> {
         const updatedTransaction = await api.updateTransaction(data.id!, data)
 
         if ("error" in updatedTransaction) {
             alert(`Erro ao editar transação:\n\n${updatedTransaction.error}`)
-            return false
+            return null
         }
 
         const updatedTransactionsList = transactionsList.map(transaction => {
@@ -56,15 +56,15 @@ export function useTransactions() {
         })
 
         setTransactionsList(updatedTransactionsList)        
-        return true
+        return updatedTransaction
     }
 
-    async function deleteTransaction(transaction: ITransaction): Promise<boolean> {
+    async function deleteTransaction(transaction: ITransaction): Promise<ITransaction | null> {
         const deletedTransaction = await api.deleteTransaction(transaction.id!)
 
         if ("error" in deletedTransaction) {
             alert(`Erro ao deletar transação:\n\n${deletedTransaction.error}`)
-            return false
+            return null
         }
 
         const updatedTransactionsList = transactionsList.filter(transaction => {
@@ -72,7 +72,7 @@ export function useTransactions() {
         })
 
         setTransactionsList(updatedTransactionsList)
-        return true
+        return deletedTransaction
     }
 
     return {
