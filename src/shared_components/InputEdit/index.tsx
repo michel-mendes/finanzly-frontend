@@ -2,16 +2,17 @@ import { CSSProperties, HTMLInputTypeAttribute } from "react"
 import styles from "./styles.module.css"
 
 interface IInputProps {
+    inputType: HTMLInputTypeAttribute;
     placeholder: string;
     fieldName: string;
-    value?: string | number
-    onChange?: (value: string | number) => void,
+    value?: string | number;
+    autocomplete?: boolean;
     widthInPixels?: number;
-    inputType: HTMLInputTypeAttribute;
+    onChange?: (value: string | number) => void,
 }
 
 function InputEdit(props: IInputProps) {
-    const { placeholder, fieldName, widthInPixels, inputType, value, onChange } = props
+    const { placeholder, fieldName, widthInPixels, inputType, value, autocomplete, onChange } = props
 
     const inputId = `input_${fieldName}`
     const inlineStyle: CSSProperties = (!widthInPixels) ? {} : {width: widthInPixels}
@@ -31,6 +32,7 @@ function InputEdit(props: IInputProps) {
                     onChange={ (!onChange) ? undefined : (event) => {
                         onChange( event.target.value )
                     } }
+                    autoComplete={autocomplete ? "on" : "off"}
                     required
                 />
             </label>

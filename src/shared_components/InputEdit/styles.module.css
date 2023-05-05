@@ -15,6 +15,17 @@
     font-family: inherit;
 }
 
+.input_container input[type="number"] {
+    text-align: right;
+}
+
+.input_container input[type="number"]::-webkit-outer-spin-button,
+.input_container input[type="number"]::-webkit-inner-spin-button {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .input_container::before {
     content: ' ';
     width:0%;

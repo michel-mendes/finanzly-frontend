@@ -25,3 +25,7 @@
     width: 40px;
     height: 40px;
 }
+
+.item p {
+    padding-left: 20px;
+}

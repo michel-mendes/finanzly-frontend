@@ -1,5 +1,5 @@
 import moment from "moment"
-import { useEffect, useState } from "react"
+import { useEffect, useState, Dispatch, SetStateAction } from "react"
 import { useNavigate } from "react-router-dom"
 import { IoArrowBack } from "react-icons/io5"
 import { RiArrowDropDownFill } from "react-icons/ri"
@@ -27,13 +27,12 @@ interface IGroupedTransactions {
 
 import styles from "./styles.module.css"
 import { FormTransactionCRUD } from "../../shared_components/FormTransactionCRUD"
-import categoryIcon from "./../../../public/vite.svg"
 
 function TransactionsPage() {
     const { loggedUser } = useAuthContext()
     const navigate = useNavigate()
 
-    const { walletsList } = useWallets()
+    const { walletsList, setWalletsList } = useWallets()
     const { categoriesList } = useCategories()
     const {
         transactionsList,
@@ -80,7 +79,8 @@ function TransactionsPage() {
         const success = (isEditing) ? await updateTransaction(draftTransaction!) : await newTransaction(draftTransaction!)
 
         if (success) {
-            alert("Transação adicionada com sucesso")
+            // alert("Transação adicionada com sucesso")
+            updateWalletBalance(success.fromWallet!, success.currentWalletBalance!, walletsList, setWalletsList, setActiveWallet)
             closeModal()
         }
     }
@@ -89,7 +89,7 @@ function TransactionsPage() {
         const success = await deleteTransaction(transaction)
 
         if (success) {
-            alert("Transação removida com sucesso")
+            updateWalletBalance(success.fromWallet!, success.currentWalletBalance!, walletsList, setWalletsList, setActiveWallet)
             closeModal()
         }
     }
@@ -176,9 +176,9 @@ function TransactionsPage() {
                                                         </span>
                                                     </div>
 
-                                                    <div className={styles.item_content}>
+                                                    <div className={styles.item_content} onClick={() => {handleListItemClick(transaction)}}>
                                                         <div className={styles.item_icon}>
-                                                            <img src={categoryIcon} alt="" />
+                                                            <img src={category?.iconPath} alt="" />
                                                         </div>
 
                                                         <div className={styles.item_data}>
@@ -223,6 +223,18 @@ function TransactionsPage() {
             </ModalSaveCancel>
         </div>
     )
+}
+
+function updateWalletBalance(walletId: string, newBalance: number, walletList: IWallet[], setWalletList: Dispatch<SetStateAction<IWallet[]>>, setActiveWalletList: Dispatch<SetStateAction<IWallet | null>>) {
+    const wallet = walletList.find(item => {return item.id == walletId})
+    wallet!.actualBalance = newBalance
+
+    const newList = walletList.map(item => {
+        return (item.id == wallet!.id) ? wallet! : item
+    })
+
+    setActiveWalletList(wallet!)
+    setWalletList(newList)
 }
 
 export { TransactionsPage }

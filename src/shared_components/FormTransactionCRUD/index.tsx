@@ -29,7 +29,7 @@ function FormTransactionCRUD({transactionData, setTransactionData, categoriesLis
                 fieldName="fromCategory"
                 placeholder="Escolha a categoria"
                 results={categoriesList}
-                value={selectedCategoryName}
+                value={selectedCategoryName || ""}
                 renderItem={(item) => <p><span>{item.categoryName}</span><span>{(item.transactionType == "C") ? "Receita" : "Despesa"}</span></p>}
                 onSelect={(item) => {
                     handleInputChange(item.id!, "fromCategory")
@@ -41,7 +41,7 @@ function FormTransactionCRUD({transactionData, setTransactionData, categoriesLis
                 fieldName="date"
                 inputType="date"
                 placeholder="Data"
-                value={moment(transactionData?.date).format("YYYY-MM-DD")}
+                value={moment(transactionData?.date).format("YYYY-MM-DD") || ""}
                 onChange={(value) => {handleInputChange(value, "date")}}
             />
 
@@ -49,7 +49,7 @@ function FormTransactionCRUD({transactionData, setTransactionData, categoriesLis
                 fieldName="description"
                 inputType="text"
                 placeholder="Descrição"
-                value={transactionData?.description}
+                value={transactionData?.description || ""}
                 onChange={(value) => {handleInputChange(value, "description")}}
             />
 
@@ -57,7 +57,7 @@ function FormTransactionCRUD({transactionData, setTransactionData, categoriesLis
                 fieldName="value"
                 inputType="number"
                 placeholder="Valor"
-                value={transactionData?.value}
+                value={transactionData?.value || ""}
                 onChange={(value) => {handleInputChange(value, "value")}}
             />
 
@@ -65,7 +65,7 @@ function FormTransactionCRUD({transactionData, setTransactionData, categoriesLis
                 fieldName="extraInfo"
                 inputType="text"
                 placeholder="Mais detalhes (opcional)"
-                value={transactionData?.extraInfo}
+                value={transactionData?.extraInfo || ""}
                 onChange={(value) => {handleInputChange(value, "extraInfo")}}
             />
         </form>

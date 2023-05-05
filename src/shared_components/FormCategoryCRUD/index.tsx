@@ -4,6 +4,9 @@ import { Dispatch, SetStateAction } from "react"
 import { InputIconSelector } from "../InputIconSelector"
 import { InputEdit } from "../InputEdit"
 import { RadioBoxList } from "../RadioBoxList"
+import { IconsContainer } from "../IconsContainer"
+import { ModalSaveCancel } from "../Modal"
+import { useModal } from "../../hooks/useModal"
 
 import styles from "./styles.module.css"
 import { ICategory } from "../../services/types"
@@ -15,6 +18,8 @@ interface IFormCategoryCrudProps {
 
 function FormCategoryCRUD({ categoryData, setCategoryData }: IFormCategoryCrudProps) {
 
+    const { closeModal, isOpen, showModal } = useModal()
+    
     function handleInputChange(value: string | number, propName: keyof ICategory) {
         if (!categoryData) return
         
@@ -35,7 +40,7 @@ function FormCategoryCRUD({ categoryData, setCategoryData }: IFormCategoryCrudPr
                 </div>
 
                 <div>
-                    <InputIconSelector fieldName="iconPath" placeholder="Ícone" />
+                    <InputIconSelector fieldName="iconPath" placeholder="Ícone" value={categoryData?.iconPath} onChange={(value) => { handleInputChange(value, "iconPath") }} />
                     <InputEdit
                         fieldName="categoryName"
                         inputType="text"

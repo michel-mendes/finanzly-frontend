@@ -30,7 +30,7 @@ function CategoriesList({ categoriesList, onClickItem }: ICategoriesListProps) {
                                                 )
                                             }
                                         >
-                                            <img src="" alt="Ícone" />
+                                            <img src={category.iconPath} alt="Ícone" />
                                             <p>{category.categoryName}</p>
                                         </li>
                                     )
