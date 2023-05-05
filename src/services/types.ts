@@ -17,17 +17,18 @@ export interface ICategory {
 }
 
 export interface ITransaction {
-    id?:                string;
-    fromCategory?:      string;
-    fromWallet?:        string;
-    fromUser?:          string;
-    date?:              Date;
-    description?:       string;
-    description_Upper?: string;
-    extraInfo?:         string;
-    extraInfo_Upper?:   string;
-    value?:             number;
-    creditValue?:       number;
-    debitValue?:        number;
-    csvImportId?:       string;
+    id?:                    string;
+    fromCategory?:          string;
+    fromWallet?:            string;
+    fromUser?:              string;
+    date?:                  Date;
+    description?:           string;
+    description_Upper?:     string;
+    extraInfo?:             string;
+    extraInfo_Upper?:       string;
+    value?:                 number;
+    creditValue?:           number;
+    debitValue?:            number;
+    csvImportId?:           string;
+    currentWalletBalance?:  number;
 }

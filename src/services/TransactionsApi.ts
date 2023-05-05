@@ -42,7 +42,7 @@ export class TransactionsApi {
 
     async createTransaction(data: ITransaction): Promise<ITransaction | IApiErrorResponse> {
         try {
-            data.date = moment(data.date).toDate()
+            data.date = moment(data.date).startOf("day").toDate()
             const createdTransaction = (await this.api().post(appConfigs.transactionCreateEndpoint, data)).data
 
             return createdTransaction
@@ -57,7 +57,7 @@ export class TransactionsApi {
             // other properties are destructured in "newData"
             const { id, fromUser, fromWallet, csvImportId, creditValue, debitValue, ...newData } = data
 
-            newData.date = moment(data.date).toDate()
+            newData.date = moment(data.date).startOf("day").toDate()
             const updatedTransaction: ITransaction = (await this.api().put(`${appConfigs.transactionUpdateEndpoint}${transactionId}`, newData)).data
 
             return updatedTransaction
