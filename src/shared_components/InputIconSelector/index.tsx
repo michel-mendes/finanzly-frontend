@@ -30,7 +30,7 @@ function InputIconSelector(props: IInputProps) {
     }
 
     return (
-        <div>
+        <>
             <label className={styles.input_container} htmlFor={inputId} onClick={showModal}>
                 <span>{placeholder}</span>
                 <i>{<RiArrowDropDownLine />}</i>
@@ -46,7 +46,7 @@ function InputIconSelector(props: IInputProps) {
             }}>
                 <IconsContainer selectedIcon={selectedOnModal} setSelectedIcon={setSelectedOnModal} />
             </ModalSaveCancel>
-        </div>
+        </>
     )
 }
 

@@ -16,14 +16,14 @@
     width: 100%;
 }
 
-.form div:last-child {
+.form > div:last-child {
     display: flex;
     justify-content: center;
     align-items: center;
     flex: 1 0 300px;
     flex-wrap: wrap;
 }
-.form div:last-child label {
+.form > div:last-child label {
     width: 100%;
 }
 
