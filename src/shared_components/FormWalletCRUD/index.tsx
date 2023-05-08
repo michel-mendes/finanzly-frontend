@@ -35,7 +35,7 @@ function FormWalletCRUD({walletData, setWalletData}: IFormWalletCrudProps) {
         <>
             <form className={styles.form}>
                 <div>
-                    <InputIconSelector fieldName="iconPath" placeholder="Selecione um ícone" value={walletData?.iconPath} onChange={(value) => {handleInputChange(value, "iconPath")}} />
+                    <InputIconSelector iconType="banks" fieldName="iconPath" placeholder="Selecione um ícone" value={walletData?.iconPath} onChange={(value) => {handleInputChange(value, "iconPath")}} />
                 </div>
 
                 <div>

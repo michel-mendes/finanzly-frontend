@@ -1,4 +1,7 @@
+import { useState, useEffect } from "react";
 import styles from "./styles.module.css"
+
+export type TIconTypes = "banks" | "categories";
 
 interface IGlobImport {
     [key: string]: {
@@ -7,13 +10,28 @@ interface IGlobImport {
 }
 
 interface IIconsContainerProps {
+    iconTypes: TIconTypes;
     selectedIcon: string;
     setSelectedIcon: Function;
 }
 
-const iconsList: IGlobImport = import.meta.glob("../../assets/icons/*.png", { eager: true })
+function loadIconsList(iconType: TIconTypes): IGlobImport {
+    
+    switch (iconType) {
+        case "banks": return import.meta.glob(`../../assets/banks_icons/*.png`, { eager: true })
+        case "categories": return import.meta.glob(`../../assets/categories_icons/*.png`, { eager: true })
+    }
 
-function IconsContainer({selectedIcon, setSelectedIcon}: IIconsContainerProps) {
+}
+
+function IconsContainer({iconTypes, selectedIcon, setSelectedIcon}: IIconsContainerProps) {
+
+    const [iconsList, setIconsList] = useState<IGlobImport>({})
+    
+    useEffect(() => {
+        setIconsList(loadIconsList(iconTypes))
+        console.log(loadIconsList(iconTypes))
+    }, [])
 
     return (
         <div className={styles.container}>

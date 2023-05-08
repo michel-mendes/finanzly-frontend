@@ -40,7 +40,7 @@ function FormCategoryCRUD({ categoryData, setCategoryData }: IFormCategoryCrudPr
                 </div>
 
                 <div>
-                    <InputIconSelector fieldName="iconPath" placeholder="Ícone" value={categoryData?.iconPath} onChange={(value) => { handleInputChange(value, "iconPath") }} />
+                    <InputIconSelector iconType="categories" fieldName="iconPath" placeholder="Ícone" value={categoryData?.iconPath} onChange={(value) => { handleInputChange(value, "iconPath") }} />
                     <InputEdit
                         fieldName="categoryName"
                         inputType="text"

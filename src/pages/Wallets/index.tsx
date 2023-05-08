@@ -24,8 +24,6 @@ import { IoArrowBack } from "react-icons/io5"
 // Styling
 import styles from "./styles.module.css"
 
-import cefIcon from "../../assets/banks/cef.png"
-
 
 function WalletsPage() {
   const navigate = useNavigate()
@@ -174,7 +172,7 @@ function WalletsList(props: { walletsList: IWallet[], isLoading: boolean, handle
           walletsList.map(wallet => {
             return (
               <li key={wallet.id} onClick={() => { handleOpenWalletModal(wallet) }}>
-                <img src={cefIcon} alt="ícone do banco" />
+                <img src={wallet.iconPath} alt="ícone do banco" />
 
                 <div>
                   <span className={styles.wallet_name}>{wallet.walletName}</span>

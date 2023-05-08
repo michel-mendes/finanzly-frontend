@@ -5,17 +5,20 @@ import { ModalSaveCancel } from "../Modal";
 import { useModal } from "../../hooks/useModal";
 import { IconsContainer } from "../IconsContainer";
 
+import { TIconTypes } from "../IconsContainer";
+
 import styles from "./styles.module.css"
 
 interface IInputProps {
     placeholder: string;
     fieldName: string;
+    iconType: TIconTypes;
     value?: string;
     onChange?: (value: string) => void;
 }
 
 function InputIconSelector(props: IInputProps) {
-    const { placeholder, fieldName, value, onChange } = props
+    const { iconType, placeholder, fieldName, value, onChange } = props
 
     const { closeModal, isOpen, showModal } = useModal()
     const [selectedOnModal, setSelectedOnModal] = useState("")
@@ -44,7 +47,7 @@ function InputIconSelector(props: IInputProps) {
                 cancelButton: { onClick: closeModal },
                 okButton: { onClick: handleOkClick }
             }}>
-                <IconsContainer selectedIcon={selectedOnModal} setSelectedIcon={setSelectedOnModal} />
+                <IconsContainer selectedIcon={selectedOnModal} setSelectedIcon={setSelectedOnModal} iconTypes={iconType} />
             </ModalSaveCancel>
         </>
     )
