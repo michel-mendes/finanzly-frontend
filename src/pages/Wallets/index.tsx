@@ -84,24 +84,25 @@ function WalletsPage() {
           {
             cancelButton: { onClick: closeModal },
             saveButton: { onClick: handleClickSaveWallet },
-            deleteButton: { 
+            deleteButton: {
               enabled: isEditingWallet,
               onClick: async () => {
-              const deleted = await walletsApi.deleteWallet(modalWalletData?.id!)
+                const deleted = await walletsApi.deleteWallet(modalWalletData?.id!)
 
-              if ("error" in deleted) {
-                alert(`Erroooo: ${deleted.error}`)
-                return
+                if ("error" in deleted) {
+                  alert(`Erroooo: ${deleted.error}`)
+                  return
+                }
+
+                alert(`Carteira excluida com sucesso!`)
+                const newList = walletsList.filter(wallet => {
+                  if (wallet.id !== deleted.id) { return wallet }
+                })
+
+                setWalletsList(newList)
+                closeModal()
               }
-
-              alert(`Carteira excluida com sucesso!`)
-              const newList = walletsList.filter(wallet => {
-                if (wallet.id !== deleted.id) {return wallet}
-              })
-
-              setWalletsList(newList)
-              closeModal()
-            }}
+            }
           }
         }
       >

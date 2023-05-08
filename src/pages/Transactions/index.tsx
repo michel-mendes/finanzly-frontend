@@ -122,6 +122,7 @@ function TransactionsPage() {
                         />
                     </div>
 
+                    <button onClick={() => {navigate("/import")}}>Importar extrato</button>
                     <button onClick={handleNewTransactionClick} disabled={activeWallet === null}>Nova transação</button>
                 </div>
             </PageHeaderDesktop>
