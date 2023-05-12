@@ -7,8 +7,10 @@ import { PageHeaderDesktop } from '../../shared_components/PageHeaderDesktop'
 
 import styles from "./styles.module.css"
 import axios from 'axios'
+import { ICategory } from '../../services/types'
+import { useCategories } from '../../hooks/useCategories'
 
-interface IImportedTransactions {
+interface IImportedTransaction {
     fromCategory: string;
     fromWallet: string;
     fromUser: string;
@@ -22,40 +24,41 @@ interface IImportedTransactions {
 
 function ImportTransactionsPage() {
     const navigate = useNavigate()
+    const {categoriesList} = useCategories()
 
-    const [transactionsList, setTransactionsList] = useState<IImportedTransactions[]>([])
+    const [transactionsList, setTransactionsList] = useState<IImportedTransaction[]>([])
 
     const [selectedBank, setSelectedBank] = useState("n/a")
-    const selectFileInput = useRef<HTMLInputElement>(null)
+    const fileSelectInput = useRef<HTMLInputElement>(null)
 
     function handleImportBtnClick() {
-        if (!selectFileInput.current) return
+        if (!fileSelectInput.current) return
 
         if (selectedBank == "n/a") {
             alert("Selecione uma instituição para configurar a importação")
-            selectFileInput.current?.focus()
+            fileSelectInput.current?.focus()
             return
         }
 
-        selectFileInput.current?.click()
+        fileSelectInput.current?.click()
     }
 
     async function sendCsvFile() {
-        if (!selectFileInput.current?.files![0]) return
+        if (!fileSelectInput.current?.files![0]) return
 
         const formData = new FormData()
         formData.append("walletId", "TesteID")
         formData.append("bank", selectedBank)
-        formData.append("csvFile", selectFileInput.current.files[0])
+        formData.append("csvFile", fileSelectInput.current.files[0])
 
         const resp = await axios.post("http://localhost:3000/api/upload", formData, { withCredentials: true })
 
         setTransactionsList(resp.data)
 
-        selectFileInput.current.value = ""
+        fileSelectInput.current.value = ""
     }
 
-    function handleListEditChange(fieldName: keyof IImportedTransactions, value: string | number, transaction: IImportedTransactions) {
+    function handleListEditChange(fieldName: keyof IImportedTransaction, value: string | number, transaction: IImportedTransaction) {
 
         if (fieldName == "date") {
             value = moment(value).startOf("day").toDate().toISOString()
@@ -89,7 +92,7 @@ function ImportTransactionsPage() {
                                 <option value="inter-web">Banco Inter Web</option>
                             </select>
                             <div className={styles.select_arrow}></div>
-                            <input type="file" ref={selectFileInput} onChange={sendCsvFile} hidden />
+                            <input type="file" ref={fileSelectInput} onChange={sendCsvFile} hidden />
                         </div>
 
                         <button onClick={handleImportBtnClick}>Inciar importação</button>
@@ -97,22 +100,82 @@ function ImportTransactionsPage() {
                 </div>
             </PageHeaderDesktop>
 
-            <section>
+            <section className={styles.import_container}>
                 {
-                    (transactionsList.length < 0) ? null : (
-                        <ul>
-                            {
-                                transactionsList.map(transaction => {
-                                    return (
-                                        <li key={transaction.csvImportId}>
-                                            <input type="date" value={moment(new Date(transaction.date)).format("YYYY-MM-DD") || ""} onChange={(e) => { handleListEditChange("date", e.target.value, transaction) }} />
-                                            <input type="text" value={transaction.description || ""} onChange={(e) => { handleListEditChange("description", e.target.value, transaction) }} />
-                                            <input type="number" value={transaction.value || ""} onChange={(e) => { handleListEditChange("value", e.target.value, transaction) }} />
-                                        </li>
-                                    )
-                                })
-                            }
-                        </ul>
+                    (transactionsList.length < 1) ? null : (
+                        <table className={styles.table}>
+                            <datalist id="categories">
+                                {
+                                    categoriesList.map(category => {
+                                        return (
+                                            <option value={category.categoryName} label={(category.transactionType == "D") ? "Despesa" : "Receita"} />
+                                        )
+                                    })
+                                }
+                            </datalist>
+
+                            <thead>
+                                <tr>
+                                    <td><p>#</p></td>
+                                    <td><p>Data</p></td>
+                                    <td><p>Descrição</p></td>
+                                    <td><p>Valor</p></td>
+                                    <td><p>Categoria</p></td>
+                                    <td><p>Tipo</p></td>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {
+                                    transactionsList.map((transaction, itemIndex) => {
+                                        const transactionType = (transaction.transactionType == "D") ? "Despesa" : "Receita"
+
+                                        return (
+                                            <tr key={transaction.csvImportId} transaction-type={transaction.transactionType}>
+                                                <td>
+                                                    <span style={{fontSize: "7px"}}>#</span>
+                                                    <span>{itemIndex + 1}</span>
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        className={styles.input_date}
+                                                        type="date"
+                                                        value={moment(new Date(transaction.date)).format("YYYY-MM-DD") || ""}
+                                                        onChange={(e) => { handleListEditChange("date", e.target.value, transaction) }}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        className={styles.input_description}
+                                                        type="text"
+                                                        value={transaction.description || ""}
+                                                        onChange={(e) => { handleListEditChange("description", e.target.value, transaction) }}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        className={styles.input_value}
+                                                        type="number"
+                                                        step="0.01" value={transaction.value || ""}
+                                                        onChange={(e) => { handleListEditChange("value", e.target.value, transaction) }}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input 
+                                                        className={styles.input_category}
+                                                        type="text"
+                                                        list='categories'
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <span>{transactionType}</span>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                            </tbody>
+                        </table>
                     )
                 }
             </section>
