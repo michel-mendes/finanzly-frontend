@@ -150,6 +150,16 @@
     background-color: transparent;
 }
 
+.table i {
+    color: rgba(255, 0, 0, .4);
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.table i:hover {
+    color: red;
+}
+
 .input_date {
     text-align: center;
     width: 120px;
