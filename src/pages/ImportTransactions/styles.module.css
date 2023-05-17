@@ -132,6 +132,11 @@
     font-weight: bold;
 }
 
+.table tr[transaction-already-exists="true"] {
+    opacity: .3;
+    border: 2px dashed red;
+}
+
 .table td {
     padding-top: 5px;
     padding-bottom: 5px;

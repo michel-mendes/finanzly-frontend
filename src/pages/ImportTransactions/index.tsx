@@ -109,6 +109,10 @@ function ImportTransactionsPage() {
 
         // Check date inputs
         for (const dateInput of tableInputsList.dateInputs.current) {
+            const transactionAlreadyExists = dateInput?.getAttribute("transaction-already-exists") === "true"
+            
+            if (transactionAlreadyExists) continue
+
             const transactionDate = new Date(dateInput!.value)
 
             if (transactionDate > new Date()) {
@@ -120,6 +124,10 @@ function ImportTransactionsPage() {
 
         // check description inputs
         for (const descriptionInput of tableInputsList.descriptionInputs.current) {
+            const transactionAlreadyExists = descriptionInput?.getAttribute("transaction-already-exists") === "true"
+            
+            if (transactionAlreadyExists) continue
+
             if (descriptionInput?.value == "") {
                 descriptionInput?.setCustomValidity("Informe uma descrição válida")
                 descriptionInput?.reportValidity()
@@ -128,6 +136,10 @@ function ImportTransactionsPage() {
         }
 
         for (const valueInput of tableInputsList.valueInputs.current) {
+            const transactionAlreadyExists = valueInput?.getAttribute("transaction-already-exists") === "true"
+            
+            if (transactionAlreadyExists) continue
+
             const value = parseFloat(valueInput!.value)
 
             if (value < 0 || valueInput?.value == "") {
@@ -139,6 +151,10 @@ function ImportTransactionsPage() {
 
         // Check category inputs
         for (const categoryInput of tableInputsList.categoryInputs.current) {
+            const transactionAlreadyExists = categoryInput?.getAttribute("transaction-already-exists") === "true"
+            
+            if (transactionAlreadyExists) continue
+
             if (!categoriesNames.includes(categoryInput?.value)) {
                 categoryInput!.value = ""
                 categoryInput!.setCustomValidity("Informe uma categoria válida")
@@ -151,6 +167,8 @@ function ImportTransactionsPage() {
     }
 
     async function handleSendImportsClick() {
+        let insertedCount = 0
+
         if (!checkListValidity()) return
 
         const newList = transactionsList.map(transaction => {
@@ -165,13 +183,15 @@ function ImportTransactionsPage() {
         })
         
         for (const transaction of newList) {
-            const {csvImportId, ...requiredFields} = transaction
-            const result = await newTransaction(requiredFields)
+            if (transaction.transactionAlreadyExists) continue
+
+            const result = await newTransaction(transaction)
+            insertedCount++
 
             if (!result) return
         }
 
-        alert(`Foram importadas ${newList.length} transações`)
+        alert(`Foram importadas ${insertedCount} transações`)
     }
 
     // Updates the REF inputs everytime the transactions list is changed
@@ -255,6 +275,7 @@ function ImportTransactionsPage() {
                                                             value={moment(new Date(transaction.date)).format("YYYY-MM-DD") || ""}
                                                             onChange={(e) => { handleListEditChange("date", e.target.value, transaction) }}
                                                             ref={(element) => { tableInputsList.dateInputs.current[itemIndex] = element }}
+                                                            transaction-already-exists={`${transaction.transactionAlreadyExists}`}
                                                         />
                                                     </td>
                                                     <td>
@@ -264,6 +285,7 @@ function ImportTransactionsPage() {
                                                             value={transaction.description || ""}
                                                             onChange={(e) => { handleListEditChange("description", e.target.value, transaction) }}
                                                             ref={(element) => { tableInputsList.descriptionInputs.current[itemIndex] = element }}
+                                                            transaction-already-exists={`${transaction.transactionAlreadyExists}`}
                                                         />
                                                     </td>
                                                     <td>
@@ -273,6 +295,7 @@ function ImportTransactionsPage() {
                                                             step="0.01" value={transaction.value || ""}
                                                             onChange={(e) => { handleListEditChange("value", e.target.value, transaction) }}
                                                             ref={(element) => { tableInputsList.valueInputs.current[itemIndex] = element }}
+                                                            transaction-already-exists={`${transaction.transactionAlreadyExists}`}
                                                         />
                                                     </td>
                                                     <td>
@@ -282,6 +305,7 @@ function ImportTransactionsPage() {
                                                             list='categories'
                                                             onChange={(e) => { handleListEditChange("fromCategory", e.target.value, transaction) }}
                                                             ref={(element) => { tableInputsList.categoryInputs.current[itemIndex] = element }}
+                                                            transaction-already-exists={`${transaction.transactionAlreadyExists}`}
                                                         />
                                                     </td>
                                                     <td>
