@@ -60,7 +60,7 @@ function ImportTransactionsPage() {
         if (!fileSelectInput.current?.files![0]) return
 
         const formData = new FormData()
-        formData.append("walletId", "TesteID")
+        formData.append("walletId", loggedUser!.activeWalletId)
         formData.append("bank", selectedBank)
         formData.append("csvFile", fileSelectInput.current.files[0])
 
@@ -243,7 +243,7 @@ function ImportTransactionsPage() {
                                             const transactionType = (transaction.transactionType == "D") ? "Despesa" : "Receita"
 
                                             return (
-                                                <tr key={transaction.csvImportId} transaction-type={transaction.transactionType}>
+                                                <tr key={transaction.csvImportId} transaction-type={transaction.transactionType} transaction-already-exists={`${transaction.transactionAlreadyExists}`}>
                                                     <td>
                                                         <span style={{ fontSize: "7px" }}>#</span>
                                                         <span>{itemIndex + 1}</span>

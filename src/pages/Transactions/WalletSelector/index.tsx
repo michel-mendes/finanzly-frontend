@@ -1,8 +1,12 @@
+import axios from "axios"
 import { useRef, useState, useEffect, Dispatch, SetStateAction, MutableRefObject } from "react"
 import { RiArrowDropDownFill } from "react-icons/ri"
+import { appConfigs } from "../../../../config/app-configs"
 
 import walletIcon from "../../../../public/vite.svg"
 import styles from "./styles.module.css"
+
+import { useAuthContext } from "../../../contexts/Auth"
 
 // Interfaces
 import { IWallet } from "../../../services/types"
@@ -12,7 +16,11 @@ interface IWalletSelectorProps {
     setSelectedWallet: Dispatch<SetStateAction<IWallet | null>>;
 }
 
+const setActiveWalletUrl = appConfigs.userSetActiveWallet
+
 function WalletSelector({ selectedWallet, setSelectedWallet, walletsList }: IWalletSelectorProps) {
+
+    const {loggedUser, setLoggedUser} = useAuthContext()
 
     const popupMenu = useRef(null)
     const { isMenuOpen, closePopup, openPopup } = useMouseClickListener(popupMenu)
@@ -21,8 +29,19 @@ function WalletSelector({ selectedWallet, setSelectedWallet, walletsList }: IWal
         if (setSelectedWallet) {
             setSelectedWallet(wallet)
             closePopup()
+
+            setUserActiveWallet(wallet.id!)
+            setLoggedUser({...loggedUser!, activeWalletId: wallet.id!})
         }
     }
+
+    useEffect(() => {
+        if (loggedUser && walletsList.length > 0) {
+            const currentActiveWallet = walletsList.find(item => {return item.id == loggedUser!.activeWalletId})
+
+            setSelectedWallet(currentActiveWallet!)
+        }
+    }, [loggedUser, walletsList])
 
     return (
         <div className={styles.container}>
@@ -54,6 +73,18 @@ function WalletSelector({ selectedWallet, setSelectedWallet, walletsList }: IWal
             }
         </div>
     )
+}
+
+async function setUserActiveWallet(activeWallet: string) {
+
+    axios.post(setActiveWalletUrl, { activeWallet }, {withCredentials: true})
+        // .then(result => {
+        //     alert("carteira gravada com sucesso!")
+        // })
+        // .catch(error => {
+        //     alert(`Erro ao gravar carteira: ${error}`)
+        // })
+
 }
 
 function useMouseClickListener(popupRef: MutableRefObject<HTMLDivElement | null>) {

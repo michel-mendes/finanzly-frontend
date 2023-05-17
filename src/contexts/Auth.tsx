@@ -1,5 +1,5 @@
 import axios from "axios";
-import { PropsWithChildren, createContext, useContext, useEffect, useState } from "react";
+import { PropsWithChildren, createContext, useContext, useEffect, useState, Dispatch, SetStateAction } from "react";
 
 import { appConfigs } from "../../config/app-configs";
 
@@ -7,12 +7,13 @@ interface IAuthenticatedUser {
     id: string;
     firstName: string;
     role: string;
+    activeWalletId: string;
 }
 
 interface IAuthContextProps extends PropsWithChildren {
     loggedUser: IAuthenticatedUser | null
     loadingUser: boolean
-    setLoggedUser: Function
+    setLoggedUser: Dispatch<SetStateAction<IAuthenticatedUser | null>>;
 }
 
 const { getUserLoggedEndpoint } = appConfigs

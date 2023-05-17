@@ -6,6 +6,7 @@ export const appConfigs = {
     userLoginEnpoint: baseApiUrl + import.meta.env.VITE_USER_LOGIN_ENDPOINT,
     userLogoutEnpoint: baseApiUrl + import.meta.env.VITE_USER_LOGOUT_ENDPOINT,
     getUserLoggedEndpoint: baseApiUrl + import.meta.env.VITE_GET_LOGGED_USER_ENDPOINT,
+    userSetActiveWallet: baseApiUrl + import.meta.env.VITE_USER_SET_ACTIVE_WALLET,
 
     // Wallets endpoints
     walletCreateEndpoint: `${baseApiUrl}${import.meta.env.VITE_WALLET_POST}`,
