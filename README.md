@@ -1,2 +1,2 @@
-# msm-my-wallet-app-frontend
+# finanzly_frontend
 Personal Cost Manager - Frontend
