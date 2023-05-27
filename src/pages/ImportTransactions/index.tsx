@@ -209,7 +209,7 @@ function ImportTransactionsPage() {
         <div className={styles.page_container}>
             <PageHeaderDesktop>
                 <div className={styles.header_content}>
-                    <i onClick={() => { navigate("/dashboard") }}>{<IoArrowBack />}</i>
+                    <i onClick={() => { navigate("/transactions") }}>{<IoArrowBack />}</i>
 
                     <div className={styles.button_container}>
                         <div className={styles.select}>
