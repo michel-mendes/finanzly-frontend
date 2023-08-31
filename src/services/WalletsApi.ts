@@ -19,6 +19,16 @@ export class WalletsApi {
         return clientAxios
     }
 
+    async getWallet(id: string): Promise<IWallet | IApiErrorResponse> {
+        try {
+            const response: IWallet = (await this.api().get(`${appConfigs.walletGetByIdEndpoint}${id}`)).data
+
+            return response
+        } catch (error: any) {
+            return buildError(error)
+        }
+    }
+
     async getWalletsFromUser(): Promise<IWallet[] | IApiErrorResponse> {
         try {
             const response: IWallet[] = (await this.api().get(appConfigs.walletGetFromUserEndpoint)).data
