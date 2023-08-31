@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import moment from "moment"
 
 import { ICategory, ITransaction } from "../../services/types"
@@ -10,17 +10,39 @@ import styles from "./styles.module.css"
 interface IFormTransactionCrudProps {
     transactionData: ITransaction | null;
     setTransactionData: Dispatch<SetStateAction<ITransaction | null>>;
+    setTransactionValuesHasChanged?: Dispatch<SetStateAction<boolean>>;
     categoriesList: ICategory[];
 }
 
-function FormTransactionCRUD({transactionData, setTransactionData, categoriesList}: IFormTransactionCrudProps) {
+function FormTransactionCRUD({transactionData, setTransactionData, setTransactionValuesHasChanged, categoriesList}: IFormTransactionCrudProps) {
     
     const defaultCategory = categoriesList.find(category => {return category.id == transactionData?.fromCategory})
     const [selectedCategoryName, setSelectedCategoryName] = useState(defaultCategory?.categoryName || "")
+    const [initialTransactionValues, setInitialTransactionValues] = useState<ITransaction>(transactionData!)
     
     function handleInputChange(value: string | number, propName: keyof ITransaction) {
         setTransactionData({...transactionData, [propName]: value})
     }
+
+    useEffect(() => {
+        transactionData!.date = (transactionData?.date) ? moment(transactionData.date).format("YYYY-MM-DD") : moment(Date.now()).format("YYYY-MM-DD")
+
+        setInitialTransactionValues(transactionData!)
+        setTransactionValuesHasChanged ? setTransactionValuesHasChanged(false) : null
+    }, [])
+
+    useEffect(() => {
+        
+        // If "setTransactionValuesHasChanged" useState function is setted
+        if (setTransactionValuesHasChanged) {
+            const initialValues = JSON.stringify(initialTransactionValues)
+            const actualValues = JSON.stringify(transactionData)
+            const hasChanged = initialValues != actualValues
+
+            setTransactionValuesHasChanged(hasChanged)
+        }
+
+    }, [transactionData])
     
     return (
         <form className={styles.form}>
@@ -68,6 +90,7 @@ function FormTransactionCRUD({transactionData, setTransactionData, categoriesLis
                 value={transactionData?.extraInfo || ""}
                 onChange={(value) => {handleInputChange(value, "extraInfo")}}
             />
+
         </form>
     )
 }
