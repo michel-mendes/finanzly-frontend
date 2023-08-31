@@ -1,0 +1,36 @@
+.page_container {
+  overflow: hidden;
+}
+
+.donut_charts_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    border: red 2px solid;
+}
+
+.donut_container {
+    /* display: flex;
+    flex-direction: column; */
+    /* flex: 0 1 auto; */
+
+    height: 200px;
+    width: 50%;
+    position: relative;
+    border: 1px solid blue;
+}
+
+.skeleton_loading_effect {
+    color: transparent;
+    border-radius: 0.5rem;
+    animation: skeleton-loading 1s linear infinite alternate;
+}
+
+@keyframes skeleton-loading {
+    0% {
+      background-color: hsl(200, 20%, 80%);
+    }
+    100% {
+      background-color: hsl(200, 20%, 95%);
+    }
+  }
