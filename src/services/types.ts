@@ -21,7 +21,7 @@ export interface ITransaction {
     fromCategory?:          string;
     fromWallet?:            string;
     fromUser?:              string;
-    date?:                  Date;
+    date?:                  number | string;
     description?:           string;
     description_Upper?:     string;
     extraInfo?:             string;

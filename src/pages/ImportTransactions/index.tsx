@@ -17,7 +17,7 @@ interface IImportedTransaction {
     fromCategory: string;
     fromWallet: string;
     fromUser: string;
-    date: Date;
+    date: number;
     description: string;
     value: number;
     transactionType: string;

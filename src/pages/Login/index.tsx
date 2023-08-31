@@ -1,4 +1,5 @@
 import { Navigate } from "react-router-dom"
+import moment from "moment"
 
 // Icons
 import walletIcon from "../../assets/wallet.png"
@@ -20,7 +21,13 @@ import { useAuthContext } from "../../contexts/Auth"
 function LoginPage() {
   const { loggedUser } = useAuthContext()
 
-  if ( loggedUser ) return <Navigate to="/dashboard" />
+  if (loggedUser) {
+    const start = moment(Date.now()).startOf('month').toISOString(true).split("T")[0]
+    const end = moment(Date.now()).endOf('month').toISOString(true).split("T")[0]
+    const activeWallet = (loggedUser.activeWalletId) ? `&wallet=${loggedUser.activeWalletId}` : ``
+
+    return <Navigate to={`/dashboard?start=${start}&end=${end}${activeWallet}`}/>
+  }
  
   return (
     <LoginContextProvider>

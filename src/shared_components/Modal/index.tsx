@@ -13,6 +13,7 @@ interface IModalProps {
       onClick: () => void;
     },
     saveButton?: {
+      enabled?: boolean;
       onClick: () => void;
     },
     yesButton?: {
@@ -34,7 +35,7 @@ function ModalSaveCancel(props: IModalProps) {
 
   const btnOk = !modalButtons.okButton ? null : <button onClick={modalButtons.okButton.onClick}>OK</button>
   const btnCancel = !modalButtons.cancelButton ? null : <button onClick={modalButtons.cancelButton.onClick}>Cancelar</button>
-  const btnSave = !modalButtons.saveButton ? null : <button onClick={modalButtons.saveButton.onClick}>Salvar</button>
+  const btnSave = !modalButtons.saveButton ? null : <button onClick={modalButtons.saveButton.onClick} disabled={!modalButtons.saveButton.enabled}>Salvar</button>
   const btnYes = !modalButtons.yesButton ? null : <button onClick={modalButtons.yesButton.onClick}>Sim</button>
   const btnNo = !modalButtons.noButton ? null : <button onClick={modalButtons.noButton.onClick}>Não</button>
   const btnDelete = !modalButtons.deleteButton ? null : <button onClick={modalButtons.deleteButton.onClick} disabled={!modalButtons.deleteButton.enabled}>Excluir</button>

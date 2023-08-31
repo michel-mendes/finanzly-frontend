@@ -3,7 +3,7 @@ import { useEffect, useState, Dispatch, SetStateAction } from "react"
 import { useNavigate } from "react-router-dom"
 import { IoArrowBack } from "react-icons/io5"
 import { RiArrowDropDownFill } from "react-icons/ri"
-import { getFullDateName_PtBr } from "../../helpers/helpers"
+import { getFullDateName_PtBr, sortArrayOfObjects } from "../../helpers/helpers"
 
 // Authentication context
 import { useAuthContext } from "../../contexts/Auth"
@@ -48,17 +48,14 @@ function TransactionsPage() {
     const [groupedTransactions, setGroupedTransactions] = useState<IGroupedTransactions>({})
 
     const { isOpen, showModal, closeModal } = useModal()
+    const [modalTitle, setModalTitle] = useState("")
     const [isEditing, setIsEditing] = useState(false)
+    const [transactionValuesHasChanged, setTransactionValuesHasChanged] = useState(false)
 
     const [activeWallet, setActiveWallet] = useState<IWallet | null>(null)
 
-    useEffect(() => {
-
-        (!activeWallet) ? clearTransactionsList() : getTransactionsFromWallet(activeWallet.id!)
-
-    }, [activeWallet])
-
     function handleNewTransactionClick() {
+        setModalTitle("Nova transação")
         setIsEditing(false)
         setDraftTransaction({
             fromUser: loggedUser?.id,
@@ -69,6 +66,7 @@ function TransactionsPage() {
     }
 
     function handleListItemClick(transaction: ITransaction) {
+        setModalTitle("Alterando transação")
         setIsEditing(true)
         setDraftTransaction(transaction)
 
@@ -95,9 +93,16 @@ function TransactionsPage() {
     }
 
     useEffect(() => {
-        const groups: IGroupedTransactions = {}
 
-        transactionsList.forEach(transaction => {
+        (!activeWallet) ? clearTransactionsList() : getTransactionsFromWallet(activeWallet.id!)
+
+    }, [activeWallet])
+    
+    useEffect(() => {
+        const groups: IGroupedTransactions = {}
+        const sortedTransactionsList = sortArrayOfObjects<ITransaction>(transactionsList, "date", false)
+
+        sortedTransactionsList.forEach(transaction => {
             const date = String(transaction.date);
 
             (!groups[date]) ? groups[date] = [] : null
@@ -134,6 +139,7 @@ function TransactionsPage() {
                     Object.keys(groupedTransactions).map(groupName => {
                         const transactions = groupedTransactions[groupName]
 
+                        const transactionDate = new Date( Number(groupName) )
                         const groupIncomes = transactions.map(transaction => { return transaction.creditValue }).reduce((actual, current, index) => { return Number(actual) + Number(current) }, 0)!
                         const groupOutcomes = transactions.map(transaction => { return transaction.debitValue }).reduce((actual, current, index) => { return Number(actual) + Number(current) }, 0)!
                         const groupBalance = groupIncomes - groupOutcomes
@@ -143,10 +149,10 @@ function TransactionsPage() {
                             <div key={groupName} className={styles.group_container}>
                                 <div className={styles.group_header}>
                                     <div className={styles.date_container}>
-                                        <span className={styles.day_number_container}>{new Date(groupName).getDate()}</span>
+                                        <span className={styles.day_number_container}>{transactionDate.getDate()}</span>
                                         <span>
-                                            <span>{getFullDateName_PtBr(new Date(groupName)).dayName}</span>
-                                            <span>de {getFullDateName_PtBr(new Date(groupName)).monthName} de {getFullDateName_PtBr(new Date(groupName)).yearNumber}</span>
+                                            <span>{getFullDateName_PtBr(transactionDate).dayName}</span>
+                                            <span>de {getFullDateName_PtBr(transactionDate).monthName} de {getFullDateName_PtBr(transactionDate).yearNumber}</span>
                                         </span>
                                     </div>
 
@@ -210,9 +216,12 @@ function TransactionsPage() {
 
             <ModalSaveCancel
                 isOpen={isOpen}
-                modalTitle="Nova transação"
+                modalTitle={modalTitle}
                 modalButtons={{
-                    saveButton: { onClick: handleSaveButtonClick },
+                    saveButton: {
+                        onClick: handleSaveButtonClick,
+                        enabled: transactionValuesHasChanged
+                    },
                     cancelButton: { onClick: closeModal },
                     deleteButton: {
                         onClick: () => { handleDeleteButtonClick(draftTransaction!) },
@@ -220,7 +229,12 @@ function TransactionsPage() {
                     }
                 }}
             >
-                <FormTransactionCRUD transactionData={draftTransaction} setTransactionData={setDraftTransaction} categoriesList={categoriesList} />
+                <FormTransactionCRUD
+                    transactionData={draftTransaction}
+                    setTransactionData={setDraftTransaction}
+                    setTransactionValuesHasChanged={setTransactionValuesHasChanged}
+                    categoriesList={categoriesList}
+                />
             </ModalSaveCancel>
         </div>
     )
