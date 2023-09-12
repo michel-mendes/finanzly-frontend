@@ -6,7 +6,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    border: red 2px solid;
+    /* border: red 2px solid; */
 }
 
 .donut_container {
@@ -17,7 +17,8 @@
     height: 200px;
     width: 50%;
     position: relative;
-    border: 1px solid blue;
+    cursor: pointer;
+    /* border: 1px solid blue; */
 }
 
 .skeleton_loading_effect {

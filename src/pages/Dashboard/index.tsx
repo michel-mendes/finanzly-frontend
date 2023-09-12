@@ -65,11 +65,12 @@ function DashboardPage() {
     const { loggedUser, setLoggedUser } = useAuthContext()
     const { showModal, closeModal, isOpen } = useModal()
     const api = new WalletsApi()
+    const navigate = useNavigate()
 
-    const [startDate, setStartDate] = useState<Date>(moment(new Date).startOf("month").toDate())
-    const [endDate, setEndDate] = useState<Date>(moment(new Date).endOf("month").toDate())
-    const [walletName, setWalletName] = useState<String>(".")
-    const [isLoadingWalletName, setIsLoadingWalletName] = useState<Boolean>(true)
+    const [startDate, setStartDate] = useState<string>(moment(new Date).startOf("month").toJSON().slice(0, 10))
+    const [endDate, setEndDate] = useState<string>(moment(new Date).endOf("month").startOf("day").toJSON().slice(0, 10))
+    const [walletName, setWalletName] = useState<string>(".")
+    const [isLoadingWalletName, setIsLoadingWalletName] = useState<boolean>(true)
 
     const [modalCategoriesList, setModalCategoriesList] = useState<Array<IModalCategoriesList>>([])
     const [chartData, setChartData] = useState<IChartsData>({
@@ -235,24 +236,6 @@ function DashboardPage() {
                         } */
     )
 
-    function priorPeriodBtnClick() {
-        const oneDay = 86400000
-        const newStartDate = moment(startDate.getTime() - oneDay).startOf("month")
-        const newEndDate = moment(newStartDate).endOf("month")
-
-        setStartDate(newStartDate.toDate())
-        setEndDate(newEndDate.toDate())
-    }
-
-    function nextPeriodBtnClick() {
-        const oneDay = 86400000
-        const newStartDate = moment(endDate.getTime() + oneDay).startOf("month")
-        const newEndDate = moment(newStartDate).endOf("month")
-
-        setStartDate(newStartDate.toDate())
-        setEndDate(newEndDate.toDate())
-    }
-
     useEffect(() => {
         async function getWalletName() {
             const wallet = await api.getWallet(loggedUser!.activeWalletId)
@@ -278,17 +261,14 @@ function DashboardPage() {
             <br />
             <div>
                 <p className={loadingWalletEffect}>{walletName}</p>
-                <span onClick={priorPeriodBtnClick}>
-                    <BsArrowLeftSquare />
-                </span>
-                <span className={loadingWalletEffect}>{startDate.toLocaleDateString()} - {endDate.toLocaleDateString()}</span>
-                <span onClick={nextPeriodBtnClick}>
-                    <BsArrowRightSquare />
+                                
+                <span className={loadingWalletEffect}>
+                    <input type="date" onChange={(e) => {setStartDate(e.currentTarget.value)}} value={startDate} />
+                    <span> - </span>
+                    <input type="date" onChange={(e) => {setEndDate(e.currentTarget.value)}} value={endDate} />
                 </span>
             </div>
             <button onClick={async () => {
-                const queryString = new URLSearchParams(window.location.search)
-
                 const start = moment(startDate).toISOString(true).split("T")[0]
                 const end = moment(endDate).toISOString(true).split("T")[0]
                 const wallet = loggedUser.activeWalletId
@@ -320,6 +300,7 @@ function DashboardPage() {
                 })
 
             }}>Atualizar</button>
+            <button onClick={() => {navigate("/testes")}}>Página de testes</button>
             <section className={loadingChartDataEffect} style={{ height: "200px" }}>
                 {
                     loadingChartDataEffect ? null : (
@@ -404,6 +385,7 @@ function DashboardPage() {
                             )}
                     {/* </div> */}
                 </div>
+
             </section>
 
             <ModalSaveCancel
