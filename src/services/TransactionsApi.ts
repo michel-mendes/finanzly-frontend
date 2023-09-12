@@ -30,9 +30,13 @@ export class TransactionsApi {
         }
     }
     
-    async getTransactionsFromWallet(walletId: string): Promise<ITransaction[] | IApiErrorResponse> {
+    async getTransactionsFromWallet(walletId: string, startDate: string = "", endDate: string = ""): Promise<ITransaction[] | IApiErrorResponse> {
         try {
-            const response: ITransaction[] = (await this.api().get(`${appConfigs.transactionGetFromWallet}${walletId}`)).data
+            startDate = (startDate.length > 0) ? `startDate=${startDate}&` : ""
+            endDate = (endDate.length > 0) ? `endDate=${endDate}&` : ""
+            const queryString = (startDate || endDate) ? `?${startDate}${endDate}` : ""
+            
+            const response: ITransaction[] = (await this.api().get(`${appConfigs.transactionGetFromWallet}${walletId}${queryString}`)).data
 
             return response
         } catch (error: any) {

@@ -13,10 +13,10 @@ export function useTransactions() {
     const [transactionsList, setTransactionsList] = useState<ITransaction[]>([])
     const [loadingTransactions, setLoadingTransactions] = useState(true)
 
-    async function getTransactionsFromWallet(walletId: string) {
+    async function getTransactionsFromWallet(walletId: string, startDate: string = "", endDate: string = "") {
         setLoadingTransactions(true)
-        
-        const walletTransactions = await api.getTransactionsFromWallet(walletId)
+
+        const walletTransactions = await api.getTransactionsFromWallet(walletId, startDate, endDate)
 
         if ("error" in walletTransactions) {
             alert(`Erro ao atualizar transções da carteira:\n\n${walletTransactions.error}`)

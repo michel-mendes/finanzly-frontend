@@ -2,7 +2,6 @@ import moment from "moment"
 import { useEffect, useState, Dispatch, SetStateAction } from "react"
 import { useNavigate } from "react-router-dom"
 import { IoArrowBack } from "react-icons/io5"
-import { RiArrowDropDownFill } from "react-icons/ri"
 import { getFullDateName_PtBr, sortArrayOfObjects } from "../../helpers/helpers"
 
 // Authentication context
