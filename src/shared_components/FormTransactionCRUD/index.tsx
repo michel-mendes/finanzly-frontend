@@ -10,7 +10,7 @@ import styles from "./styles.module.css"
 interface IFormTransactionCrudProps {
     transactionData: ITransaction | null;
     setTransactionData: Dispatch<SetStateAction<ITransaction | null>>;
-    setTransactionValuesHasChanged?: Dispatch<SetStateAction<boolean>>;
+    setTransactionValuesHasChanged?: (value: boolean) => void;
     categoriesList: ICategory[];
 }
 

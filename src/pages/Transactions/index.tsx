@@ -1,5 +1,4 @@
-import moment from "moment"
-import { useEffect, useState, Dispatch, SetStateAction } from "react"
+import { useEffect, useState, Dispatch, SetStateAction, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { IoArrowBack } from "react-icons/io5"
 import { getFullDateName_PtBr, sortArrayOfObjects } from "../../helpers/helpers"
@@ -17,6 +16,7 @@ import { useModal } from "../../hooks/useModal"
 import { PageHeaderDesktop } from "../../shared_components/PageHeaderDesktop"
 import { WalletSelector } from "./WalletSelector"
 import { ModalSaveCancel } from "../../shared_components/Modal"
+import { FormTransactionCRUD } from "../../shared_components/FormTransactionCRUD"
 
 // Interfaces
 import { ITransaction, IWallet } from "../../services/types"
@@ -25,7 +25,8 @@ interface IGroupedTransactions {
 }
 
 import styles from "./styles.module.css"
-import { FormTransactionCRUD } from "../../shared_components/FormTransactionCRUD"
+
+
 
 function TransactionsPage() {
     const { loggedUser } = useAuthContext()
@@ -41,21 +42,34 @@ function TransactionsPage() {
         newTransaction,
         updateTransaction,
         deleteTransaction,
-        clearTransactionsList
-    } = useTransactions()
+        clearTransactionsList } = useTransactions()
 
     const [groupedTransactions, setGroupedTransactions] = useState<IGroupedTransactions>({})
+    const [textFilter, setTextFilter] = useState("")
+    const [categoryFilter, setCategoryFilter] = useState("")
+    const filterDescriptionInput = useRef<HTMLInputElement>(null)
+    const filterCategoryInput = useRef<HTMLInputElement>(null)
 
     const { isOpen, showModal, closeModal } = useModal()
-    const [modalTitle, setModalTitle] = useState("")
-    const [isEditing, setIsEditing] = useState(false)
-    const [transactionValuesHasChanged, setTransactionValuesHasChanged] = useState(false)
+    const [modalState, setModalState] = useState({
+        title: "",
+        isEditing: false,
+        transactionValuesHasChanged: false
+    })
+    // const [modalTitle, setModalTitle] = useState("")
+    // const [isEditing, setIsEditing] = useState(false)
+    // const [transactionValuesHasChanged, setTransactionValuesHasChanged] = useState(false)
 
     const [activeWallet, setActiveWallet] = useState<IWallet | null>(null)
 
+
     function handleNewTransactionClick() {
-        setModalTitle("Nova transação")
-        setIsEditing(false)
+        setModalState({
+            ...modalState,
+            title: "Nova transação",
+            isEditing: false
+        })
+
         setDraftTransaction({
             fromUser: loggedUser?.id,
             fromWallet: activeWallet?.id,
@@ -65,15 +79,19 @@ function TransactionsPage() {
     }
 
     function handleListItemClick(transaction: ITransaction) {
-        setModalTitle("Alterando transação")
-        setIsEditing(true)
-        setDraftTransaction(transaction)
+        setModalState({
+            ...modalState,
+            title: "Alterando transação",
+            isEditing: true
+        })
+        
+        setDraftTransaction({...transaction})
 
         showModal()
     }
 
-    async function handleSaveButtonClick() {
-        const success = (isEditing) ? await updateTransaction(draftTransaction!) : await newTransaction(draftTransaction!)
+    async function handleModalSaveButtonClick() {
+        const success = (modalState.isEditing) ? await updateTransaction(draftTransaction!) : await newTransaction(draftTransaction!)
 
         if (success) {
             // alert("Transação adicionada com sucesso")
@@ -82,7 +100,7 @@ function TransactionsPage() {
         }
     }
 
-    async function handleDeleteButtonClick(transaction: ITransaction) {
+    async function handleModalDeleteButtonClick(transaction: ITransaction) {
         const success = await deleteTransaction(transaction)
 
         if (success) {
@@ -91,16 +109,30 @@ function TransactionsPage() {
         }
     }
 
-    useEffect(() => {
-
-        (!activeWallet) ? clearTransactionsList() : getTransactionsFromWallet(activeWallet.id!)
-
-    }, [activeWallet])
+    // Clear transaction list case there's no selected wallet or show selected wallet transactions
+    useEffect(() => { (!activeWallet) ? clearTransactionsList() : getTransactionsFromWallet(activeWallet.id!) }, [activeWallet])
     
+    
+    // Sort and group transactions
     useEffect(() => {
         const groups: IGroupedTransactions = {}
-        const sortedTransactionsList = sortArrayOfObjects<ITransaction>(transactionsList, "date", false)
+        
+        // Filter the list according to the search params
+        const filteredTransactions = transactionsList.filter(transaction => {
+            const categoryName = categoriesList.find(category => { return (category.id == transaction.fromCategory) })?.categoryName?.toUpperCase() || ""
+            const description = transaction.description?.toUpperCase() || ""
+            const extraInfo = transaction.extraInfo?.toUpperCase() || ""
+            const query = textFilter.toUpperCase()
+            const categoryQuery = categoryFilter.toUpperCase()
 
+            if ( (description.includes(query) || extraInfo.includes(query)) &&
+                 (categoryName.includes(categoryQuery)) ) return transaction
+        })
+
+        // Sort the list by date
+        const sortedTransactionsList = sortArrayOfObjects<ITransaction>(filteredTransactions, "date", false)
+
+        // Group the list by date
         sortedTransactionsList.forEach(transaction => {
             const date = String(transaction.date);
 
@@ -110,10 +142,13 @@ function TransactionsPage() {
         })
 
         setGroupedTransactions(groups)
-    }, [transactionsList])
+    }, [transactionsList, textFilter, categoryFilter])
 
+    
+    
     return (
         <div className={styles.page_container}>
+            
             <PageHeaderDesktop>
                 <div className={styles.header_content}>
                     <div className={styles.left_toolbar}>
@@ -132,21 +167,38 @@ function TransactionsPage() {
             </PageHeaderDesktop>
 
             <p>Transações</p>
+            <div>
+                <input type="text" name="" id="" ref={filterDescriptionInput} placeholder="Encontre pela descrição" /><br />
+                <input type="text" name="" id="" ref={filterCategoryInput} placeholder="Encontre pela categoria" /><br />
+                <button onClick={() => {
+                    setTextFilter(filterDescriptionInput.current?.value || "")
+                    setCategoryFilter(filterCategoryInput.current?.value || "")
+                }}
+                >Atualizar</button>
+            </div>
 
+            {/* Transactions list */}
             <ul className={styles.list}>
                 {
                     Object.keys(groupedTransactions).map(groupName => {
-                        const transactions = groupedTransactions[groupName]
-
                         const transactionDate = new Date( Number(groupName) )
+                        
+                        /*
+                        // Group balance value
+                        const transactions = groupedTransactions[groupName]
                         const groupIncomes = transactions.map(transaction => { return transaction.creditValue }).reduce((actual, current, index) => { return Number(actual) + Number(current) }, 0)!
                         const groupOutcomes = transactions.map(transaction => { return transaction.debitValue }).reduce((actual, current, index) => { return Number(actual) + Number(current) }, 0)!
                         const groupBalance = groupIncomes - groupOutcomes
                         const balanceSignal = (groupBalance >= 0) ? "+" : ""
+                        */
 
                         return (
                             <div key={groupName} className={styles.group_container}>
+                                
+                                {/* Group container */}
                                 <div className={styles.group_header}>
+                                    
+                                    {/* Date container, here will be shown the group date */}
                                     <div className={styles.date_container}>
                                         <span className={styles.day_number_container}>{transactionDate.getDate()}</span>
                                         <span>
@@ -155,11 +207,17 @@ function TransactionsPage() {
                                         </span>
                                     </div>
 
-                                    {/* <div className={styles.date_balance_container}>
+                                    {/*
+                                    
+                                    //Group balance value container
+                                    <div className={styles.date_balance_container}>
                                         <span>{balanceSignal}{groupBalance.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</span>
-                                    </div> */}
+                                    </div>
+
+                                    */}
                                 </div>
 
+                                {/* Group body, here will be shown the group transactions */}
                                 <div className={styles.group_body}>
                                     {
                                         groupedTransactions[groupName].map((transaction, index) => {
@@ -167,7 +225,11 @@ function TransactionsPage() {
                                             const operatorSignal = (category?.transactionType == "C") ? "+" : "-"
 
                                             return (
+
+                                                // List item
                                                 <li key={transaction.id} className={styles.item}>
+                                                    
+                                                    {/* Transaction type signal "-" or "+" */}
                                                     <div className={styles.signal_container}>
                                                         <span>
                                                             <i></i>
@@ -182,25 +244,32 @@ function TransactionsPage() {
                                                         </span>
                                                     </div>
 
+                                                    
+                                                    {/* Transaction data */}
                                                     <div className={styles.item_content} onClick={() => {handleListItemClick(transaction)}}>
+                                                        
+                                                        {/* Category icon */}
                                                         <div className={styles.item_icon}>
                                                             <img src={category?.iconPath} alt="" />
                                                         </div>
 
                                                         <div className={styles.item_data}>
+                                                            
+                                                            {/* Category name and transaction value */}
                                                             <p>
                                                                 <span className={styles.transaction_category_name}>{category?.categoryName}</span>
                                                                 <span className={styles.transaction_value} transaction-type={category?.transactionType}>{operatorSignal}{activeWallet?.currencySymbol} {Number(transaction.value).toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})}</span>
                                                             </p>
 
+                                                            {/* Description and extraInfo (extraInfo only if exists) */}
                                                             <p className={styles.transaction_description}>{transaction.description}</p>
-
                                                             {
                                                                 (!transaction.extraInfo) ? null : (
                                                                     <p className={styles.transaction_extra_info}>{transaction.extraInfo}</p>
                                                                 )
                                                             }
                                                         </div>
+
                                                     </div>
                                                 </li>
                                             )
@@ -215,23 +284,23 @@ function TransactionsPage() {
 
             <ModalSaveCancel
                 isOpen={isOpen}
-                modalTitle={modalTitle}
+                modalTitle={modalState.title}
                 modalButtons={{
                     saveButton: {
-                        onClick: handleSaveButtonClick,
-                        enabled: transactionValuesHasChanged
+                        onClick: handleModalSaveButtonClick,
+                        enabled: modalState.transactionValuesHasChanged
                     },
                     cancelButton: { onClick: closeModal },
                     deleteButton: {
-                        onClick: () => { handleDeleteButtonClick(draftTransaction!) },
-                        enabled: isEditing
+                        onClick: () => { handleModalDeleteButtonClick(draftTransaction!) },
+                        enabled: modalState.isEditing
                     }
                 }}
             >
                 <FormTransactionCRUD
                     transactionData={draftTransaction}
                     setTransactionData={setDraftTransaction}
-                    setTransactionValuesHasChanged={setTransactionValuesHasChanged}
+                    setTransactionValuesHasChanged={(value: boolean) => {setModalState({...modalState, transactionValuesHasChanged: value})}}
                     categoriesList={categoriesList}
                 />
             </ModalSaveCancel>
