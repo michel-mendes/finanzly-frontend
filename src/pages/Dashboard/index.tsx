@@ -28,6 +28,8 @@ interface IModalCategoriesList {
 interface IModalProps {
     categoriesList: Array<IModalCategoriesList>
     currencySymbol: string
+    startDate: string
+    endDate: string
 }
 
 interface IBarChartData {
@@ -397,21 +399,30 @@ function DashboardPage() {
                     }
                 }}
             >
-                <ModalCategoriesList categoriesList={modalCategoriesList} currencySymbol={chartData.donutChartsData.currencySymbol} />
+                <ModalCategoriesList
+                    categoriesList={modalCategoriesList}
+                    currencySymbol={chartData.donutChartsData.currencySymbol}
+                    startDate={startDate}
+                    endDate={endDate}
+                />
             </ModalSaveCancel>
         </div>
     )
 }
 
-function ModalCategoriesList(props: IModalProps) {
-    const {categoriesList, currencySymbol} = props
+function ModalCategoriesList({categoriesList, currencySymbol, endDate, startDate}: IModalProps) {
+    const navigate = useNavigate()
+
+    function handleCategoryClick(categoryName: string) {
+        navigate(`/transactions?startDate=${startDate}&endDate=${endDate}&category=${categoryName}`)
+    }
 
     return (
         <div>
             {
                 categoriesList.map((item, itemIndex) => {
                     return (
-                        <p style={{display: "flex", justifyContent: "space-between", width: "300px"}} key={itemIndex}>
+                        <p style={{display: "flex", justifyContent: "space-between", width: "300px", cursor: "pointer"}} key={itemIndex} onClick={() => { handleCategoryClick(item.categoryName) }}>
                             <span>{item.categoryName}</span>
                             <span>{currencySymbol} {Number(item.value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                         </p>

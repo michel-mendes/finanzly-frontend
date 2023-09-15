@@ -1,7 +1,8 @@
 import { useEffect, useState, Dispatch, SetStateAction, useRef } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { IoArrowBack } from "react-icons/io5"
 import { getFullDateName_PtBr, sortArrayOfObjects } from "../../helpers/helpers"
+import moment from "moment"
 
 // Authentication context
 import { useAuthContext } from "../../contexts/Auth"
@@ -29,6 +30,13 @@ import styles from "./styles.module.css"
 
 
 function TransactionsPage() {
+    // Route params
+    const location = useLocation()
+    const urlQuery = new URLSearchParams(location.search)
+    const queryStartDate = urlQuery.get("startDate")
+    const queryEndDate = urlQuery.get("endDate")
+    const queryCategory = urlQuery.get("category")
+
     const { loggedUser } = useAuthContext()
     const navigate = useNavigate()
 
@@ -45,10 +53,17 @@ function TransactionsPage() {
         clearTransactionsList } = useTransactions()
 
     const [groupedTransactions, setGroupedTransactions] = useState<IGroupedTransactions>({})
+    
     const [textFilter, setTextFilter] = useState("")
-    const [categoryFilter, setCategoryFilter] = useState("")
+    const [categoryFilter, setCategoryFilter] = useState<string>(queryCategory || "")
+    const [startDate, setStartDate] = useState<string>(queryStartDate || moment(new Date).startOf("month").toJSON().slice(0, 10))
+    const [endDate, setEndDate] = useState<string>(queryEndDate || moment(new Date).endOf("month").startOf("day").toJSON().slice(0, 10))
+    const refStartDate = useRef(startDate)
+    const refEndDate = useRef(endDate)
     const filterDescriptionInput = useRef<HTMLInputElement>(null)
     const filterCategoryInput = useRef<HTMLInputElement>(null)
+    const filterStartDateInput = useRef<HTMLInputElement>(null)
+    const filterEndDateInput = useRef<HTMLInputElement>(null)
 
     const { isOpen, showModal, closeModal } = useModal()
     const [modalState, setModalState] = useState({
@@ -110,7 +125,22 @@ function TransactionsPage() {
     }
 
     // Clear transaction list case there's no selected wallet or show selected wallet transactions
-    useEffect(() => { (!activeWallet) ? clearTransactionsList() : getTransactionsFromWallet(activeWallet.id!) }, [activeWallet])
+    useEffect(() => {
+        if (activeWallet) {
+            const prevStartDate = refStartDate.current
+            const prevEndDate = refEndDate.current
+
+            refStartDate.current = startDate
+            refEndDate.current = endDate
+
+            if (prevStartDate !== startDate || prevEndDate !== endDate) {
+                getTransactionsFromWallet(activeWallet.id!, startDate, endDate)
+            }
+
+        } else {
+            clearTransactionsList()
+        }
+    }, [activeWallet, startDate, endDate])
     
     
     // Sort and group transactions
@@ -142,9 +172,18 @@ function TransactionsPage() {
         })
 
         setGroupedTransactions(groups)
-    }, [transactionsList, textFilter, categoryFilter])
+    }, [transactionsList, textFilter, categoryFilter, startDate, endDate])
 
-    
+    useEffect(() => {
+        if (filterCategoryInput.current) {
+            filterCategoryInput.current.value = queryCategory || ""
+        }
+
+        if (filterStartDateInput.current && filterEndDateInput.current) {
+            filterStartDateInput.current.value = startDate
+            filterEndDateInput.current.value = endDate
+        }
+    }, [])
     
     return (
         <div className={styles.page_container}>
@@ -170,9 +209,13 @@ function TransactionsPage() {
             <div>
                 <input type="text" name="" id="" ref={filterDescriptionInput} placeholder="Encontre pela descrição" /><br />
                 <input type="text" name="" id="" ref={filterCategoryInput} placeholder="Encontre pela categoria" /><br />
+                <input type="date" name="" id="" ref={filterStartDateInput} />
+                <input type="date" name="" id="" ref={filterEndDateInput} />
                 <button onClick={() => {
                     setTextFilter(filterDescriptionInput.current?.value || "")
                     setCategoryFilter(filterCategoryInput.current?.value || "")
+                    setStartDate(filterStartDateInput.current?.value || "")
+                    setEndDate(filterEndDateInput.current?.value || "")
                 }}
                 >Atualizar</button>
             </div>
