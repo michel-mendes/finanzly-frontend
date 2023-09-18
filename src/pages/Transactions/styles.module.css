@@ -46,6 +46,7 @@
     flex-direction: column;
     gap: 30px;
     /* width: 75%; */
+    height: 100%;
 
     overflow: auto;
 }

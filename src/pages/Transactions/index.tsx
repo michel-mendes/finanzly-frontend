@@ -18,11 +18,18 @@ import { PageHeaderDesktop } from "../../shared_components/PageHeaderDesktop"
 import { WalletSelector } from "./WalletSelector"
 import { ModalSaveCancel } from "../../shared_components/Modal"
 import { FormTransactionCRUD } from "../../shared_components/FormTransactionCRUD"
+import { LoadingOverlay } from "../../shared_components/LoadingPageOverlay"
 
 // Interfaces
 import { ITransaction, IWallet } from "../../services/types"
 interface IGroupedTransactions {
     [key: string]: ITransaction[]
+}
+interface ITransactionsPageFilters {
+    text: string,
+    category: string,
+    startDate: string,
+    endDate: string
 }
 
 import styles from "./styles.module.css"
@@ -33,16 +40,16 @@ function TransactionsPage() {
     // Route params
     const location = useLocation()
     const urlQuery = new URLSearchParams(location.search)
-    const queryStartDate = urlQuery.get("startDate")
-    const queryEndDate = urlQuery.get("endDate")
-    const queryCategory = urlQuery.get("category")
 
+    // Get user data
     const { loggedUser } = useAuthContext()
     const navigate = useNavigate()
 
+    // CRUD Hooks
     const { walletsList, setWalletsList } = useWallets()
     const { categoriesList } = useCategories()
     const {
+        loadingTransactions,
         transactionsList,
         draftTransaction,
         setDraftTransaction,
@@ -52,142 +59,53 @@ function TransactionsPage() {
         deleteTransaction,
         clearTransactionsList } = useTransactions()
 
+    
+    // The list to be rendered in the page
     const [groupedTransactions, setGroupedTransactions] = useState<IGroupedTransactions>({})
     
-    const [textFilter, setTextFilter] = useState("")
-    const [categoryFilter, setCategoryFilter] = useState<string>(queryCategory || "")
-    const [startDate, setStartDate] = useState<string>(queryStartDate || moment(new Date).startOf("month").toJSON().slice(0, 10))
-    const [endDate, setEndDate] = useState<string>(queryEndDate || moment(new Date).endOf("month").startOf("day").toJSON().slice(0, 10))
-    const refStartDate = useRef(startDate)
-    const refEndDate = useRef(endDate)
-    const filterDescriptionInput = useRef<HTMLInputElement>(null)
-    const filterCategoryInput = useRef<HTMLInputElement>(null)
-    const filterStartDateInput = useRef<HTMLInputElement>(null)
-    const filterEndDateInput = useRef<HTMLInputElement>(null)
+    // Wallet list where the user can swap active wallets
+    const [activeWallet, setActiveWallet] = useState<IWallet | null>(null)
 
+    // Search filters
+    const [filters, setFilters] = useState<ITransactionsPageFilters>({
+        text: "",
+        category: urlQuery.get("category") || "",
+        startDate: "",
+        endDate: ""
+    })
+
+    // Previous dates filters observers, used in order to get date changes by user
+    const refStartDate = useRef(filters.startDate)
+    const refEndDate = useRef(filters.endDate)
+
+    // Get the filters inputs
+    const refFilterDescriptionInput = useRef<HTMLInputElement>(null)
+    const refFilterCategoryInput = useRef<HTMLInputElement>(null)
+    const refFilterStartDateInput = useRef<HTMLInputElement>(null)
+    const refFilterEndDateInput = useRef<HTMLInputElement>(null)
+
+    // CRUD Modal management
     const { isOpen, showModal, closeModal } = useModal()
     const [modalState, setModalState] = useState({
         title: "",
         isEditing: false,
         transactionValuesHasChanged: false
     })
-    // const [modalTitle, setModalTitle] = useState("")
-    // const [isEditing, setIsEditing] = useState(false)
-    // const [transactionValuesHasChanged, setTransactionValuesHasChanged] = useState(false)
-
-    const [activeWallet, setActiveWallet] = useState<IWallet | null>(null)
 
 
-    function handleNewTransactionClick() {
-        setModalState({
-            ...modalState,
-            title: "Nova transação",
-            isEditing: false
-        })
 
-        setDraftTransaction({
-            fromUser: loggedUser?.id,
-            fromWallet: activeWallet?.id,
-        })
+    // Sets the filters values on page load
+    useEffect(setInitialFilterValues, [])
 
-        showModal()
-    }
+    // Sort and group transactions based in the filters changes
+    useEffect(sortAndGroupTransactionsList, [transactionsList, filters])
 
-    function handleListItemClick(transaction: ITransaction) {
-        setModalState({
-            ...modalState,
-            title: "Alterando transação",
-            isEditing: true
-        })
-        
-        setDraftTransaction({...transaction})
+    // Clear or render the list everytime the conditions changes. The conditions are "selected wallet", "start date" and "end date"
+    useEffect(refreshTransactionList, [activeWallet, filters])
 
-        showModal()
-    }
-
-    async function handleModalSaveButtonClick() {
-        const success = (modalState.isEditing) ? await updateTransaction(draftTransaction!) : await newTransaction(draftTransaction!)
-
-        if (success) {
-            // alert("Transação adicionada com sucesso")
-            updateWalletBalance(success.fromWallet!, success.currentWalletBalance!, walletsList, setWalletsList, setActiveWallet)
-            closeModal()
-        }
-    }
-
-    async function handleModalDeleteButtonClick(transaction: ITransaction) {
-        const success = await deleteTransaction(transaction)
-
-        if (success) {
-            updateWalletBalance(success.fromWallet!, success.currentWalletBalance!, walletsList, setWalletsList, setActiveWallet)
-            closeModal()
-        }
-    }
-
-    // Clear transaction list case there's no selected wallet or show selected wallet transactions
-    useEffect(() => {
-        if (activeWallet) {
-            const prevStartDate = refStartDate.current
-            const prevEndDate = refEndDate.current
-
-            refStartDate.current = startDate
-            refEndDate.current = endDate
-
-            if (prevStartDate !== startDate || prevEndDate !== endDate) {
-                getTransactionsFromWallet(activeWallet.id!, startDate, endDate)
-            }
-
-        } else {
-            clearTransactionsList()
-        }
-    }, [activeWallet, startDate, endDate])
-    
-    
-    // Sort and group transactions
-    useEffect(() => {
-        const groups: IGroupedTransactions = {}
-        
-        // Filter the list according to the search params
-        const filteredTransactions = transactionsList.filter(transaction => {
-            const categoryName = categoriesList.find(category => { return (category.id == transaction.fromCategory) })?.categoryName?.toUpperCase() || ""
-            const description = transaction.description?.toUpperCase() || ""
-            const extraInfo = transaction.extraInfo?.toUpperCase() || ""
-            const query = textFilter.toUpperCase()
-            const categoryQuery = categoryFilter.toUpperCase()
-
-            if ( (description.includes(query) || extraInfo.includes(query)) &&
-                 (categoryName.includes(categoryQuery)) ) return transaction
-        })
-
-        // Sort the list by date
-        const sortedTransactionsList = sortArrayOfObjects<ITransaction>(filteredTransactions, "date", false)
-
-        // Group the list by date
-        sortedTransactionsList.forEach(transaction => {
-            const date = String(transaction.date);
-
-            (!groups[date]) ? groups[date] = [] : null
-
-            groups[date].push(transaction)
-        })
-
-        setGroupedTransactions(groups)
-    }, [transactionsList, textFilter, categoryFilter, startDate, endDate])
-
-    useEffect(() => {
-        if (filterCategoryInput.current) {
-            filterCategoryInput.current.value = queryCategory || ""
-        }
-
-        if (filterStartDateInput.current && filterEndDateInput.current) {
-            filterStartDateInput.current.value = startDate
-            filterEndDateInput.current.value = endDate
-        }
-    }, [])
-    
     return (
         <div className={styles.page_container}>
-            
+
             <PageHeaderDesktop>
                 <div className={styles.header_content}>
                     <div className={styles.left_toolbar}>
@@ -200,22 +118,24 @@ function TransactionsPage() {
                         />
                     </div>
 
-                    <button onClick={() => {navigate(`/import?wallet=${activeWallet?.id}`)}}>Importar extrato</button>
+                    <button onClick={() => { navigate(`/import?wallet=${activeWallet?.id}`) }}>Importar extrato</button>
                     <button onClick={handleNewTransactionClick} disabled={activeWallet === null}>Nova transação</button>
                 </div>
             </PageHeaderDesktop>
 
             <p>Transações</p>
             <div>
-                <input type="text" name="" id="" ref={filterDescriptionInput} placeholder="Encontre pela descrição" /><br />
-                <input type="text" name="" id="" ref={filterCategoryInput} placeholder="Encontre pela categoria" /><br />
-                <input type="date" name="" id="" ref={filterStartDateInput} />
-                <input type="date" name="" id="" ref={filterEndDateInput} />
+                <input type="text" name="" id="" ref={refFilterDescriptionInput} placeholder="Encontre pela descrição" /><br />
+                <input type="text" name="" id="" ref={refFilterCategoryInput} placeholder="Encontre pela categoria" /><br />
+                <input type="date" name="" id="" ref={refFilterStartDateInput} />
+                <input type="date" name="" id="" ref={refFilterEndDateInput} />
                 <button onClick={() => {
-                    setTextFilter(filterDescriptionInput.current?.value || "")
-                    setCategoryFilter(filterCategoryInput.current?.value || "")
-                    setStartDate(filterStartDateInput.current?.value || "")
-                    setEndDate(filterEndDateInput.current?.value || "")
+                    setFilters({
+                        text: refFilterDescriptionInput.current?.value || "",
+                        category: refFilterCategoryInput.current?.value || "",
+                        startDate: refFilterStartDateInput.current?.value || "",
+                        endDate: refFilterEndDateInput.current?.value || ""
+                    })
                 }}
                 >Atualizar</button>
             </div>
@@ -223,9 +143,9 @@ function TransactionsPage() {
             {/* Transactions list */}
             <ul className={styles.list}>
                 {
-                    Object.keys(groupedTransactions).map(groupName => {
-                        const transactionDate = new Date( Number(groupName) )
-                        
+                    (loadingTransactions) ? (<LoadingOverlay />) : Object.keys(groupedTransactions).map(groupName => {
+                        const transactionDate = new Date(Number(groupName))
+
                         /*
                         // Group balance value
                         const transactions = groupedTransactions[groupName]
@@ -237,10 +157,10 @@ function TransactionsPage() {
 
                         return (
                             <div key={groupName} className={styles.group_container}>
-                                
+
                                 {/* Group container */}
                                 <div className={styles.group_header}>
-                                    
+
                                     {/* Date container, here will be shown the group date */}
                                     <div className={styles.date_container}>
                                         <span className={styles.day_number_container}>{transactionDate.getDate()}</span>
@@ -271,7 +191,7 @@ function TransactionsPage() {
 
                                                 // List item
                                                 <li key={transaction.id} className={styles.item}>
-                                                    
+
                                                     {/* Transaction type signal "-" or "+" */}
                                                     <div className={styles.signal_container}>
                                                         <span>
@@ -287,21 +207,21 @@ function TransactionsPage() {
                                                         </span>
                                                     </div>
 
-                                                    
+
                                                     {/* Transaction data */}
-                                                    <div className={styles.item_content} onClick={() => {handleListItemClick(transaction)}}>
-                                                        
+                                                    <div className={styles.item_content} onClick={() => { handleListItemClick(transaction) }}>
+
                                                         {/* Category icon */}
                                                         <div className={styles.item_icon}>
                                                             <img src={category?.iconPath} alt="" />
                                                         </div>
 
                                                         <div className={styles.item_data}>
-                                                            
+
                                                             {/* Category name and transaction value */}
                                                             <p>
                                                                 <span className={styles.transaction_category_name}>{category?.categoryName}</span>
-                                                                <span className={styles.transaction_value} transaction-type={category?.transactionType}>{operatorSignal}{activeWallet?.currencySymbol} {Number(transaction.value).toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})}</span>
+                                                                <span className={styles.transaction_value} transaction-type={category?.transactionType}>{operatorSignal}{activeWallet?.currencySymbol} {Number(transaction.value).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</span>
                                                             </p>
 
                                                             {/* Description and extraInfo (extraInfo only if exists) */}
@@ -343,24 +263,136 @@ function TransactionsPage() {
                 <FormTransactionCRUD
                     transactionData={draftTransaction}
                     setTransactionData={setDraftTransaction}
-                    setTransactionValuesHasChanged={(value: boolean) => {setModalState({...modalState, transactionValuesHasChanged: value})}}
+                    setTransactionValuesHasChanged={(value: boolean) => { setModalState({ ...modalState, transactionValuesHasChanged: value }) }}
                     categoriesList={categoriesList}
                 />
             </ModalSaveCancel>
         </div>
     )
-}
 
-function updateWalletBalance(walletId: string, newBalance: number, walletList: IWallet[], setWalletList: Dispatch<SetStateAction<IWallet[]>>, setActiveWalletList: Dispatch<SetStateAction<IWallet | null>>) {
-    const wallet = walletList.find(item => {return item.id == walletId})
-    wallet!.actualBalance = newBalance
 
-    const newList = walletList.map(item => {
-        return (item.id == wallet!.id) ? wallet! : item
-    })
+    // Transactions page helper functions
+    function setInitialFilterValues() {
+        const tempStartDate = urlQuery.get("startDate") || moment(new Date).startOf("month").toJSON().slice(0, 10)
+        const tempEndDate = urlQuery.get("endDate") || moment(new Date).endOf("month").startOf("day").toJSON().slice(0, 10)
 
-    setActiveWalletList(wallet!)
-    setWalletList(newList)
+        setFilters({ ...filters, startDate: tempStartDate, endDate: tempEndDate })
+
+        if (refFilterCategoryInput.current) {
+            refFilterCategoryInput.current.value = urlQuery.get("category") || ""
+        }
+
+        if (refFilterStartDateInput.current && refFilterEndDateInput.current) {
+            refFilterStartDateInput.current.value = tempStartDate
+            refFilterEndDateInput.current.value = tempEndDate
+        }
+    }
+
+    function sortAndGroupTransactionsList() {
+        const groups: IGroupedTransactions = {}
+
+        // Filter the list according to the search params
+        const filteredTransactions = transactionsList.filter(transaction => {
+            const categoryName = categoriesList.find(category => { return (category.id == transaction.fromCategory) })?.categoryName?.toUpperCase() || ""
+            const description = transaction.description?.toUpperCase() || ""
+            const extraInfo = transaction.extraInfo?.toUpperCase() || ""
+            const query = filters.text.toUpperCase()
+            const categoryQuery = filters.category.toUpperCase()
+
+            if ((description.includes(query) || extraInfo.includes(query)) &&
+                (categoryName.includes(categoryQuery))) return transaction
+        })
+
+        // Sort the list by date
+        const sortedTransactionsList = sortArrayOfObjects<ITransaction>(filteredTransactions, "date", false)
+
+        // Group the list by date
+        sortedTransactionsList.forEach(transaction => {
+            const date = String(transaction.date);
+
+            (!groups[date]) ? groups[date] = [] : null
+
+            groups[date].push(transaction)
+        })
+
+        setGroupedTransactions(groups)
+    }
+
+    function refreshTransactionList() {
+        if (activeWallet) {
+            const prevStartDate = refStartDate.current
+            const prevEndDate = refEndDate.current
+
+            refStartDate.current = filters.startDate
+            refEndDate.current = filters.endDate
+
+            if (prevStartDate !== filters.startDate || prevEndDate !== filters.endDate) {
+                getTransactionsFromWallet(activeWallet.id!, filters.startDate, filters.endDate)
+            }
+
+        } else {
+            clearTransactionsList()
+        }
+    }
+
+    function updateWalletBalance(walletId: string, newBalance: number) {
+        const wallet = walletsList.find(item => { return item.id == walletId })
+        wallet!.actualBalance = newBalance
+
+        const newList = walletsList.map(item => {
+            return (item.id == wallet!.id) ? wallet! : item
+        })
+
+        setActiveWallet(wallet!)
+        setWalletsList(newList)
+    }
+
+    function handleNewTransactionClick() {
+        setModalState({
+            ...modalState,
+            title: "Nova transação",
+            isEditing: false
+        })
+
+        setDraftTransaction({
+            fromUser: loggedUser?.id,
+            fromWallet: activeWallet?.id,
+        })
+
+        showModal()
+    }
+
+    function handleListItemClick(transaction: ITransaction) {
+        setModalState({
+            ...modalState,
+            title: "Alterando transação",
+            isEditing: true
+        })
+
+        setDraftTransaction({ ...transaction })
+
+        showModal()
+    }
+
+    async function handleModalSaveButtonClick() {
+        const success = (modalState.isEditing) ? await updateTransaction(draftTransaction!) : await newTransaction(draftTransaction!)
+
+        if (success) {
+            // alert("Transação adicionada com sucesso")
+            updateWalletBalance(success.fromWallet!, success.currentWalletBalance!)
+            closeModal()
+        }
+    }
+
+    async function handleModalDeleteButtonClick(transaction: ITransaction) {
+        const success = await deleteTransaction(transaction)
+
+        if (success) {
+            // alert("Transação excluída com sucesso")
+            updateWalletBalance(success.fromWallet!, success.currentWalletBalance!)
+            closeModal()
+        }
+    }
 }
 
 export { TransactionsPage }
