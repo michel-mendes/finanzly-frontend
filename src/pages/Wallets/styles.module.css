@@ -8,7 +8,7 @@
     left: 0;
     
     /* Margin added because of app side menu bar */
-    margin-left: 50px;
+    padding-left: 50px;
 
     background-color: #e4e4e4;
     overflow: hidden;
