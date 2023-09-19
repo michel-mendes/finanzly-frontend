@@ -60,11 +60,8 @@ interface IChartsData {
     isLoadingData: boolean
 }
 
-
-const { userLogoutEnpoint } = appConfigs
-
 function DashboardPage() {
-    const { loggedUser, setLoggedUser } = useAuthContext()
+    const { loggedUser } = useAuthContext()
     const { showModal, closeModal, isOpen } = useModal()
     const api = new WalletsApi()
     const navigate = useNavigate()
@@ -87,17 +84,6 @@ function DashboardPage() {
 
     const loadingWalletEffect = (isLoadingWalletName) ? styles.skeleton_loading_effect : ""
     const loadingChartDataEffect = (chartData.isLoadingData) ? styles.skeleton_loading_effect : ""
-
-    async function handleLogoutUser() {
-        try {
-            const resp = await axios.post(userLogoutEnpoint, {}, { withCredentials: true })
-
-            // alert(resp.data.message)
-            setLoggedUser!(null)
-        } catch (error: any) {
-            alert("Erro")
-        }
-    }
 
 
     const MyResponsiveBar = (data: any) => (

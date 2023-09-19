@@ -1,5 +1,8 @@
 .page_container {
   overflow: hidden;
+
+  /* Margin added because of app side menu bar */
+  margin-left: 50px;
 }
 
 .donut_charts_container {
