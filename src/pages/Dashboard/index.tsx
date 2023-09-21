@@ -288,7 +288,9 @@ function DashboardPage() {
                 })
 
             }}>Atualizar</button>
+            
             <button onClick={() => {navigate("/testes")}}>Página de testes</button>
+
             <section className={loadingChartDataEffect} style={{ height: "200px" }}>
                 {
                     loadingChartDataEffect ? null : (
