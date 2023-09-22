@@ -13,3 +13,67 @@
     background-color: #e4e4e4;
     overflow: hidden;
 }
+
+.table_container {
+    overflow: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 15px;
+
+}
+
+.table_container table {
+    width: 100%;
+    margin: auto;
+    border-collapse: collapse;
+}
+
+.table_container table thead {
+    position: sticky;
+    top: 0;
+}
+
+.table_container table tbody {
+    background-color: #f0f8ff
+}
+
+.table_container table tbody tr {
+    border: 1px solid #d3d3d3;
+    display: table-row;
+    padding: 50px;
+}
+
+.table_container table tbody tr:hover {
+    border: rgb(163, 163, 236) 1px solid;
+}
+
+.table_container table tbody td:nth-child(2) {
+    text-align: left;
+    padding-left: 10px;
+}
+
+.table_container table tbody td:nth-child(n + 3) {
+    border-left: #d3d3d3 1px solid;
+}
+
+.table_container table tbody td {
+    /* border: lightgray 1px solid; */
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 11px;
+}
+
+.transaction_icon {
+    width: 16px;
+    height: 16px;
+    display: block;
+    margin: auto;
+}
+
+.table_container table tfoot {
+    background-color: #ffffff;
+    position: sticky;
+    bottom: 0;
+    font-size: 11px;
+    height: 25px;
+}

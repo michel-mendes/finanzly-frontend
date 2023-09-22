@@ -4,14 +4,17 @@ import { useAuthContext } from '../../contexts/Auth'
 
 import styles from "./styles.module.css"
 import { useCategories } from '../../hooks/useCategories'
+import { useWallets } from '../../hooks/useWallets'
+import { ITransaction } from '../../services/types'
 
 function TestsPage() {
     const { loggedUser } = useAuthContext()
-    const { transactionsList, getTransactionsFromWallet } = useTransactions()
+    const { walletsList } = useWallets()
     const { categoriesList } = useCategories()
-    const [startDate, setStartDate] = useState( new Date(Date.now()).toJSON().slice(0, 10) )
-    const [endDate, setEndDate] = useState( new Date(Date.now()).toJSON().slice(0, 10) )
-    
+    const { transactionsList, getTransactionsFromWallet } = useTransactions()
+    const [startDate, setStartDate] = useState(new Date(Date.now()).toJSON().slice(0, 10))
+    const [endDate, setEndDate] = useState(new Date(Date.now()).toJSON().slice(0, 10))
+
     return (
         <div className={styles.page_container}>
             <br />
@@ -21,63 +24,110 @@ function TestsPage() {
             <div>
                 <span>
                     <span>Data Inicial</span>
-                    <input type="date" name="" id="" onChange={(value) => {setStartDate(value.currentTarget.value)}} value={startDate} />
+                    <input type="date" name="" id="" onChange={(value) => { setStartDate(value.currentTarget.value) }} value={startDate} />
                 </span>
 
                 <span>
                     <span>Data final</span>
-                    <input type="date" name="" id="" onChange={(value) => {setEndDate(value.currentTarget.value)}} value={endDate} />
+                    <input type="date" name="" id="" onChange={(value) => { setEndDate(value.currentTarget.value) }} value={endDate} />
                 </span>
                 <br />
-                <button onClick={() => {getTransactionsFromWallet(loggedUser!.activeWalletId, startDate, endDate)}}>Atualizar</button>
+                <button onClick={() => { getTransactionsFromWallet(loggedUser!.activeWalletId, startDate, endDate) }}>Atualizar</button>
             </div>
 
-            {/* Transactions table */}
-            <table style={{width: "95%", border: "black 1px solid"}}>
-                <thead>
-                    <tr>
-                        <td><span> </span></td>
-                        <td>Descrição</td>
-                        <td>Categoria</td>
-                        <td>Data</td>
-                        <td>Valor</td>
-                    </tr>
-                </thead>
+            <div className={styles.table_container}>
 
-                <tbody>
-                    {
-                        transactionsList.map(transaction => {
-                            const myCategory = categoriesList.find(category => {return (category.id == transaction.fromCategory)})
+                {/* Transactions table */}
+                <table>
 
-                            return (
-                                <tr itemID={transaction.id}>
-                                    <td>
-                                        <img src={myCategory?.iconPath} alt="" style={{width: "16px", height: "16px"}} />
-                                    </td>
+                    <thead>
+                        <tr>
+                            <th><span>#</span></th>
+                            <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th>Data</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
 
-                                    <td style={{display: "flex", flexDirection: "row", justifyContent: "left", alignItems: "center", gap: "8px"}}>
-                                        <span>{transaction.description}</span>
-                                    </td>
+                    <tbody>
+                        {
+                            transactionsList.map(transaction => {
+                                const wallet = walletsList.find(myWallet => { return (myWallet.id == transaction.fromWallet) })
+                                const myCategory = categoriesList.find(category => { return (category.id == transaction.fromCategory) })
 
-                                    <td>
-                                        <span>{myCategory && myCategory.categoryName}</span>
-                                    </td>
+                                return (
+                                    <tr key={transaction.id}>
+                                        <td>
+                                            <img className={styles.transaction_icon} src={myCategory?.iconPath} alt="" />
+                                        </td>
 
-                                    <td>
-                                        <span>{new Date(transaction.date!).toLocaleDateString()}</span>
-                                    </td>
-                                    
-                                    <td>
-                                        <span>{Number(transaction.value).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                                    </td>
-                                </tr>
-                            )
-                        })
-                    }
-                </tbody>
-            </table>
+                                        <td>
+                                            <span>{transaction.description}</span>
+                                            {
+                                                transaction.extraInfo && (
+                                                    <>
+                                                        <br />
+                                                        <span>&emsp;&emsp;</span><span>{transaction.extraInfo}</span>
+                                                    </>
+                                                )
+                                            }
+                                        </td>
+
+                                        <td>
+                                            <span>{myCategory && myCategory.categoryName}</span>
+                                        </td>
+
+                                        <td>
+                                            <span>{new Date(transaction.date!).toLocaleDateString()}</span>
+                                        </td>
+
+                                        <td>
+                                            <span>{wallet?.currencySymbol} {Number(transaction.value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                        </td>
+                                    </tr>
+                                )
+                            })
+                        }
+                    </tbody>
+
+                    <tfoot>
+                        { renderTableFooter() }
+                    </tfoot>
+                </table>
+
+            </div>
+
         </div>
     )
+
+
+    // Page helper functions
+    function renderTableFooter() {
+        const wallet = walletsList.find(myWallet => { return (myWallet.id == loggedUser?.activeWalletId) })
+        const { totalIncomes, totalExpenses } = sumTotalIncomesAndExpenses(transactionsList)
+        
+        return (
+            <tr>
+                <td colSpan={2}># transações: {transactionsList.length}</td>
+                <td colSpan={3}>Total pagamentos: {wallet!.currencySymbol} {totalExpenses}, Total recebimentos: {totalIncomes}</td>
+            </tr>
+        )
+    }
+}
+
+
+// Helper functions
+function sumTotalIncomesAndExpenses(transactionsList: Array<ITransaction>) {
+    let totalIncomes = 0
+    let totalExpenses = 0
+
+    for (const transaction of transactionsList) {
+        totalIncomes += Number(transaction.creditValue!)
+        totalExpenses += Number(transaction.debitValue!)
+    }
+
+    return { totalIncomes, totalExpenses }
 }
 
 export { TestsPage }
