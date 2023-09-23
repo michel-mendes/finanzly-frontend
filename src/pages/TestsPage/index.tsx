@@ -46,53 +46,16 @@ function TestsPage() {
                             <th>Descrição</th>
                             <th>Categoria</th>
                             <th>Data</th>
-                            <th>Valor</th>
+                            <th colSpan={2}>Valor</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        {
-                            transactionsList.map(transaction => {
-                                const wallet = walletsList.find(myWallet => { return (myWallet.id == transaction.fromWallet) })
-                                const myCategory = categoriesList.find(category => { return (category.id == transaction.fromCategory) })
-
-                                return (
-                                    <tr key={transaction.id}>
-                                        <td>
-                                            <img className={styles.transaction_icon} src={myCategory?.iconPath} alt="" />
-                                        </td>
-
-                                        <td>
-                                            <span>{transaction.description}</span>
-                                            {
-                                                transaction.extraInfo && (
-                                                    <>
-                                                        <br />
-                                                        <span>&emsp;&emsp;</span><span>{transaction.extraInfo}</span>
-                                                    </>
-                                                )
-                                            }
-                                        </td>
-
-                                        <td>
-                                            <span>{myCategory && myCategory.categoryName}</span>
-                                        </td>
-
-                                        <td>
-                                            <span>{new Date(transaction.date!).toLocaleDateString()}</span>
-                                        </td>
-
-                                        <td>
-                                            <span>{wallet?.currencySymbol} {Number(transaction.value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                        </td>
-                                    </tr>
-                                )
-                            })
-                        }
+                        {renderTableTransactions()}
                     </tbody>
 
                     <tfoot>
-                        { renderTableFooter() }
+                        {renderTableFooter()}
                     </tfoot>
                 </table>
 
@@ -103,14 +66,70 @@ function TestsPage() {
 
 
     // Page helper functions
+    function renderTableTransactions() {
+        return (
+            <>
+                {
+                    transactionsList.map(transaction => {
+                        const wallet = walletsList.find(myWallet => { return (myWallet.id == transaction.fromWallet) })
+                        const myCategory = categoriesList.find(category => { return (category.id == transaction.fromCategory) })
+
+                        return (
+                            <tr key={transaction.id} transaction-type={myCategory?.transactionType}>
+                                <td>
+                                    <img className={styles.transaction_icon} src={myCategory?.iconPath} alt="" />
+                                </td>
+
+                                <td>
+                                    <span>{transaction.description}</span>
+                                    {
+                                        transaction.extraInfo && (
+                                            <>
+                                                <br />
+                                                <span>&emsp;&emsp;</span><span>{transaction.extraInfo}</span>
+                                            </>
+                                        )
+                                    }
+                                </td>
+
+                                <td>
+                                    <span>{myCategory && myCategory.categoryName}</span>
+                                </td>
+
+                                <td>
+                                    <span>{new Date(transaction.date!).toLocaleDateString()}</span>
+                                </td>
+
+                                <td>
+                                    {wallet?.currencySymbol}
+                                </td>
+
+                                <td>
+                                    <span>{Number(transaction.value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                </td>
+                            </tr>
+                        )
+                    })
+                }
+            </>
+        )
+    }
+
     function renderTableFooter() {
         const wallet = walletsList.find(myWallet => { return (myWallet.id == loggedUser?.activeWalletId) })
         const { totalIncomes, totalExpenses } = sumTotalIncomesAndExpenses(transactionsList)
-        
+
         return (
             <tr>
-                <td colSpan={2}># transações: {transactionsList.length}</td>
-                <td colSpan={3}>Total pagamentos: {wallet!.currencySymbol} {totalExpenses}, Total recebimentos: {totalIncomes}</td>
+                <td colSpan={2}>
+                    <span># transações: {transactionsList.length}</span>
+                </td>
+                <td colSpan={4}>
+                    <span>
+                        <span>Total recebimentos: {wallet && wallet.currencySymbol} {totalIncomes.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                        <span>Total pagamentos: {wallet && wallet.currencySymbol} {totalExpenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </span>
+                </td>
             </tr>
         )
     }
