@@ -6,7 +6,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    
+
     /* Margin added because of app side menu bar */
     padding-left: 50px;
 
@@ -15,93 +15,101 @@
 }
 
 .table_container {
-    overflow: auto;
+    display: flex;
+    flex-direction: column;
     padding-left: 10px;
     padding-right: 10px;
     margin-bottom: 15px;
-
-}
-
-.table_container table {
-    width: 100%;
-    margin: auto;
-    border-collapse: collapse;
-}
-
-.table_container table thead {
-    position: sticky;
-    top: 0;
-}
-
-.table_container table tbody {
-    background-color: #f0f8ff
-}
-
-.table_container table tbody tr {
-    border: 1px solid #d3d3d3;
-    display: table-row;
-    padding: 50px;
-}
-
-.table_container table tbody tr:hover {
-    border: rgb(163, 163, 236) 1px solid;
-}
-
-.table_container table tbody td:nth-child(2) {
-    text-align: left;
-    padding-left: 10px;
-}
-
-.table_container table tbody td:nth-child(4) {
-    border-right: 1px solid #d3d3d3;
-}
-
-.table_container table tbody td:nth-child(n + 3) {
-    border-left: #d3d3d3 1px solid;
-}
-
-.table_container table tbody tr[transaction-type=D] td:nth-child(n+5) {
-    color: #ff0000;
-    font-weight: bold;
-}
-.table_container table tbody tr[transaction-type=C] td:nth-child(n+5) {
-    color: #0000ff;
-    font-weight: bold;
-}
-.table_container table tbody td:nth-child(n+5) {
-    text-align: right;
-    padding-right: 10px;
-    border-left: none;
-}
-
-.table_container table tbody td {
-    /* border: lightgray 1px solid; */
-    padding-top: 5px;
-    padding-bottom: 5px;
+    overflow: auto;
     font-size: 11px;
+    color: #000000;
 }
 
-.table_container table tfoot td:nth-child(1) {
-    text-align: left;
-    padding-left: 10px;
+.table_body {
+    flex-grow: 1;
 }
-.table_container table tfoot td:nth-child(2)>span {
+
+.table_footer {
     display: flex;
     justify-content: space-between;
-    padding: 0 10px 0 10px;
-}
-
-.transaction_icon {
-    width: 16px;
-    height: 16px;
-    display: block;
-    margin: auto;
-}
-
-.table_container table tfoot {
-    background-color: #ffffff;
     position: sticky;
     bottom: 0;
-    font-size: 11px;
-    height: 25px;
+    background-color: #ffffff;
+}
+.table_footer>span:first-child {
+    flex: 1;
+    text-align: left;
+}
+.table_footer>span:last-child {
+    flex: 1;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.columns_row {
+    position: sticky;
+    top: 0;
+    background-color: #ffffff;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+.data_row {
+    padding: 3px;
+    display: flex;
+    justify-content: space-between;
+    border: 2px solid transparent;
+    transition: border 100ms;
+}
+
+.data_row:hover {
+    border: rgb(163, 163, 236) 2px solid;
+    transition: border 100ms;
+}
+
+/* Description column */
+.columns_row>span:nth-child(1),
+.data_row>span:nth-child(1) {
+    display: flex;
+    gap: 10px;
+    flex-grow: 1;
+    text-align: left;
+}
+
+/* Category column */
+.columns_row>span:nth-child(2),
+.data_row>span:nth-child(2) {
+    flex-basis: 150px;
+}
+
+/* Date column */
+.columns_row>span:nth-child(3),
+.data_row>span:nth-child(3) {
+    flex-basis: 100px;
+}
+
+/* Value column */
+.columns_row>span:nth-child(4),
+.data_row>span:nth-child(4) {
+    flex-basis: 100px;
+    text-align: right;
+}
+.data_row>span:nth-child(4)[category-type="D"] {
+    color: #ff0000;
+    font-weight: 600;
+}
+.data_row>span:nth-child(4)[category-type="C"] {
+    color: #0000ff;
+    font-weight: 600;
+}
+
+.row_container {
+    border-top: solid 1px #c0c0c0;
+    border-left: solid 1px #c0c0c0;
+    border-right: solid 1px #c0c0c0;
+}
+
+.row_container:last-child {
+    border-bottom: solid 1px #c0c0c0;
 }

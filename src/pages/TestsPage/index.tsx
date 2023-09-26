@@ -17,8 +17,6 @@ function TestsPage() {
 
     return (
         <div className={styles.page_container}>
-            <br />
-            <br />
             <h2>Página de testes</h2>
 
             <div>
@@ -35,29 +33,26 @@ function TestsPage() {
                 <button onClick={() => { getTransactionsFromWallet(loggedUser!.activeWalletId, startDate, endDate) }}>Atualizar</button>
             </div>
 
+            {/* Transactions table */}
             <div className={styles.table_container}>
 
-                {/* Transactions table */}
-                <table>
+                {/* Table header / columns */}
+                <div className={styles.columns_row}>
+                    <span>Descrição</span>
+                    <span>Categoria</span>
+                    <span>Data</span>
+                    <span>Valor</span>
+                </div>
 
-                    <thead>
-                        <tr>
-                            <th><span>#</span></th>
-                            <th>Descrição</th>
-                            <th>Categoria</th>
-                            <th>Data</th>
-                            <th colSpan={2}>Valor</th>
-                        </tr>
-                    </thead>
+                {/* Table body */}
+                <div className={styles.table_body}>
+                    {renderTableTransactions()}
+                </div>
 
-                    <tbody>
-                        {renderTableTransactions()}
-                    </tbody>
-
-                    <tfoot>
-                        {renderTableFooter()}
-                    </tfoot>
-                </table>
+                {/* Table footer */}
+                <div className={styles.table_footer}>
+                    {renderTableFooter()}
+                </div>
 
             </div>
 
@@ -75,39 +70,29 @@ function TestsPage() {
                         const myCategory = categoriesList.find(category => { return (category.id == transaction.fromCategory) })
 
                         return (
-                            <tr key={transaction.id} transaction-type={myCategory?.transactionType}>
-                                <td>
-                                    <img className={styles.transaction_icon} src={myCategory?.iconPath} alt="" />
-                                </td>
 
-                                <td>
-                                    <span>{transaction.description}</span>
-                                    {
-                                        transaction.extraInfo && (
-                                            <>
-                                                <br />
-                                                <span>&emsp;&emsp;</span><span>{transaction.extraInfo}</span>
-                                            </>
-                                        )
-                                    }
-                                </td>
+                            // Transaction row
+                            <div className={styles.row_container}>
 
-                                <td>
-                                    <span>{myCategory && myCategory.categoryName}</span>
-                                </td>
+                                <div key={transaction.id} className={styles.data_row}>
 
-                                <td>
+                                    <span>
+                                        <img src={myCategory?.iconPath} alt="" style={{ width: "16px", height: "16px" }} />
+                                        <span>{transaction.description}</span>
+                                        {
+                                            transaction.extraInfo && <span> [{transaction.extraInfo}]</span>
+                                        }
+                                    </span>
+                                    <span>{myCategory?.categoryName}</span>
                                     <span>{new Date(transaction.date!).toLocaleDateString()}</span>
-                                </td>
+                                    <span category-type={myCategory?.transactionType}>
+                                        <span>{wallet?.currencySymbol}</span>
+                                        <span>{Number(transaction.value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                    </span>
 
-                                <td>
-                                    {wallet?.currencySymbol}
-                                </td>
+                                </div>
 
-                                <td>
-                                    <span>{Number(transaction.value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                </td>
-                            </tr>
+                            </div>
                         )
                     })
                 }
@@ -120,17 +105,16 @@ function TestsPage() {
         const { totalIncomes, totalExpenses } = sumTotalIncomesAndExpenses(transactionsList)
 
         return (
-            <tr>
-                <td colSpan={2}>
+            <>
+                <span>
                     <span># transações: {transactionsList.length}</span>
-                </td>
-                <td colSpan={4}>
-                    <span>
-                        <span>Total recebimentos: {wallet && wallet.currencySymbol} {totalIncomes.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                        <span>Total pagamentos: {wallet && wallet.currencySymbol} {totalExpenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                    </span>
-                </td>
-            </tr>
+                </span>
+
+                <span>
+                    <span>Total recebimentos: {wallet && wallet.currencySymbol} {totalIncomes.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <span>Total pagamentos: {wallet && wallet.currencySymbol} {totalExpenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </span>
+            </>
         )
     }
 }
