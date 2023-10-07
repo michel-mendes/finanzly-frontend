@@ -14,102 +14,128 @@
     overflow: hidden;
 }
 
-.table_container {
+.transactions_container {
     display: flex;
     flex-direction: column;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-bottom: 15px;
+
+    flex: 1;
+    margin: 10px;
+    padding-bottom: 20px;
     overflow: auto;
-    font-size: 11px;
     color: #000000;
+    /* border: 2px solid black; */
+    border-radius: 15px;
 }
 
-.table_body {
-    flex-grow: 1;
-}
-
-.table_footer {
-    display: flex;
-    justify-content: space-between;
-    position: sticky;
-    bottom: 0;
-    background-color: #ffffff;
-}
-.table_footer>span:first-child {
+.table_container {
     flex: 1;
-    text-align: left;
 }
-.table_footer>span:last-child {
-    flex: 1;
-    display: flex;
-    justify-content: space-evenly;
+.table_container table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 11px;
 }
-
-.columns_row {
+.table_container thead {
     position: sticky;
     top: 0;
+    z-index: 1;
     background-color: #ffffff;
-
-    display: flex;
-    justify-content: space-between;
+}
+.table_container tbody tr {
+    background-color: #ffffff;
+    border: 1px solid #c0c0c0;
+    position: relative;
+}
+.table_container tbody tr:hover {
+    filter: brightness(95%);
+    cursor: pointer;
+}
+.table_container tbody td:first-child::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border: 2px solid #00000000; /* Transparent border */
+    margin: -1px;
+    transition: border .2s;
+}
+.table_container tbody td:hover::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border: 2px solid rgb(103, 103, 225);
+    margin: -1px;
+    transition: border .2s;
 }
 
-.data_row {
-    padding: 3px;
-    display: flex;
-    justify-content: space-between;
-    border: 2px solid transparent;
-    transition: border 100ms;
+.table_container tbody td {
+    padding: 4px;
 }
 
-.data_row:hover {
-    border: rgb(163, 163, 236) 2px solid;
-    transition: border 100ms;
-}
-
-/* Description column */
-.columns_row>span:nth-child(1),
-.data_row>span:nth-child(1) {
+.description_cell > span {
     display: flex;
+    justify-content: left;
+    align-items: center;
     gap: 10px;
-    flex-grow: 1;
-    text-align: left;
+    padding-left: 5px;
+}
+.description_cell .extra_info {
+    color: #909090;
+    font-style: italic;
 }
 
-/* Category column */
-.columns_row>span:nth-child(2),
-.data_row>span:nth-child(2) {
-    flex-basis: 150px;
+.category_cell {
+    width: 0;
+    white-space: nowrap;
+}
+.category_cell > span {
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
-/* Date column */
-.columns_row>span:nth-child(3),
-.data_row>span:nth-child(3) {
-    flex-basis: 100px;
+.date_cell, .value_cell {
+    width: 100px;
 }
-
-/* Value column */
-.columns_row>span:nth-child(4),
-.data_row>span:nth-child(4) {
-    flex-basis: 100px;
-    text-align: right;
+.value_cell > span {
+    display: flex;
+    gap: 5px;
+    justify-content: right;
+    padding-right: 5px;
 }
-.data_row>span:nth-child(4)[category-type="D"] {
+.value_cell[category-type="D"] {
     color: #ff0000;
-    font-weight: 600;
 }
-.data_row>span:nth-child(4)[category-type="C"] {
-    color: #0000ff;
-    font-weight: 600;
+.value_cell[category-type="C"] {
+    color: #0000FF;
 }
 
-.row_container {
-    border-top: solid 1px #c0c0c0;
-    border-left: solid 1px #c0c0c0;
-    border-right: solid 1px #c0c0c0;
+.transactions_container_footer {
+    position: sticky;
+    display: flex;
+    bottom: 0;
+    background-color: white;
 }
 
-.row_container:last-child {
-    border-bottom: solid 1px #c0c0c0;
+.footer_transactions_counter {
+    flex-grow: 1;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    padding-left: 10px;
+}
+
+.footer_total_values {
+    display: flex;
+    justify-content: space-around;
+    flex-basis: 400px;
+    flex-direction: row;
+}
+.footer_total_values>span {
+    display:flex;
+    flex-direction: column;
 }

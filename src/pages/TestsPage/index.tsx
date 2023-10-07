@@ -34,26 +34,29 @@ function TestsPage() {
             </div>
 
             {/* Transactions table */}
-            <div className={styles.table_container}>
+            <div className={styles.transactions_container}>
 
-                {/* Table header / columns */}
-                <div className={styles.columns_row}>
-                    <span>Descrição</span>
-                    <span>Categoria</span>
-                    <span>Data</span>
-                    <span>Valor</span>
+                <div className={styles.table_container}>
+                    <table>
+                        {/* Table header / columns */}
+                        <thead>
+                            <tr>
+                                <th>Descrição</th>
+                                <th>Categoria</th>
+                                <th>Data</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {renderTableTransactions()}
+                        </tbody>
+                    </table>
                 </div>
 
-                {/* Table body */}
-                <div className={styles.table_body}>
-                    {renderTableTransactions()}
-                </div>
-
-                {/* Table footer */}
-                <div className={styles.table_footer}>
+                <div className={styles.transactions_container_footer}>
                     {renderTableFooter()}
                 </div>
-
             </div>
 
         </div>
@@ -72,27 +75,34 @@ function TestsPage() {
                         return (
 
                             // Transaction row
-                            <div className={styles.row_container}>
+                            <tr key={transaction.id}>
 
-                                <div key={transaction.id} className={styles.data_row}>
-
+                                <td className={styles.description_cell}>
                                     <span>
                                         <img src={myCategory?.iconPath} alt="" style={{ width: "16px", height: "16px" }} />
                                         <span>{transaction.description}</span>
                                         {
-                                            transaction.extraInfo && <span> [{transaction.extraInfo}]</span>
+                                            transaction.extraInfo && <span className={styles.extra_info}> ( {transaction.extraInfo} )</span>
                                         }
                                     </span>
+                                </td>
+
+                                <td className={styles.category_cell}>
                                     <span>{myCategory?.categoryName}</span>
+                                </td>
+
+                                <td className={styles.date_cell}>
                                     <span>{new Date(transaction.date!).toLocaleDateString()}</span>
-                                    <span category-type={myCategory?.transactionType}>
+                                </td>
+
+                                <td className={styles.value_cell} category-type={myCategory?.transactionType}>
+                                    <span>
                                         <span>{wallet?.currencySymbol}</span>
                                         <span>{Number(transaction.value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                     </span>
+                                </td>
 
-                                </div>
-
-                            </div>
+                            </tr>
                         )
                     })
                 }
@@ -106,14 +116,21 @@ function TestsPage() {
 
         return (
             <>
-                <span>
-                    <span># transações: {transactionsList.length}</span>
-                </span>
+                <div className={styles.footer_transactions_counter}>
+                    <span>Qtd transações: {transactionsList.length}</span>
+                </div>
 
-                <span>
-                    <span>Total recebimentos: {wallet && wallet.currencySymbol} {totalIncomes.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                    <span>Total pagamentos: {wallet && wallet.currencySymbol} {totalExpenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                </span>
+                <div className={styles.footer_total_values}>
+                    <span>
+                        <span>Total recebimentos</span>
+                        <span>{wallet && wallet.currencySymbol} {totalIncomes.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </span>
+
+                    <span>
+                        <span>Total pagamentos</span>
+                        <span>{wallet && wallet.currencySymbol} {totalExpenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </span>
+                </div>
             </>
         )
     }
