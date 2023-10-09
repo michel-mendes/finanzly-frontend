@@ -22,14 +22,9 @@ import { LoadingOverlay } from "../../shared_components/LoadingPageOverlay"
 
 // Interfaces
 import { ITransaction, IWallet } from "../../services/types"
+import { ITransactionsPageFilters } from "../../prop-defs"
 interface IGroupedTransactions {
     [key: string]: ITransaction[]
-}
-interface ITransactionsPageFilters {
-    text: string,
-    category: string,
-    startDate: string,
-    endDate: string
 }
 
 import styles from "./styles.module.css"

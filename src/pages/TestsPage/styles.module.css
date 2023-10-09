@@ -20,8 +20,7 @@
 
     flex: 1;
     margin: 10px;
-    padding-bottom: 20px;
-    overflow: auto;
+    overflow: hidden;
     color: #000000;
     /* border: 2px solid black; */
     border-radius: 15px;
@@ -29,6 +28,7 @@
 
 .table_container {
     flex: 1;
+    overflow: auto;
 }
 .table_container table {
     border-collapse: collapse;
@@ -68,7 +68,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    border: 2px solid rgb(103, 103, 225);
+    border: 2px solid #6767e1;
     margin: -1px;
     transition: border .2s;
 }

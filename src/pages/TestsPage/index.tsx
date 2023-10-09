@@ -1,4 +1,8 @@
+import { DateRangePicker } from './DateRangePicker'
+import { TransactionSearchBox } from './TransactionSearchBox'
+
 import React, { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useTransactions } from '../../hooks/useTransactions'
 import { useAuthContext } from '../../contexts/Auth'
 
@@ -7,34 +11,40 @@ import { useCategories } from '../../hooks/useCategories'
 import { useWallets } from '../../hooks/useWallets'
 import { ITransaction } from '../../services/types'
 
+import { ITransactionsPageFilters } from '../../prop-defs'
+
 function TestsPage() {
+// Route params
+    const location = useLocation()
+    const urlQuery = new URLSearchParams(location.search)
+
     const { loggedUser } = useAuthContext()
     const { walletsList } = useWallets()
     const { categoriesList } = useCategories()
     const { transactionsList, getTransactionsFromWallet } = useTransactions()
-    const [startDate, setStartDate] = useState(new Date(Date.now()).toJSON().slice(0, 10))
-    const [endDate, setEndDate] = useState(new Date(Date.now()).toJSON().slice(0, 10))
+
+    const [searchFilters, setSearchFilters] = useState<ITransactionsPageFilters>({
+        text: "",
+        category: urlQuery.get("category") || "",
+        startDate: new Date(Date.now()),
+        endDate: new Date(Date.now())
+    })
 
     return (
         <div className={styles.page_container}>
             <h2>Página de testes</h2>
 
             <div>
-                <span>
-                    <span>Data Inicial</span>
-                    <input type="date" name="" id="" onChange={(value) => { setStartDate(value.currentTarget.value) }} value={startDate} />
-                </span>
-
-                <span>
-                    <span>Data final</span>
-                    <input type="date" name="" id="" onChange={(value) => { setEndDate(value.currentTarget.value) }} value={endDate} />
-                </span>
-                <br />
-                <button onClick={() => { getTransactionsFromWallet(loggedUser!.activeWalletId, startDate, endDate) }}>Atualizar</button>
+                <button onClick={() => { getTransactionsFromWallet(loggedUser!.activeWalletId, searchFilters.startDate.toISOString().slice(0, 10), searchFilters.endDate.toISOString().slice(0, 10)) }}>Atualizar</button>
             </div>
 
             {/* Transactions table */}
             <div className={styles.transactions_container}>
+
+                <div>
+                    {/* <DateRangePicker dateRange={dateRange} setDateRange={setDateRange}/> */}
+                    <TransactionSearchBox filters={searchFilters} setFilters={setSearchFilters} />
+                </div>
 
                 <div className={styles.table_container}>
                     <table>

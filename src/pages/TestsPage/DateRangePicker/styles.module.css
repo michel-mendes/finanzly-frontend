@@ -1,0 +1,44 @@
+.container {
+    /* border: red 5px solid; */
+    display: inline-block;
+    position: relative;
+}
+
+.popup_container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 7px;
+    background-color: #ffffff;
+    top: calc(100% + 3px);
+    width: 300px;
+    z-index: 99;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.popup_container > div {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 10px;
+}
+.popup_container > div input {
+    width: 120px;
+    text-align: center;
+}
+
+.date_range_input {
+    text-align: center;
+    font-family: inherit;
+    padding: 5px;
+    cursor: pointer;
+    outline: none;
+    border: 1px solid #c0c0c0;
+    border-radius: 5px;
+    transition: border .2s;
+}
+.date_range_input:hover {
+    border: 1px solid #6767e1;
+    transition: border .2s;
+}
