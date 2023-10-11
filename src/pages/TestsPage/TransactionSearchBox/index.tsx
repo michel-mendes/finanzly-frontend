@@ -1,69 +1,134 @@
 import {useState, useEffect, useRef, Dispatch, SetStateAction, MutableRefObject} from "react"
 import { AiOutlineSearch } from "react-icons/ai"
+import { RiEqualizerLine } from "react-icons/ri"
 import moment from "moment"
 
 // Interfaces
-import { ITransactionsPageFilters } from "../../../prop-defs"
+import { ITransactionSearchBoxProps, ITransactionsPageFilters } from "../../../prop-defs"
 
 import styles from "./styles.module.css"
 
-interface ITransactionSearchBoxProps {
-    filters: ITransactionsPageFilters,
-    setFilters: Dispatch< SetStateAction<ITransactionsPageFilters> >
-}
+
+
+
 
 function TransactionSearchBox({filters, setFilters}: ITransactionSearchBoxProps) {
     const popupSearchFilters = useRef(null)
     const {isPopupOpen, toggleShowPopup} = useMouseClickListener(popupSearchFilters)
 
+    const searchTextInput = useRef<HTMLInputElement>(null)
+    const popupSearchTextInput = useRef<HTMLInputElement>(null)
+    const popupSearchCategoryInput = useRef<HTMLInputElement>(null)
+    const popupStartDateInput = useRef<HTMLInputElement>(null)
+    const popupEndDateInput = useRef<HTMLInputElement>(null)
+
+    const [tempFilters, setTempFilters] = useState<ITransactionsPageFilters>({
+        text: "",
+        category: "",
+        startDate: new Date(Date.now()),
+        endDate: new Date(Date.now()),
+    })
+
+    const [searchPlaceholderText, setSearchPlaceholderText] = useState("")
+
+    function handleBarSearchButtonClick() {
+        setTempFilters({...tempFilters, text: searchTextInput.current!.value})
+        setFilters({...filters, text: searchTextInput.current!.value})
+        searchTextInput.current!.value = ""
+    }
+    
+    function handlePopupSearchButtonClick() {
+        setFilters({
+            text: popupSearchTextInput.current!.value,
+            category: popupSearchCategoryInput.current!.value,
+            startDate: moment(popupStartDateInput.current!.value).startOf("day").toDate(),
+            endDate: moment(popupEndDateInput.current!.value).startOf("day").toDate(),
+        })
+
+        toggleShowPopup()
+    }
+
+    function openPopupAndFillInputValuesWithFilters() {
+        // popupSearchTextInput.current!.value = "kkk"
+
+        toggleShowPopup()
+    }
+
+    useEffect(() => {
+        const textValue = (filters.text) && `"${filters.text}"`
+        const textComma = (textValue) && ", "
+        const categoryValue = (filters.category) && `"${filters.category}"`
+        const categoryComma = (categoryValue) && ", "
+        const dateRangeValue = (filters.startDate && filters.endDate) && `${filters.startDate.toLocaleDateString()} até ${filters.endDate.toLocaleDateString()}`
+
+        setSearchPlaceholderText(`${textValue}${textComma}${categoryValue}${categoryComma}${dateRangeValue}`)
+    }, [filters])
+
 
     return (
         <div className={styles.container} ref={popupSearchFilters}>
-            <div>
-                <AiOutlineSearch />
+            <div className={styles.search_bar_container}>
+                <div className={styles.button} onClick={handleBarSearchButtonClick}>
+                    <AiOutlineSearch />
+                </div>
+
                 <input
                     type="text"
                     // value={`${dateRange.startDate.toLocaleDateString()} ~ ${dateRange.endDate.toLocaleDateString()}`}
-                    onClick={toggleShowPopup}
                     className={styles.date_range_input}
-                    readOnly
+                    placeholder={searchPlaceholderText}
+                    ref={searchTextInput}
                 />
+
+                <div className={styles.button} onClick={openPopupAndFillInputValuesWithFilters}>
+                    <RiEqualizerLine />
+                </div>
             </div>
 
             {
                 isPopupOpen && (
                     <div className={styles.popup_container}>
-                        <div>
+                        <label>
                             <span>Contém as palavras</span>
                             <input  
                                 type="text"
-                                onChange={(value) => {setFilters({...filters, text: value.currentTarget.value})}}
+                                value={tempFilters.text}
+                                onChange={(value) => {setTempFilters({...tempFilters, text: value.currentTarget.value})}}
+                                ref={popupSearchTextInput}
                             />
-                        </div>
+                        </label>
 
-                        <div>
+                        <label>
                             <span>Seja da categoria</span>
                             <input
                                 type="text"
-                                onChange={(value) => {setFilters({...filters, category: value.currentTarget.value})}}
+                                value={tempFilters.category}
+                                onChange={(value) => {setTempFilters({...tempFilters, category: value.currentTarget.value})}}
+                                ref={popupSearchCategoryInput}
                             />
-                        </div>
+                        </label>
 
-                        <div>
+                        <label>
                             <span>Data entre</span>
-                            <div>
+                            <div className={styles.date_range_selector}>
                                 <input
                                     type="date"
-                                    value={filters.startDate.toISOString().slice(0, 10)}
-                                    onChange={(value) => {setFilters({...filters, startDate: moment(value.currentTarget.value).startOf("day").toDate()})}}
+                                    value={tempFilters.startDate.toISOString().slice(0, 10)}
+                                    onChange={(value) => {setTempFilters({...tempFilters, startDate: moment(value.currentTarget.value).startOf("day").toDate()})}}
+                                    ref={popupStartDateInput}
                                 />
                                 <span>e</span>
                                 <input
                                     type="date"
-                                    value={filters.endDate.toISOString().slice(0, 10)}
-                                    onChange={(value) => {setFilters({...filters, endDate: moment(value.currentTarget.value).startOf("day").toDate()})}}
+                                    value={tempFilters.endDate.toISOString().slice(0, 10)}
+                                    onChange={(value) => {setTempFilters({...tempFilters, endDate: moment(value.currentTarget.value).startOf("day").toDate()})}}
+                                    ref={popupEndDateInput}
                                 />
                             </div>
+                        </label>
+
+                        <div className={styles.search_button_container}>
+                            <button onClick={handlePopupSearchButtonClick}>Pesquisar</button>
                         </div>
                     </div>
                 )

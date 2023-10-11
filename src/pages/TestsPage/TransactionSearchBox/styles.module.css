@@ -1,0 +1,110 @@
+.container {
+    /* border: red 5px solid; */
+    display: inline-block;
+    position: relative;
+}
+.container input {
+    font-family: inherit;
+}
+
+.search_bar_container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 5px;
+    width: 450px;
+    border: 1px solid #c0c0c0;
+    border-radius: 20px;
+    transition: border .2s;
+
+    background-color: #ffffff;
+}
+
+.search_bar_container:hover {
+    border: 1px solid #6767e1;
+    transition: border .2s;
+}
+
+.search_bar_container>.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    min-width: 30px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 18px;
+    transition: all .15s;
+}
+
+.search_bar_container>.button:hover {
+    background-color: #00000070;
+    color: #ffffff;
+    transition: all .15s;
+}
+
+.search_bar_container>input {
+    outline: none;
+    width: 100%;
+    border: none;
+}
+.search_bar_container>input::placeholder {
+    text-align: right;
+    font-size: 11px;
+}
+
+.popup_container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    padding-top: 20px;
+    border-radius: 7px;
+    background-color: #ffffff;
+    top: calc(100% + 3px);
+    width: 450px;
+    z-index: 99;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.popup_container>label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.popup_container>label>span {
+    display: inline-block;
+    min-width: 150px;
+    text-align: left;
+}
+
+.popup_container>label>input {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #c0c0c0;
+    outline: none;
+}
+
+.popup_container .date_range_selector {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.popup_container .date_range_selector input[type="date"] {
+    width: 120px;
+    text-align: center;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #c0c0c0;
+}
+
+.popup_container .search_button_container {
+    display: flex;
+    justify-content: right;
+    padding: 10px;
+}
