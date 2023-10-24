@@ -16,6 +16,25 @@ export interface IRegisterProps {
     password:   string
 }
 
+export interface ILoginContextProps extends PropsWithChildren {
+    props?: {
+        loginData:              ILoginProps
+        loginError:             string | null
+        setLoginData:           Function
+        setLoginError:          Function
+
+        forgotPasswordData:     IForgotPasswordProps
+        forgotPasswordError:    string | null
+        setForgotPasswordData:  Function
+        setForgotPasswordError: Function
+
+        registerData:           IRegisterProps
+        registerError:          string | null
+        setRegisterData:        Function
+        setRegisterError:       Function
+    }
+}
+
 export interface IAuthenticatedUser {
     id: string;
     firstName: string;
