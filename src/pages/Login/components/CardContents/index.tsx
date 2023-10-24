@@ -70,7 +70,7 @@ function RegisterContent({ handleFlip }: IFlipCardContentProps) {
         </label>
 
         <div className={styles.create_account_button_container}>
-          <button>CRIAR CONTA</button>
+          <button className="btn btn-info">CRIAR CONTA</button>
         </div>
 
       </form>
@@ -86,17 +86,19 @@ function RegisterContent({ handleFlip }: IFlipCardContentProps) {
 
 function FormContent({ handleFlip }: IFlipCardContentProps) {
   const { loginData, setLoginData, loginError, setLoginError,  } = useLoginContext().props!
-  const { setLoggedUser } = useAuthContext()
+  const {loginUser } = useAuthContext()
 
   // Helper function
   async function handleLoginFormSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     try {
-      const response = await axios.post(loginUrl, loginData, { withCredentials: true })
+      loginUser({...loginData})
+      
+      // const response = await axios.post(loginUrl, loginData, { withCredentials: true })
   
       setLoginError(null)
-      setLoggedUser!( response.data )
+      // setLoggedUser!( response.data )
     } catch (error: any) {
       setLoginError(getErrorMessage(error))
     }
@@ -130,7 +132,7 @@ function FormContent({ handleFlip }: IFlipCardContentProps) {
         }
 
         <div className={styles.login_button_container}>
-          <button type="submit" onClick={(event) => { event.stopPropagation() }}>ENTRAR</button>
+          <button type="submit" onClick={(event) => { event.stopPropagation() }} className="btn btn-info">ENTRAR</button>
         </div>
 
       </form>
@@ -154,7 +156,7 @@ function ForgotPasswordContent({ handleFlip }: IFlipCardContentProps) {
         </label>
 
         <div className={styles.reset_password_container}>
-          <button>RESETAR SENHA</button>
+          <button className="btn btn-info">RESETAR SENHA</button>
         </div>
       </form>
 

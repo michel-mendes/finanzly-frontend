@@ -24,7 +24,7 @@ function LoginPage() {
   if (loggedUser) {
     const start = moment(Date.now()).startOf('month').toISOString(true).split("T")[0]
     const end = moment(Date.now()).endOf('month').toISOString(true).split("T")[0]
-    const activeWallet = (loggedUser.activeWalletId) ? `&wallet=${loggedUser.activeWalletId}` : ``
+    const activeWallet = (loggedUser.activeWallet) ? `&wallet=${loggedUser.activeWallet.id}` : ``
 
     return <Navigate to={`/dashboard?start=${start}&end=${end}${activeWallet}`}/>
   }

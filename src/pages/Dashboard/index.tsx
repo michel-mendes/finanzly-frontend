@@ -226,7 +226,7 @@ function DashboardPage() {
 
     useEffect(() => {
         async function getWalletName() {
-            const wallet = await api.getWallet(loggedUser!.activeWalletId)
+            const wallet = await api.getWallet(loggedUser!.activeWallet?.id!)
 
             if ("error" in wallet) {
                 alert("Houve um erro inesperado ao consultar carteira, tente novamente mais tarde.")
@@ -259,7 +259,7 @@ function DashboardPage() {
             <button onClick={async () => {
                 const start = moment(startDate).toISOString(true).split("T")[0]
                 const end = moment(endDate).toISOString(true).split("T")[0]
-                const wallet = loggedUser.activeWalletId
+                const wallet = loggedUser.activeWallet?.id
 
                 if (!start || !end || !wallet) {
                     alert("Faltando dados: data inicial ou data final ou carteira")
@@ -402,7 +402,7 @@ function ModalCategoriesList({categoriesList, currencySymbol, endDate, startDate
     const navigate = useNavigate()
 
     function handleCategoryClick(categoryName: string) {
-        navigate(`/transactions?startDate=${startDate}&endDate=${endDate}&category=${categoryName}`)
+        navigate(`/testes?startDate=${startDate}&endDate=${endDate}&category=${categoryName}`)
     }
 
     return (

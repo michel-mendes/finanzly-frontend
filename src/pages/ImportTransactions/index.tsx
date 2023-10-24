@@ -19,6 +19,7 @@ interface IImportedTransaction {
     fromUser: string;
     date: number;
     description: string;
+    extraInfo: string,
     value: number;
     transactionType: string;
     csvImportId: string;
@@ -41,6 +42,7 @@ function ImportTransactionsPage() {
         categoryInputs: useRef<Array<HTMLInputElement | null>>([]),
         dateInputs: useRef<Array<HTMLInputElement | null>>([]),
         descriptionInputs: useRef<Array<HTMLInputElement | null>>([]),
+        extraInfoInputs: useRef<Array<HTMLInputElement | null>>([]),
         valueInputs: useRef<Array<HTMLInputElement | null>>([])
     }
 
@@ -60,7 +62,7 @@ function ImportTransactionsPage() {
         if (!fileSelectInput.current?.files![0]) return
 
         const formData = new FormData()
-        formData.append("walletId", loggedUser!.activeWalletId)
+        formData.append("walletId", loggedUser!.activeWallet?.id!)
         formData.append("bank", selectedBank)
         formData.append("csvFile", fileSelectInput.current.files[0])
 
@@ -100,6 +102,7 @@ function ImportTransactionsPage() {
     function updateInputs(newTransactions: IImportedTransaction[]) {
         tableInputsList.dateInputs.current = newTransactions.map((_, index) => { return tableInputsList.dateInputs.current[index] })
         tableInputsList.descriptionInputs.current = newTransactions.map((_, index) => { return tableInputsList.descriptionInputs.current[index] })
+        tableInputsList.extraInfoInputs.current = newTransactions.map((_, index) => { return tableInputsList.extraInfoInputs.current[index] })
         tableInputsList.valueInputs.current = newTransactions.map((_, index) => { return tableInputsList.valueInputs.current[index] })
         tableInputsList.categoryInputs.current = newTransactions.map((_, index) => { return tableInputsList.categoryInputs.current[index] })
     }
@@ -238,7 +241,7 @@ function ImportTransactionsPage() {
                                 {
                                     categoriesList.map(category => {
                                         return (
-                                            <option key={category.id} value={category.categoryName} label={(category.transactionType == "D") ? "Despesa" : "Receita"} />
+                                            <option key={category.id} value={category.categoryName} label={(category.transactionType == "D") ? "Pagamento" : "Recebimento"} />
                                         )
                                     })
                                 }
@@ -250,6 +253,7 @@ function ImportTransactionsPage() {
                                         <td><p>#</p></td>
                                         <td><p>Data</p></td>
                                         <td><p>Descrição</p></td>
+                                        <td><p>Detalhes extras</p></td>
                                         <td><p>Valor</p></td>
                                         <td><p>Categoria</p></td>
                                         <td><p>Tipo</p></td>
@@ -260,10 +264,10 @@ function ImportTransactionsPage() {
                                 <tbody>
                                     {
                                         transactionsList.map((transaction, itemIndex) => {
-                                            const transactionType = (transaction.transactionType == "D") ? "Despesa" : "Receita"
+                                            const transactionType = (transaction.transactionType == "D") ? "Pagamento" : "Recebimento"
 
                                             return (
-                                                <tr key={transaction.csvImportId} transaction-type={transaction.transactionType} transaction-already-exists={`${transaction.transactionAlreadyExists}`}>
+                                                <tr key={`${transaction.csvImportId}_${itemIndex}`} transaction-type={transaction.transactionType} transaction-already-exists={`${transaction.transactionAlreadyExists}`}>
                                                     <td>
                                                         <span style={{ fontSize: "7px" }}>#</span>
                                                         <span>{itemIndex + 1}</span>
@@ -285,6 +289,16 @@ function ImportTransactionsPage() {
                                                             value={transaction.description || ""}
                                                             onChange={(e) => { handleListEditChange("description", e.target.value, transaction) }}
                                                             ref={(element) => { tableInputsList.descriptionInputs.current[itemIndex] = element }}
+                                                            transaction-already-exists={`${transaction.transactionAlreadyExists}`}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <input
+                                                            // className={styles.input_description}
+                                                            type="text"
+                                                            value={transaction.extraInfo || ""}
+                                                            onChange={(e) => { handleListEditChange("extraInfo", e.target.value, transaction) }}
+                                                            ref={(element) => { tableInputsList.extraInfoInputs.current[itemIndex] = element }}
                                                             transaction-already-exists={`${transaction.transactionAlreadyExists}`}
                                                         />
                                                     </td>
