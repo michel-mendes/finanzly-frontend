@@ -1,5 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from "react"
+import React, { useState, useEffect, useRef, useCallback, CSSProperties } from "react"
 import { RiArrowDropDownFill } from "react-icons/ri"
+import { AiOutlineSearch } from "react-icons/ai";
+import { RiEqualizerLine } from "react-icons/ri";
+import { RiArrowDownSLine } from "react-icons/ri";
 
 import styles from "./styles.module.css"
 
@@ -11,15 +14,21 @@ interface ISearchDropDownProps<Type> {
     onChange?: React.ChangeEventHandler;
     onSelect?: (item: Type) => void;
     value?: string;
+    dropdownPxWidth?: number;
+    searcheableProperty: keyof Type;
 }
 
-function SearchDropDown<Type extends object>({ results = [], renderItem, value, placeholder, fieldName, onChange, onSelect }: ISearchDropDownProps<Type>) {
+    function SearchDropDown<Type extends object>({ results = [], renderItem, value, placeholder, fieldName, onChange, onSelect, dropdownPxWidth, searcheableProperty }: ISearchDropDownProps<Type>) {
 
     const [focusedIndex, setFocusedIndex] = useState(-1)
-    const [showResults, setShowResults] = useState(false)
+    const [showDropDown, setShowDropDown] = useState(false)
     const [defaultValue, setDefaultValue] = useState("")
 
+    const [searchText, setSearchText] = useState("")
+
     const resultContainer = useRef<HTMLDivElement>(null)
+
+    const dropdownStyleValue: CSSProperties = (dropdownPxWidth) ? {minWidth: dropdownPxWidth} : {}
 
     function handleSelection(selectedIndex: number) {
         const selectedItem = results[selectedIndex]
@@ -33,8 +42,12 @@ function SearchDropDown<Type extends object>({ results = [], renderItem, value, 
 
     const resetSearchComplete = useCallback(() => {
         setFocusedIndex(-1)
-        setShowResults(false)
+        setShowDropDown(false)
     }, [])
+
+    function toggleShowPopup() {
+        setShowDropDown(prevStateValue => { return !prevStateValue })
+    }
 
     function handleKeyDown(event: React.KeyboardEvent<HTMLLabelElement>) {
         const { key } = event
@@ -91,47 +104,66 @@ function SearchDropDown<Type extends object>({ results = [], renderItem, value, 
     const inputId = `input_${fieldName}`
 
     return (
-        <div className={styles.input_container}>
-            <label htmlFor={inputId} tabIndex={1} onBlur={resetSearchComplete} onKeyDown={handleKeyDown}>
-                <span>{placeholder}</span>
+        <div className={styles.container}>
+            {/* <div tabIndex={0} onBlur={resetSearchComplete}> */}
+            <div tabIndex={0} className={styles.placeholder_container} onClick={toggleShowPopup}>
+                {
+                    !defaultValue && (<span>{placeholder}</span>)
+                }
 
-                <input
-                    type="text"
-                    name={fieldName}
-                    id={inputId}
-                    placeholder=" "
-                    value={defaultValue}
-                    onChange={handleChange}
-                    autoComplete="off"
-                    required
-                />
-            </label>
+                <span>{defaultValue}</span>
 
-            <i className={styles.dropdown_button} onClick={() => { setShowResults(!showResults) }}>
-                <RiArrowDropDownFill />
-            </i>
+                <div className={styles.dropdown_arrow}>
+                    <RiArrowDownSLine />
+                </div>
+            </div>
 
             {/* Search reaults container */}
             {
-                (!showResults) ? null : (
-                    <div className={styles.results}>
-                        {
-                            results.map((result, index) => {
-                                return (
-                                    <div
-                                        className={styles.result_item}
-                                        key={index}
-                                        onMouseDown={() => handleSelection(index)}
-                                        ref={(index === focusedIndex) ? resultContainer : null}
-                                        is-focused={index === focusedIndex ? "true" : "false"}
-                                    >
-                                        {
-                                            renderItem(result)
-                                        }
-                                    </div>
-                                )
-                            })
-                        }
+                showDropDown && (
+                    <div className={styles.dropdown_container} style={dropdownStyleValue}>
+
+                        <div className={styles.search_bar_container}>
+                            <div className={styles.button}>
+                                <AiOutlineSearch />
+                            </div>
+
+                            <input
+                                type="text"
+                                onChange={(event) => { setSearchText(event.currentTarget.value) }}
+                                value={searchText}
+                                autoFocus
+                            />
+                        </div>
+
+                        <div className={styles.results_container}>
+                            {
+                                results.filter((item) => {
+                                    if ((item[searcheableProperty] as string).toUpperCase().includes(searchText.toUpperCase())) {
+                                        return item
+                                    }
+                                })
+                                    .map((result, index) => {
+                                        return (
+                                            <div
+                                                key={index}
+                                                onMouseDown={() => handleSelection(index)}
+                                                ref={(index === focusedIndex) ? resultContainer : null}
+                                                is-focused={index === focusedIndex ? "true" : "false"}
+                                                className={styles.dropdown_item}
+                                            >
+                                                {
+                                                    renderItem(result)
+                                                }
+                                            </div>
+                                        )
+                                    })
+                            }
+                        </div>
+
+                        <div className={styles.results_counter_container}>
+                            <span>{results.length} itens</span>
+                        </div>
                     </div>
                 )
             }

@@ -33,12 +33,12 @@ function ModalSaveCancel(props: IModalProps) {
 
   const { isOpen, modalTitle, children, modalButtons } = props
 
-  const btnOk = !modalButtons.okButton ? null : <button onClick={modalButtons.okButton.onClick}>OK</button>
-  const btnCancel = !modalButtons.cancelButton ? null : <button onClick={modalButtons.cancelButton.onClick}>Cancelar</button>
-  const btnSave = !modalButtons.saveButton ? null : <button onClick={modalButtons.saveButton.onClick} disabled={ (modalButtons.saveButton.enabled !== undefined) ? !modalButtons.saveButton.enabled : false }>Salvar</button>
-  const btnYes = !modalButtons.yesButton ? null : <button onClick={modalButtons.yesButton.onClick}>Sim</button>
-  const btnNo = !modalButtons.noButton ? null : <button onClick={modalButtons.noButton.onClick}>Não</button>
-  const btnDelete = !modalButtons.deleteButton ? null : <button onClick={modalButtons.deleteButton.onClick} disabled={!modalButtons.deleteButton.enabled}>Excluir</button>
+  const btnOk = !modalButtons.okButton ? null : <button onClick={modalButtons.okButton.onClick} className="btn btn-info">OK</button>
+  const btnCancel = !modalButtons.cancelButton ? null : <button onClick={modalButtons.cancelButton.onClick} className="btn btn-warning">Cancelar</button>
+  const btnSave = !modalButtons.saveButton ? null : <button onClick={modalButtons.saveButton.onClick} className="btn btn-submit" disabled={ (modalButtons.saveButton.enabled !== undefined) ? !modalButtons.saveButton.enabled : false }>Salvar</button>
+  const btnYes = !modalButtons.yesButton ? null : <button onClick={modalButtons.yesButton.onClick} className="btn btn-info">Sim</button>
+  const btnNo = !modalButtons.noButton ? null : <button onClick={modalButtons.noButton.onClick} className="btn btn-warning">Não</button>
+  const btnDelete = !modalButtons.deleteButton ? null : <button onClick={modalButtons.deleteButton.onClick} className="btn btn-delete" disabled={!modalButtons.deleteButton.enabled}>Excluir</button>
 
   // Handle ESC key pressing
   const cancelModal = (modalButtons.cancelButton?.onClick || modalButtons.noButton?.onClick) || function () { }

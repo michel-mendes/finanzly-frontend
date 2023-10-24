@@ -14,23 +14,12 @@ import styles from "./styles.module.css"
 const { userLogoutEnpoint } = appConfigs
 
 function AppSideMenu() {
-    const { loggedUser, setLoggedUser } = useAuthContext()
+    const { loggedUser, logoutUser } = useAuthContext()
 
     const [isExpanded, setIsExpanded] = useState(false)
 
     function handleMenuButtonClick() {
         setIsExpanded(prevState => { return !prevState })
-    }
-
-    async function handleLogoutUser() {
-        try {
-            const resp = await axios.post(userLogoutEnpoint, {}, { withCredentials: true })
-
-            // alert(resp.data.message)
-            setLoggedUser!(null)
-        } catch (error: any) {
-            alert("Erro")
-        }
     }
 
     const menuExpandedOrNot = (isExpanded) ? `${styles.side_menu} ${styles.expanded}` : styles.side_menu
@@ -85,7 +74,7 @@ function AppSideMenu() {
                     </li>
 
                     <li title={`Sair`}>
-                        <Link to={"javascript:void(0);"} className={styles.menu_item} onClick={handleLogoutUser}>
+                        <Link to={"javascript:void(0);"} className={styles.menu_item} onClick={logoutUser}>
                             <i><IoLogOut /></i>
                             <span>{`Sair`}</span>
                         </Link>

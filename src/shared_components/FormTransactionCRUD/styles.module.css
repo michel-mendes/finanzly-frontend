@@ -1,24 +1,32 @@
 .form {
     display: flex;
+    flex-direction: column;
+    /* flex-basis: 400px; */
+    /* flex-wrap: wrap; */
+    gap: 10px;
+}
+
+.form .field_row {
+    display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
+    width: 400px;
     max-width: 700px;
-    gap: 20px;
 }
 
-.form > div {
-    flex: 1 0 300px;
+.form .column_name {
+    display: flex;
+    align-items: center;
+    width: 130px;
 }
 
-.form > label:nth-child(2){
-    flex: 1 0 20px;
+.form .column_value {
+    flex: 1;
+    /* flex-basis: 400px; */
 }
-.form > label:nth-child(3){
-    flex: 1 0 300px;
-}
-.form > label:nth-child(4){
-    flex: 1 0 100px;
-}
-.form > label:nth-child(5){
-    flex: 1 0 400px;
+
+@media screen and (max-width: 480px) {
+    .field_row {
+        flex-direction: column !important;
+        width: 100% !important;
+    }
 }

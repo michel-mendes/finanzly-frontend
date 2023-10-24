@@ -1,4 +1,4 @@
-import { CSSProperties, HTMLInputTypeAttribute } from "react"
+import { CSSProperties, HTMLInputTypeAttribute, MutableRefObject, RefObject, useRef } from "react"
 import styles from "./styles.module.css"
 
 interface IInputProps {
@@ -8,35 +8,33 @@ interface IInputProps {
     value?: string | number;
     autocomplete?: boolean;
     widthInPixels?: number;
+    refObject?: RefObject<HTMLInputElement>;
     onChange?: (value: string | number) => void,
 }
 
 function InputEdit(props: IInputProps) {
-    const { placeholder, fieldName, widthInPixels, inputType, value, autocomplete, onChange } = props
+    const { placeholder, fieldName, widthInPixels, inputType, value, autocomplete, refObject: referenceObject, onChange } = props
 
     const inputId = `input_${fieldName}`
-    const inlineStyle: CSSProperties = (!widthInPixels) ? {} : {width: widthInPixels}
+    const inlineStyle: CSSProperties = (!widthInPixels) ? {} : { width: widthInPixels }
 
     return (
-        <>
-            <label className={styles.input_container} htmlFor={inputId}>
-                <span>{placeholder}</span>
-                
-                <input
-                    type={inputType}
-                    name={fieldName}
-                    id={inputId}
-                    placeholder=" "
-                    style={inlineStyle}
-                    value={ value }
-                    onChange={ (!onChange) ? undefined : (event) => {
-                        onChange( event.target.value )
-                    } }
-                    autoComplete={autocomplete ? "on" : "off"}
-                    required
-                />
-            </label>
-        </>
+        <label className={styles.input_container} htmlFor={inputId}>
+            <input
+                type={inputType}
+                name={fieldName}
+                id={inputId}
+                placeholder={placeholder}
+                style={inlineStyle}
+                value={value}
+                onChange={(!onChange) ? undefined : (event) => {
+                    onChange(event.target.value)
+                }}
+                autoComplete={autocomplete ? "on" : "off"}
+                ref={referenceObject}
+                required
+            />
+        </label>
     )
 }
 

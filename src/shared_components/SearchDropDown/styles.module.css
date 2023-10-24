@@ -1,115 +1,108 @@
-/* Input Styles */
-.input_container {
-    display: block;
-    margin-top: 30px;
-    height: 50px;
+.container {
     position: relative;
+    border: 2px solid #e4ebe4;
+    border-radius: 10px;
+    transition: border .2s;
+    height: 40px;
+}
+.container:hover, .container:focus {
+    border-color: #c7d6c7;
+    transition: border .2s;
 }
 
-.input_container label input {
-    width: 100%;
+.placeholder_container {
     height: 100%;
-    font-size: 15px;
-    outline: none;
-    border: none;
-    font-family: inherit;
-}
-
-.input_container::before {
-    content: ' ';
-    width: 0%;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
-    position: absolute;
-    transition: ease-in-out .15s all;
-}
-
-.input_container::after {
-    content: ' ';
-    width: 0%;
-    bottom: 0px;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    position: absolute;
-    transition: ease-in-out .15s all;
-}
-
-.input_container::before {
-    width: 100%;
-    border-bottom: 1px solid rgb(217, 217, 217);
-}
-
-.input_container::after {
-    border-bottom: 2px solid rgb(57, 139, 247);
-}
-
-.input_container:focus-within::after {
-    width: 100%;
-}
-
-.input_container label span:nth-child(1) {
-    position: absolute;
-    left: 10px;
-    top: 15px;
-    font-size: 15px;
-    transition: all .2s;
-}
-
-.input_container label span:nth-child(2) {
-    position: absolute;
-    right: 10px;
-    top: 15px;
-}
-
-.input_container:not(:has(input:placeholder-shown)) label span:nth-child(1),
-.input_container:has(input:focus) label span:nth-child(1) {
-    left: 0px;
-    top: -28px;
-    font-size: 20px;
-}
-
-.dropdown_button {
-    position: absolute;
-    left: calc(100% - 30px);
-
-    font-size: 30px;
     cursor: pointer;
-    /* border: 1px solid gray; */
-}
-
-.results {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    left: 0;
-    right: -25%;
-    max-height: 300px;
-
-    background-color: white;
-    border: 1px solid gray;
-    overflow-y: auto;
-    z-index: 1;
-}
-
-.result_item {
-    border: 1px solid transparent;
-    cursor: pointer;
-    user-select: none;
-}
-
-.result_item p {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    gap: 10px;
-    height: 20px;
+    align-items: center;
     padding-left: 10px;
     padding-right: 10px;
-    font-size: 12px;
+}
+.placeholder_container .dropdown_arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
 }
 
-.result_item[is-focused="true"],
-.result_item:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+.dropdown_container {
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    gap: 10px;
+    position: absolute;
+    top: calc(100% + 5px);
+    width: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    z-index: 1;
+    background-color: #ffffff;
+
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.dropdown_container .search_bar_container {
+    display: flex;
+    align-items: center;
+
+    margin: 10px;
+    padding: 5px;
+    width: 90%;
+    border: 1px solid #c0c0c0;
+    border-radius: 20px;
+    transition: border .2s;
+    cursor: text;
+
+    background-color: #ffffff;
+}
+
+.dropdown_container .search_bar_container:hover {
+    border: 1px solid #6767e1;
+    transition: border .2s;
+}
+
+.dropdown_container .search_bar_container>.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 20px;
+    width: 20px;
+    font-size: 18px;
+}
+
+.dropdown_container .search_bar_container>input {
+    outline: none;
+    width: 100%;
+    border: none;
+    font: inherit;
+}
+
+.dropdown_container .results_container {
+    /* border: 1px solid black; */
+    overflow: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdown_container .results_counter_container {
+    width: 100%;
+    display: flex;
+    align-items: left;
+    justify-content: left;
+    padding: 10px;
+}
+
+.dropdown_container .results_container .dropdown_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+}
+.dropdown_container .results_container .dropdown_item:hover {
+    background-color: #f2f7f2;
+    cursor: pointer;
 }
