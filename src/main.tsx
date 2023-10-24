@@ -8,7 +8,14 @@ import { AuthContextProvider } from './contexts/Auth'
 
 ReactDOM.createRoot(document.getElementById('App') as HTMLElement).render(
   <React.StrictMode>
-    <AuthContextProvider loadingUser={true} loggedUser={null} setLoggedUser={() => {}}>
+    <AuthContextProvider
+      loadingUser={true}
+      loggedUser={null}
+      loginUser={() => {}}
+      logoutUser={() => {}}
+      getLoggedUser={() => {}}
+      setActiveWallet={() => {}}
+    >
       <App />
     </AuthContextProvider>
   </React.StrictMode>,
