@@ -29,6 +29,7 @@ export interface ITransaction {
     value?:                 number;
     creditValue?:           number;
     debitValue?:            number;
+    importedTransaction?:   boolean;
     csvImportId?:           string;
     currentWalletBalance?:  number;
 }
