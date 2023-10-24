@@ -1,60 +1,30 @@
-import axios from "axios";
-import { PropsWithChildren, createContext, useContext, useEffect, useState, Dispatch, SetStateAction } from "react";
+import { createContext, useContext } from "react";
 
-import { appConfigs } from "../../config/app-configs";
+// Types
+import { IAuthContextProps } from "../type-defs";
 
-interface IAuthenticatedUser {
-    id: string;
-    firstName: string;
-    role: string;
-    activeWalletId: string;
-}
+// Hooks
+import { useUsers } from "../hooks/useUsers";
 
-interface IAuthContextProps extends PropsWithChildren {
-    loggedUser: IAuthenticatedUser | null
-    loadingUser: boolean
-    setLoggedUser: Dispatch<SetStateAction<IAuthenticatedUser | null>>;
-}
 
-const { getUserLoggedEndpoint } = appConfigs
+const AuthContext = createContext<IAuthContextProps | null>(null)
 
-const AuthContext = createContext< IAuthContextProps | null >( null )
+function AuthContextProvider({ children  }: IAuthContextProps) {
 
-function AuthContextProvider( {children}: IAuthContextProps ) {
+    const {loadingUser, loggedUser, loginUser, logoutUser, getLoggedUser, setActiveWallet} = useUsers()
 
-    const [ loggedUser, setLoggedUser ] = useState< IAuthenticatedUser | null >( null )
-    const [ loadingUser, setLoadingUser ] = useState( true )
-
-    useEffect(() => {
-        async function getLoggedInUser() {
-            try {
-                setLoadingUser(true)
-                const user = (await axios.get(getUserLoggedEndpoint, {withCredentials: true})).data
-        
-                setLoggedUser( user )
-                setLoadingUser( false )
-            } catch (error: any) {
-                setLoggedUser( null )
-                setLoadingUser( false )
-            }
-        }
-
-        getLoggedInUser()
-
-    }, [])
-    
     return (
-        <AuthContext.Provider value={ { loggedUser, loadingUser, setLoggedUser } }>
-            { children }
+        <AuthContext.Provider value={{ loadingUser, loggedUser, loginUser, logoutUser, getLoggedUser, setActiveWallet }}>
+            {children}
         </AuthContext.Provider>
     )
 }
 
 const useAuthContext = (): IAuthContextProps => {
-    const contextValue = useContext( AuthContext )
+    const contextValue = useContext(AuthContext)
 
-    if ( !contextValue ) {
-        throw new Error( "'useAuthContext' must be use within an 'AuthContextProvider'" )
+    if (!contextValue) {
+        throw new Error("'useAuthContext' must be use within an 'AuthContextProvider'")
     }
 
     return contextValue
