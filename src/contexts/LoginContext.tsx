@@ -1,38 +1,6 @@
 import { createContext, useContext, useState , PropsWithChildren} from "react"
 
-interface ILoginProps {
-    email:      string
-    password:   string
-}
-
-interface IForgotPasswordProps {
-    email: string
-}
-
-interface IRegisterProps {
-    firstName:  string
-    email:      string
-    password:   string
-}
-
-interface ILoginContextProps extends PropsWithChildren {
-    props?: {
-        loginData:              ILoginProps
-        loginError:             string | null
-        setLoginData:           Function
-        setLoginError:          Function
-
-        forgotPasswordData:     IForgotPasswordProps
-        forgotPasswordError:    string | null
-        setForgotPasswordData:  Function
-        setForgotPasswordError: Function
-
-        registerData:           IRegisterProps
-        registerError:          string | null
-        setRegisterData:        Function
-        setRegisterError:       Function
-    }
-}
+import {ILoginProps, IForgotPasswordProps, IRegisterProps, ILoginContextProps} from "../type-defs"
 
 const LoginContext = createContext< ILoginContextProps | null >( null )
 
