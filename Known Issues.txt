@@ -1,2 +1,0 @@
-- Falha de lógica na página de importação de transações:
-	- se por coincidência houverem 2 ou mais transações idênticas (isso pode acontecer, é raro mas pode) em todos os campos, após a leitura do arquivo CSV os inputs de edição desses regístros específicos entrarão em conflito
