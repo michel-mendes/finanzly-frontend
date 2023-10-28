@@ -20,7 +20,7 @@ import { ModalSaveCancel } from '../../shared_components/Modal'
 import { FormTransactionCRUD } from '../../shared_components/FormTransactionCRUD'
 
 
-function TestsPage() {
+function TransactionsPage() {
     // Route params
     const location = useLocation()
     const urlQuery = new URLSearchParams(location.search)
@@ -331,4 +331,4 @@ function useTransactionEditorModal({walletsList, setWalletsList, categoriesList,
     return {isOpen, closeModal, showModal, modalState, setModalState, handleCreateNewTransaction, handleEditExistingTransaction, renderModalComponent}
 }
 
-export { TestsPage }
+export { TransactionsPage }

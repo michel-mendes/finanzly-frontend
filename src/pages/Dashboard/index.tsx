@@ -289,7 +289,7 @@ function DashboardPage() {
 
             }}>Atualizar</button>
             
-            <button onClick={() => {navigate("/testes")}}>Página de testes</button>
+            <button onClick={() => {navigate("/transactions")}}>Página de testes</button>
 
             <section className={loadingChartDataEffect} style={{ height: "200px" }}>
                 {
@@ -402,7 +402,7 @@ function ModalCategoriesList({categoriesList, currencySymbol, endDate, startDate
     const navigate = useNavigate()
 
     function handleCategoryClick(categoryName: string) {
-        navigate(`/testes?startDate=${startDate}&endDate=${endDate}&category=${categoryName}`)
+        navigate(`/transactions?startDate=${startDate}&endDate=${endDate}&category=${categoryName}`)
     }
 
     return (
