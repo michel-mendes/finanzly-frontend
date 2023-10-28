@@ -13,10 +13,11 @@
     gap: 10px;
 
     padding: 5px;
-    width: 450px;
+    /* width: 450px; */
     border: 1px solid #c0c0c0;
     border-radius: 20px;
     transition: border .2s;
+    cursor: text;
 
     background-color: #ffffff;
 }
@@ -69,11 +70,39 @@
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
-.popup_container>label {
+.popup_container .fields_row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
+    /* border: 1px dotted red; */
+}
+
+.popup_container .name_column {
+    /* border: 1px dashed green; */
+    width: 120px;
+    text-align: left;
+}
+
+.popup_container .value_column {
+    /* border: 1px dashed blue; */
+    flex: 1;
+}
+
+.popup_container .value_column input[type="date"] {
+    text-align: center;
+}
+
+.popup_container .date_range_selector {
+    /* border: 2px dashed purple; */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+}
+
+/* .popup_container>label>div {
+    width: 100%;
 }
 
 .popup_container>label>span {
@@ -92,16 +121,13 @@
 .popup_container .date_range_selector {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
 }
 
 .popup_container .date_range_selector input[type="date"] {
-    width: 120px;
     text-align: center;
-    outline: none;
-    border: none;
-    border-bottom: 1px solid #c0c0c0;
-}
+} */
 
 .popup_container .search_button_container {
     display: flex;

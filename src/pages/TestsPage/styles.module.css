@@ -21,9 +21,19 @@
     flex: 1;
     margin: 10px;
     overflow: hidden;
+    background-color: #ffffff;
     color: #000000;
     /* border: 2px solid black; */
     border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.transactions_container .toolbar {
+    /* border: 1px solid black; */
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .table_container {
@@ -34,18 +44,42 @@
     border-collapse: collapse;
     width: 100%;
     font-size: 11px;
+    /* border: 2px solid #c0c0c0; */
 }
+
 .table_container thead {
     position: sticky;
     top: 0;
     z-index: 1;
     background-color: #ffffff;
 }
+.table_container thead::before {
+    content: "";
+    border: 2px solid #c0c0c0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.table_container thead th {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
 .table_container tbody tr {
     background-color: #ffffff;
     border: 1px solid #c0c0c0;
+    border-left: none;
     position: relative;
 }
+.table_container tbody tr:first-child {
+    border-top: 1px solid transparent;
+}
+.table_container tbody tr:nth-child(even) {
+    background-color: #ececec;
+}
+
 .table_container tbody tr:hover {
     filter: brightness(95%);
     cursor: pointer;
@@ -59,6 +93,7 @@
     left: 0;
     border: 2px solid #00000000; /* Transparent border */
     margin: -1px;
+    margin-left: 0px;
     transition: border .2s;
 }
 .table_container tbody td:hover::before {
@@ -70,11 +105,16 @@
     left: 0;
     border: 2px solid #6767e1;
     margin: -1px;
+    margin-left: 0px;
     transition: border .2s;
 }
 
 .table_container tbody td {
     padding: 4px;
+}
+
+.table_container tbody td:nth-child(n + 3) {
+    border-left: 1px solid #c0c0c0;
 }
 
 .description_cell > span {
@@ -87,6 +127,11 @@
 .description_cell .extra_info {
     color: #909090;
     font-style: italic;
+}
+
+.imported_transaction_cell {
+    border-left: none;
+    width: 0;
 }
 
 .category_cell {
@@ -118,7 +163,10 @@
     position: sticky;
     display: flex;
     bottom: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
     background-color: white;
+    border-top: 2px solid #c0c0c0;
 }
 
 .footer_transactions_counter {
@@ -138,4 +186,12 @@
 .footer_total_values>span {
     display:flex;
     flex-direction: column;
+}
+.footer_total_values .total_incomes {
+    color: #0000FF;
+    font-weight: bold;
+}
+.footer_total_values .total_expenses {
+    color: #FF0000;
+    font-weight: bold;
 }

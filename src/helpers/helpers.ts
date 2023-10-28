@@ -1,3 +1,6 @@
+import { useState, useEffect, MutableRefObject } from "react";
+
+// Private interfaces
 interface ISortableObject {
     [key: string]: any;
 }
@@ -63,5 +66,61 @@ export function sortArrayOfObjects<T extends ISortableObject>(
     })
 
     return sortedList
+
+}
+
+export function useClickOutsideComponentListener<T extends HTMLElement>(targetElement: MutableRefObject<T | null>) {
+    const [isPopupOpen, setIsPopupOpen] = useState(false)
+
+    useEffect(() => {
+        function handleClickOutsideMenu(e: MouseEvent) {
+            if (isPopupOpen && targetElement.current && !targetElement.current.contains(e.target as Node)) {
+                setIsPopupOpen(false)
+            }
+        }
+
+        document.addEventListener("click", handleClickOutsideMenu, true)
+
+        return () => {
+            document.removeEventListener("click", handleClickOutsideMenu, true)
+        }
+    }, [isPopupOpen])
+
+    function toggleShowPopup(value?: boolean) {
+
+        // Show or hide manually popup if "value" is declared
+        if (typeof value == "boolean") {
+            setIsPopupOpen(value)
+        }
+        // Or just toggles between show or hide
+        else {
+            setIsPopupOpen((prevStateValue) => { return !prevStateValue })
+        }
+
+    }
+
+    return { isPopupOpen, toggleShowPopup }
+}
+
+export function useEscapeKeyListener(toggleShowElement: (value: boolean) => void) {
+
+    function handleKeyDown(event: KeyboardEvent) {
+        const pressedKey = event.keyCode || event.key
+
+        if (pressedKey === "Escape" || pressedKey === "Esc" || pressedKey === 27) {
+            toggleShowElement(false)
+        }
+    }
+    
+    useEffect(() => {
+        
+        // Adds event to document
+        document.addEventListener("keydown", handleKeyDown)
+
+        // Removes event on unmount this component
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown)
+        }
+    }, [])
 
 }
