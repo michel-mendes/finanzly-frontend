@@ -22,7 +22,7 @@ import { LoadingOverlay } from "../../shared_components/LoadingPageOverlay"
 
 // Interfaces
 import { ITransaction, IWallet } from "../../services/types"
-import { ITransactionsPageFilters } from "../../prop-defs"
+import { ITransactionsPageFilters } from "../../type-defs"
 interface IGroupedTransactions {
     [key: string]: ITransaction[]
 }

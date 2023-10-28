@@ -13,35 +13,30 @@ import { IWallet } from "../../../services/types"
 interface IWalletSelectorProps {
     walletsList: IWallet[];
     selectedWallet: IWallet | null;
-    setSelectedWallet: Dispatch<SetStateAction<IWallet | null>>;
+    setSelectedWallet: (walletId: string) => void;
 }
-
-const setActiveWalletUrl = appConfigs.userSetActiveWallet
 
 function WalletSelector({ selectedWallet, setSelectedWallet, walletsList }: IWalletSelectorProps) {
 
-    const {loggedUser, setLoggedUser} = useAuthContext()
+    const {loggedUser, setActiveWallet} = useAuthContext()
 
     const popupMenu = useRef(null)
     const { isMenuOpen, closePopup, openPopup } = useMouseClickListener(popupMenu)
 
     function handleWalletItemClick(wallet: IWallet) {
         if (setSelectedWallet) {
-            setSelectedWallet(wallet)
+            setSelectedWallet(wallet.id!)
             closePopup()
 
-            setUserActiveWallet(wallet.id!)
-            setLoggedUser({...loggedUser!, activeWalletId: wallet.id!})
+            // setActiveWallet(wallet.id || "")
         }
     }
 
-    useEffect(() => {
-        if (loggedUser && walletsList.length > 0) {
-            const currentActiveWallet = walletsList.find(item => {return item.id == loggedUser!.activeWalletId})
-
-            setSelectedWallet(currentActiveWallet!)
-        }
-    }, [loggedUser, walletsList])
+    // useEffect(() => {
+    //     if (loggedUser) {
+    //         setSelectedWallet(loggedUser.activeWallet)
+    //     }
+    // }, [loggedUser, walletsList])
 
     return (
         <div className={styles.container}>
@@ -73,18 +68,6 @@ function WalletSelector({ selectedWallet, setSelectedWallet, walletsList }: IWal
             }
         </div>
     )
-}
-
-async function setUserActiveWallet(activeWallet: string) {
-
-    axios.post(setActiveWalletUrl, { activeWallet }, {withCredentials: true})
-        // .then(result => {
-        //     alert("carteira gravada com sucesso!")
-        // })
-        // .catch(error => {
-        //     alert(`Erro ao gravar carteira: ${error}`)
-        // })
-
 }
 
 function useMouseClickListener(popupRef: MutableRefObject<HTMLDivElement | null>) {
