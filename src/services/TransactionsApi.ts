@@ -4,7 +4,7 @@ import { appConfigs } from "../../config/app-configs";
 
 // Interfaces
 import { ITransaction } from "./types";
-import { IApiErrorResponse, buildError } from "../interfaces/ApiErrorResponse";
+import { IApiErrorResponse, buildError } from "../helpers/errorHandler";
 
 export class TransactionsApi {
     private api(): AxiosInstance {

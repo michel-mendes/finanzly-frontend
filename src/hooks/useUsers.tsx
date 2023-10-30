@@ -4,11 +4,17 @@ import { appConfigs } from "../../config/app-configs";
 // Decorator
 import {decorateCustomHookFunction} from "../helpers/hookDecorator"
 
+// Components
+import { useToastNotification } from "./useToastNotification";
+
 // Types
 import { IAuthenticatedUser, ILoginProps } from "../type-defs";
 
 // Services
 import { api } from "../helpers/apiCall";
+
+// Error handler
+import { handleError } from "../helpers/errorHandler";
 
 const {
     userLoginEnpoint,
@@ -20,6 +26,8 @@ const {
 
 export function useUsers() {
 
+    const {showErrorNotification, showSuccessNotification} = useToastNotification()
+    
     const [loggedUser, setLoggedUser] = useState<IAuthenticatedUser | null>(null)
     const [loadingUser, setLoadingUser] = useState(true)
 
@@ -31,9 +39,11 @@ export function useUsers() {
         try {
             const user: IAuthenticatedUser = (await api.post(userLoginEnpoint, { email, password })).data
 
+            showSuccessNotification("Login realizado com sucesso")
+
             setLoggedUser(user)
         } catch (error: any) {
-            alert(`Erro durante login\n${error}`)
+            return handleError(error, showErrorNotification)
         }
     }
 
@@ -43,7 +53,7 @@ export function useUsers() {
 
             setLoggedUser(null)
         } catch (error) {
-            alert(`Erro durante logout\n${error}`)
+            return handleError(error, showErrorNotification)
         }
     }
 
@@ -53,7 +63,7 @@ export function useUsers() {
 
             setLoggedUser(user)
         } catch (error: any) {
-            alert(`Erro ao solicitar dados do usuário logado\n${error}`)
+            return handleError(error)
         }
     }
 
@@ -63,7 +73,7 @@ export function useUsers() {
 
             setLoggedUser(user)
         } catch (error: any) {
-            alert(`Erro ao definir carteira ativa para ${loggedUser?.firstName}\n${error}`)
+            return handleError(error)
         }
     }
 

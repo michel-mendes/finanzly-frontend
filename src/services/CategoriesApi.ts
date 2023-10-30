@@ -3,7 +3,7 @@ import { appConfigs } from "../../config/app-configs";
 
 // Interfaces
 import { ICategory } from "./types";
-import { IApiErrorResponse, buildError } from "../interfaces/ApiErrorResponse";
+import { IApiErrorResponse, buildError } from "../helpers/errorHandler";
 
 export class CategoriesApi {
     private api(): AxiosInstance {

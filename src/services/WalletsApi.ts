@@ -3,7 +3,7 @@ import { appConfigs } from "../../config/app-configs";
 
 // Interfaces
 import { IWallet } from "./types";
-import { IApiErrorResponse, buildError } from "../interfaces/ApiErrorResponse";
+import { IApiErrorResponse, buildError } from "../helpers/errorHandler";
 
 export class WalletsApi {
     private api(): AxiosInstance {
