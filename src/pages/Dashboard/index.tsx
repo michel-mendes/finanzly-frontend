@@ -18,7 +18,7 @@ import { useAuthContext } from "../../contexts/Auth"
 
 // Modal
 import { useModal } from "../../hooks/useModal"
-import { ModalSaveCancel } from "../../shared_components/Modal"
+import { ModalSaveCancel } from "../../components/Modal"
 
 interface IModalCategoriesList {
     categoryName: string

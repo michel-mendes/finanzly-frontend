@@ -10,8 +10,8 @@ import { useAuthContext } from "../../../contexts/Auth"
 import { ITransactionSearchBoxProps, ITransactionsPageFilters } from "../../../type-defs"
 
 // Components
-import { SearchDropDown } from "../../../shared_components/SearchDropDown"
-import { InputEdit } from "../../../shared_components/InputEdit"
+import { SearchDropDown } from "../../../components/SearchDropDown"
+import { InputEdit } from "../../../components/InputEdit"
 
 // Helper functions
 import { useClickOutsideComponentListener, useEscapeKeyListener } from "../../../helpers/helpers"

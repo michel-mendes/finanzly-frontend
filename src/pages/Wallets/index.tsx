@@ -8,17 +8,17 @@ import { useAuthContext } from "../../contexts/Auth"
 import { IWallet } from "../../services/types"
 
 // Modal
-import { ModalSaveCancel } from "../../shared_components/Modal"
+import { ModalSaveCancel } from "../../components/Modal"
 import { useModal } from "../../hooks/useModal"
 
 // Wallet CRUD form
-import { FormWalletCRUD } from "../../shared_components/FormWalletCRUD"
+import { FormWalletCRUD } from "../../components/FormWalletCRUD"
 
 // API Services
 import { WalletsApi } from "../../services/WalletsApi"
 
 // Components
-import { PageHeaderDesktop } from "../../shared_components/PageHeaderDesktop"
+import { PageHeaderDesktop } from "../../components/PageHeaderDesktop"
 import { IoArrowBack } from "react-icons/io5"
 
 // Styling

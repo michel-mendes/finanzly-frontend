@@ -5,7 +5,7 @@ import axios, { AxiosError } from "axios"
 
 // Components
 import { LoginFlipCard as ForgotOrLoginCard } from "../../components/FlipCard"
-import { AlertBox } from "../../../../shared_components/AlertBox"
+import { AlertBox } from "../../../../components/AlertBox"
 
 // Icons
 import { FiMail, FiUser } from "react-icons/fi"

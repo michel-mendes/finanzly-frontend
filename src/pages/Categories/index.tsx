@@ -6,15 +6,15 @@ import { IoArrowBack } from "react-icons/io5"
 import { ICategory } from "../../services/types"
 
 // Crud forms
-import { FormCategoryCRUD } from "../../shared_components/FormCategoryCRUD"
+import { FormCategoryCRUD } from "../../components/FormCategoryCRUD"
 
 // Hooks
 import { useModal } from "../../hooks/useModal"
 
 // Components
-import { PageHeaderDesktop } from "../../shared_components/PageHeaderDesktop"
+import { PageHeaderDesktop } from "../../components/PageHeaderDesktop"
 import { CategoriesList } from "./CategoriesList"
-import { ModalSaveCancel } from "../../shared_components/Modal"
+import { ModalSaveCancel } from "../../components/Modal"
 
 // Services
 import { useAuthContext } from "../../contexts/Auth"

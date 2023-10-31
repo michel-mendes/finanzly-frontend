@@ -16,8 +16,8 @@ import { sortArrayOfObjects } from '../../helpers/helpers'
 import {CiImport} from "react-icons/ci"
 
 import { useModal } from '../../hooks/useModal'
-import { ModalSaveCancel } from '../../shared_components/Modal'
-import { FormTransactionCRUD } from '../../shared_components/FormTransactionCRUD'
+import { ModalSaveCancel } from '../../components/Modal'
+import { FormTransactionCRUD } from '../../components/FormTransactionCRUD'
 
 
 function TransactionsPage() {

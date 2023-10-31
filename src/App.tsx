@@ -13,9 +13,9 @@ import { TransactionsPage } from './pages/Transactions'
 import { ImportTransactionsPage } from './pages/ImportTransactions'
 
 // Shared Components
-import { LoadingOverlay } from './shared_components/LoadingPageOverlay'
-import { FloatingTopNavigationBar } from './shared_components/FloatingTopNavigationBar'
-import { AppSideMenu } from './shared_components/AppSideMenu'
+import { LoadingOverlay } from './components/LoadingPageOverlay'
+import { FloatingTopNavigationBar } from './components/FloatingTopNavigationBar'
+import { AppSideMenu } from './components/AppSideMenu'
 
 function App() {
 

@@ -4,7 +4,7 @@ import { IoArrowBack } from 'react-icons/io5'
 import { TiDelete } from 'react-icons/ti'
 import { useNavigate } from 'react-router-dom'
 
-import { PageHeaderDesktop } from '../../shared_components/PageHeaderDesktop'
+import { PageHeaderDesktop } from '../../components/PageHeaderDesktop'
 
 import axios from 'axios'
 import { useAuthContext } from '../../contexts/Auth'
