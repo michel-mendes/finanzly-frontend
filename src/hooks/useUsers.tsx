@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { appConfigs } from "../../config/app-configs";
 
 // Decorator
-import {decorateCustomHookFunction} from "../helpers/hookDecorator"
+import { decorateCustomHookFunction } from "../helpers/hookDecorator"
 
 // Components
 import { useToastNotification } from "./useToastNotification";
@@ -26,8 +26,8 @@ const {
 
 export function useUsers() {
 
-    const {showErrorNotification, showSuccessNotification} = useToastNotification()
-    
+    const { showErrorNotification, showSuccessNotification } = useToastNotification()
+
     const [loggedUser, setLoggedUser] = useState<IAuthenticatedUser | null>(null)
     const [loadingUser, setLoadingUser] = useState(true)
 
@@ -35,11 +35,11 @@ export function useUsers() {
         decoratedGetLoggedUser()
     }, [])
 
-    async function loginUser({email, password}: ILoginProps) {        
+    async function loginUser({ email, password }: ILoginProps) {
         try {
             const user: IAuthenticatedUser = (await api.post(userLoginEnpoint, { email, password })).data
 
-            showSuccessNotification("Login realizado com sucesso")
+            showSuccessNotification(`Bem vindo(a), ${user.firstName}`)
 
             setLoggedUser(user)
         } catch (error: any) {
