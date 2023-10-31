@@ -30,8 +30,8 @@ interface ISearchDropDownProps<Type> {
 
     const dropdownStyleValue: CSSProperties = (dropdownPxWidth) ? {minWidth: dropdownPxWidth} : {}
 
-    function handleSelection(selectedIndex: number) {
-        const selectedItem = results[selectedIndex]
+    function handleSelection(selected: Type) {
+        const selectedItem = results.find(item => {return item == selected})
 
         if (!selectedItem) { return resetSearchComplete() }
 
@@ -49,7 +49,7 @@ interface ISearchDropDownProps<Type> {
         setShowDropDown(prevStateValue => { return !prevStateValue })
     }
 
-    function handleKeyDown(event: React.KeyboardEvent<HTMLLabelElement>) {
+    function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
         const { key } = event
         let nextIndexCount = 0
 
@@ -69,7 +69,7 @@ interface ISearchDropDownProps<Type> {
             // Select the current item
             case "Enter":
                 event.preventDefault()
-                handleSelection(focusedIndex)
+                // handleSelection(focusedIndex)
                 break
         }
 
@@ -131,6 +131,7 @@ interface ISearchDropDownProps<Type> {
                             <input
                                 type="text"
                                 onChange={(event) => { setSearchText(event.currentTarget.value) }}
+                                onKeyDown={handleKeyDown}
                                 value={searchText}
                                 autoFocus
                             />
@@ -144,10 +145,13 @@ interface ISearchDropDownProps<Type> {
                                     }
                                 })
                                     .map((result, index) => {
+                                        const iAmFocused = index == focusedIndex
+                                        const focusedStyle: CSSProperties = (iAmFocused) ? {fontWeight: "bold", backgroundColor: "#f2f7f2"} : {}
                                         return (
                                             <div
                                                 key={index}
-                                                onMouseDown={() => handleSelection(index)}
+                                                style={focusedStyle}
+                                                onMouseDown={() => handleSelection(result)}
                                                 ref={(index === focusedIndex) ? resultContainer : null}
                                                 is-focused={index === focusedIndex ? "true" : "false"}
                                                 className={styles.dropdown_item}
