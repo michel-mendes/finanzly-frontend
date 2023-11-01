@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react"
 import { Navigate, useNavigate } from "react-router-dom"
-import { appConfigs } from "../../../config/app-configs"
 import { ResponsiveBar } from "@nivo/bar"
 import { ResponsivePie } from "@nivo/pie"
-import { BsArrowLeftSquare, BsArrowRightSquare } from "react-icons/bs"
 import axios from "axios"
 import moment from "moment"
 
 // styles
 import styles from "./styles.module.css"
-
-// Data manipulation
-import { WalletsApi } from "../../services/WalletsApi"
 
 // Auth context
 import { useAuthContext } from "../../contexts/Auth"
@@ -61,15 +56,13 @@ interface IChartsData {
 }
 
 function DashboardPage() {
-    const { loggedUser } = useAuthContext()
+    const { loggedUser, loadingUser } = useAuthContext()
     const { showModal, closeModal, isOpen } = useModal()
-    const api = new WalletsApi()
+
     const navigate = useNavigate()
 
     const [startDate, setStartDate] = useState<string>(moment(new Date).startOf("month").toJSON().slice(0, 10))
     const [endDate, setEndDate] = useState<string>(moment(new Date).endOf("month").startOf("day").toJSON().slice(0, 10))
-    const [walletName, setWalletName] = useState<string>(".")
-    const [isLoadingWalletName, setIsLoadingWalletName] = useState<boolean>(true)
 
     const [modalCategoriesList, setModalCategoriesList] = useState<Array<IModalCategoriesList>>([])
     const [chartData, setChartData] = useState<IChartsData>({
@@ -82,9 +75,8 @@ function DashboardPage() {
         isLoadingData: true
     })
 
-    const loadingWalletEffect = (isLoadingWalletName) ? styles.skeleton_loading_effect : ""
+    const loadingWalletEffect = (loadingUser) ? styles.skeleton_loading_effect : ""
     const loadingChartDataEffect = (chartData.isLoadingData) ? styles.skeleton_loading_effect : ""
-
 
     const MyResponsiveBar = (data: any) => (
         <ResponsiveBar
@@ -178,9 +170,9 @@ function DashboardPage() {
             innerRadius={0.8}
             enableArcLabels={false}
             arcLinkLabel={d => `${d.id}`}
-            arcLabelsComponent={({ datum, label, style }) => {
-                return (<></>)
-            }}
+            // arcLabelsComponent={({ datum, label, style }) => {
+            //     return (<></>)
+            // }}
             activeInnerRadiusOffset={8}
 
             padAngle={0.7}
@@ -223,22 +215,6 @@ function DashboardPage() {
                             />
                         } */
     )
-
-    useEffect(() => {
-        async function getWalletName() {
-            const wallet = await api.getWallet(loggedUser!.activeWallet?.id!)
-
-            if ("error" in wallet) {
-                alert("Houve um erro inesperado ao consultar carteira, tente novamente mais tarde.")
-            } else {
-                setWalletName(wallet.walletName!)
-                setIsLoadingWalletName(false)
-            }
-        }
-
-        setIsLoadingWalletName(true)
-        getWalletName()
-    }, [])
     
     if (!loggedUser) return <Navigate to="/login" />
 
@@ -248,7 +224,7 @@ function DashboardPage() {
             <br />
             <br />
             <div>
-                <p className={loadingWalletEffect}>{walletName}</p>
+                <p className={loadingWalletEffect}>{loggedUser.activeWallet?.walletName}</p>
                                 
                 <span className={loadingWalletEffect}>
                     <input type="date" onChange={(e) => {setStartDate(e.currentTarget.value)}} value={startDate} />

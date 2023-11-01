@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 // Auth context
@@ -14,8 +14,9 @@ import { useModal } from "../../hooks/useModal"
 // Wallet CRUD form
 import { FormWalletCRUD } from "../../components/FormWalletCRUD"
 
-// API Services
-import { WalletsApi } from "../../services/WalletsApi"
+// hooks
+import { useWallets } from "../../hooks/useWallets"
+import { useToastNotification } from "../../hooks/useToastNotification"
 
 // Components
 import { PageHeaderDesktop } from "../../components/PageHeaderDesktop"
@@ -27,7 +28,9 @@ import styles from "./styles.module.css"
 
 function WalletsPage() {
   const navigate = useNavigate()
-  const walletsApi = new WalletsApi()
+  const { walletsList, tempWallet, setTempWallet, loadingWallets, deleteWallet, updateWallet, createWallet, awaitingResponse } = useWallets()
+
+  const { showSuccessNotification } = useToastNotification()
 
   // Authenticated user data
   const { loggedUser } = useAuthContext()
@@ -37,30 +40,8 @@ function WalletsPage() {
   const [modalTitle, setModalTitle] = useState("")
 
   // New and updating wallet management
-  const [modalWalletData, setModalWalletData] = useState<IWallet | null>(null)
   const [isEditingWallet, setIsEditingWallet] = useState(false)
 
-  // Wallets listing management
-  const [walletsList, setWalletsList] = useState<IWallet[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-
-  // Get wallets list when the page is loaded
-  useEffect(() => {
-    async function updateList() {
-      const wallets = await walletsApi.getWalletsFromUser()
-
-      if ("error" in wallets) {
-        alert("Erro ao carregar lista de carteiras")
-        console.log(wallets)
-        return
-      }
-
-      setWalletsList(wallets)
-      setIsLoading(false)
-    }
-
-    updateList()
-  }, [])
 
   return (
     <div className={styles.page_container}>
@@ -74,7 +55,7 @@ function WalletsPage() {
       </PageHeaderDesktop>
 
       <ul className={styles.list}>
-        <WalletsList isLoading={isLoading} walletsList={walletsList} handleOpenWalletModal={handleOpenWalletModal} />
+        <WalletsList isLoading={loadingWallets} walletsList={walletsList} handleOpenWalletModal={handleOpenWalletModal} />
       </ul>
 
       <ModalSaveCancel
@@ -83,30 +64,20 @@ function WalletsPage() {
         modalButtons={
           {
             cancelButton: { onClick: closeModal },
-            saveButton: { onClick: handleClickSaveWallet },
+            saveButton: { onClick: async () => { await handleClickSaveWallet() } },
             deleteButton: {
               enabled: isEditingWallet,
               onClick: async () => {
-                const deleted = await walletsApi.deleteWallet(modalWalletData?.id!)
-
-                if ("error" in deleted) {
-                  alert(`Erroooo: ${deleted.error}`)
-                  return
+                if (await deleteWallet(tempWallet?.id!)) {
+                  showSuccessNotification(`A carteira "${tempWallet?.walletName}" foi removida`)
+                  closeModal()
                 }
-
-                alert(`Carteira excluida com sucesso!`)
-                const newList = walletsList.filter(wallet => {
-                  if (wallet.id !== deleted.id) { return wallet }
-                })
-
-                setWalletsList(newList)
-                closeModal()
               }
             }
           }
         }
       >
-        <FormWalletCRUD walletData={modalWalletData} setWalletData={setModalWalletData} />
+        <FormWalletCRUD walletData={tempWallet} setWalletData={setTempWallet} />
       </ModalSaveCancel>
     </div>
   )
@@ -116,7 +87,7 @@ function WalletsPage() {
     if (!walletToEdit) {
       setModalTitle("Nova carteira")
       setIsEditingWallet(false)
-      setModalWalletData({
+      setTempWallet({
         fromUser: loggedUser?.id,
         walletName: "",
         currencySymbol: "",
@@ -127,33 +98,21 @@ function WalletsPage() {
     else {
       setModalTitle("Alterar carteira")
       setIsEditingWallet(true)
-      setModalWalletData(walletToEdit)
+      setTempWallet({ ...walletToEdit })
     }
 
     showModal()
   }
 
   async function handleClickSaveWallet() {
-    const savedWallet = (isEditingWallet) ? (await walletsApi.updateWallet(modalWalletData!.id!, modalWalletData!)) : (await walletsApi.createWallet(modalWalletData!))
+    const success = (isEditingWallet) ? await updateWallet(tempWallet?.id!, { ...tempWallet! }) : await createWallet(tempWallet!)
+    const operationType = (isEditingWallet) ? "alterada" : "adicionada"
+    const message = `A carteira "${tempWallet?.walletName}" foi ${operationType}`
 
-    if ("error" in savedWallet) {
-      alert(`Erro durante a operação:\n${savedWallet.error}`)
-      console.log(savedWallet)
-      return
+    if (success) {
+      showSuccessNotification(message)
+      closeModal()
     }
-
-    if (isEditingWallet) {
-      const updatedWalletList = walletsList!.map(wallet => {
-        return (savedWallet.id == wallet.id) ? savedWallet : wallet
-      })
-
-      setWalletsList(updatedWalletList)
-    }
-    else {
-      setWalletsList([...walletsList!, savedWallet])
-    }
-
-    closeModal()
 
   }
 }
