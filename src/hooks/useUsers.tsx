@@ -43,7 +43,7 @@ export function useUsers() {
 
             setLoggedUser(user)
         } catch (error: any) {
-            return handleError(error, showErrorNotification)
+            showErrorNotification( handleError(error).message )
         }
     }
 
@@ -53,27 +53,29 @@ export function useUsers() {
 
             setLoggedUser(null)
         } catch (error) {
-            return handleError(error, showErrorNotification)
+            showErrorNotification( handleError(error).message )
         }
     }
 
+    // Silent error handling
     async function getLoggedUser() {
         try {
             const user: IAuthenticatedUser = (await api.get(getUserLoggedEndpoint)).data
 
             setLoggedUser(user)
         } catch (error: any) {
-            return handleError(error)
+            return
         }
     }
 
+    // Silent error handling
     async function setActiveWallet(walletId: string) {
         try {
             const user: IAuthenticatedUser = (await api.post(userSetActiveWalletEndpoint, { activeWallet: walletId })).data
 
             setLoggedUser(user)
         } catch (error: any) {
-            return handleError(error)
+            return
         }
     }
 
