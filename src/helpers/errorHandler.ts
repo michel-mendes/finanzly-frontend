@@ -1,12 +1,6 @@
-// Toast notification component
-import { useToastNotification } from "../hooks/useToastNotification"
-
-export function handleError(error: any, showErrorNotification?: (message: string) => void) {
+export function handleError(error: any) {
 
     const errorMessage: string = error.response?.data?.errors?.[0] || `Oops, algo deu errado. Tente novamente mais tarde.(${error.message})`
-    
-    // execute "showErrorNotification" if received in parameter
-    if (showErrorNotification) {showErrorNotification(errorMessage)}
     
     return new Error(errorMessage)
 }
