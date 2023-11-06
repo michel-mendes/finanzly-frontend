@@ -1,7 +1,7 @@
 import styles from './styles.module.css'
 
 // Interfaces
-import { ICategory } from '../../../services/types'
+import { ICategory } from '../../../type-defs'
 interface ICategoriesListProps {
     categoriesList: ICategory[];
     onClickItem: Function;

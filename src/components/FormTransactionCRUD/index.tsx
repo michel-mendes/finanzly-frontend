@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import moment from "moment"
 
-import { ICategory, ITransaction } from "../../services/types"
+import { ICategory, ITransaction } from "../../type-defs"
 import { InputEdit } from "../InputEdit"
 import { SearchDropDown } from "../SearchDropDown"
 

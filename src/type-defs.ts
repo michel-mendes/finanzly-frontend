@@ -1,5 +1,45 @@
 import { Dispatch, SetStateAction, PropsWithChildren } from "react"
-import { ICategory, ITransaction, IWallet } from "./services/types"
+
+// Data base DATATYPES
+////////////////////////////////////////////////////
+export interface IWallet {
+    id?:                string;
+    fromUser?:          string;
+    walletName?:        string;
+    currencySymbol?:    string;
+    initialBalance?:    number;
+    actualBalance?:     number;
+    iconPath?:          string;
+}
+
+export interface ICategory {
+    id?:                string;
+    fromUser?:          string;
+    categoryName?:      string;
+    transactionType?:   string;
+    iconPath?:          string;
+}
+
+export interface ITransaction {
+    id?:                    string;
+    fromCategory?:          string;
+    fromWallet?:            string;
+    fromUser?:              string;
+    date?:                  number | string;
+    description?:           string;
+    description_Upper?:     string;
+    extraInfo?:             string;
+    extraInfo_Upper?:       string;
+    value?:                 number;
+    creditValue?:           number;
+    debitValue?:            number;
+    importedTransaction?:   boolean;
+    csvImportId?:           string;
+    currentWalletBalance?:  number;
+}
+////////////////////////////////////////////////////
+
+
 
 export interface ILoginProps {
     email:      string;
@@ -68,12 +108,12 @@ export interface ITransactionSearchBoxProps {
 }
 
 export interface useTransactionEditorModalHookProps {
-    walletsList: Array<IWallet>,
-    setWalletsList: Dispatch<SetStateAction<Array<IWallet>>>,
+    updateWalletBalance(walletId: string, newBalance: number): Promise<void>,
     categoriesList: Array<ICategory>,
-    draftTransaction: ITransaction | null,
-    setDraftTransaction: Dispatch<SetStateAction<ITransaction | null>>
-    updateTransaction(data: ITransaction): Promise<ITransaction | null>,
-    newTransaction(data: ITransaction): Promise<ITransaction | null>,
-    deleteTransaction(transaction: ITransaction): Promise<ITransaction | null>
+    tempTransaction: ITransaction | null,
+    setTempTransaction: Dispatch<SetStateAction<ITransaction | null>>
+    createTransaction(transactionData: ITransaction): Promise<boolean>,
+    updateTransaction(transactionId: string, transactionData: ITransaction): Promise<boolean>,
+    deleteTransaction(transactionId: string): Promise<boolean>,
+    walletBalanceAfterLastTransaction: number;
 }

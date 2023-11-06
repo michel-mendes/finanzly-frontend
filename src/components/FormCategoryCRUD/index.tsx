@@ -4,12 +4,9 @@ import { Dispatch, SetStateAction } from "react"
 import { InputIconSelector } from "../InputIconSelector"
 import { InputEdit } from "../InputEdit"
 import { RadioBoxList } from "../RadioBoxList"
-import { IconsContainer } from "../IconsContainer"
-import { ModalSaveCancel } from "../Modal"
-import { useModal } from "../../hooks/useModal"
 
 import styles from "./styles.module.css"
-import { ICategory } from "../../services/types"
+import { ICategory } from "../../type-defs"
 
 interface IFormCategoryCrudProps {
     categoryData: ICategory | null;
@@ -17,9 +14,7 @@ interface IFormCategoryCrudProps {
 }
 
 function FormCategoryCRUD({ categoryData, setCategoryData }: IFormCategoryCrudProps) {
-
-    const { closeModal, isOpen, showModal } = useModal()
-    
+  
     function handleInputChange(value: string | number, propName: keyof ICategory) {
         if (!categoryData) return
         

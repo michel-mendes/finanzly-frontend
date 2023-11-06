@@ -5,7 +5,7 @@ import { api } from "../helpers/apiCall"
 import { handleError } from "../helpers/errorHandler"
 
 // Interfaces
-import { ICategory } from "../services/types"
+import { ICategory } from "../type-defs"
 
 // Hooks
 import { useToastNotification } from "./useToastNotification"

@@ -7,7 +7,7 @@ import { InputEdit } from "../InputEdit"
 import { InputIconSelector } from "../InputIconSelector"
 
 // Types
-import { IWallet } from "../../services/types"
+import { IWallet } from "../../type-defs"
 interface IFormWalletCrudProps {
     walletData: IWallet | null;
     setWalletData: Dispatch<SetStateAction<IWallet | null>>;

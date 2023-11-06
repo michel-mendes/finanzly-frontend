@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { IoArrowBack } from "react-icons/io5"
 
 // Interfaces
-import { ICategory } from "../../services/types"
+import { ICategory } from "../../type-defs"
 
 // Crud forms
 import { FormCategoryCRUD } from "../../components/FormCategoryCRUD"

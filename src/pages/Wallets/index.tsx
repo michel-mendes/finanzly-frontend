@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 import { useAuthContext } from "../../contexts/Auth"
 
 // Types
-import { IWallet } from "../../services/types"
+import { IWallet } from "../../type-defs"
 
 // Modal
 import { ModalSaveCancel } from "../../components/Modal"

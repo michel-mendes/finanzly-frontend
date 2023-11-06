@@ -8,7 +8,7 @@ import { api } from "../helpers/apiCall"
 import { handleError } from "../helpers/errorHandler"
 
 // Interfaces
-import { IWallet } from "../services/types"
+import { IWallet } from "../type-defs"
 
 // Hooks
 import { useToastNotification } from "./useToastNotification"
@@ -41,6 +41,17 @@ export function useWallets() {
         } catch (error: any) {
             showErrorNotification( handleError(error).message )   
         }
+    }
+
+    async function updateWalletBalance(walletId: string, newBalance: number) {
+        const updatedWallet = walletsList.find(wallet => { return wallet.id == walletId })
+        updatedWallet!.actualBalance = newBalance
+
+        const updatedWalletsList = walletsList.map(wallet => {
+            return (wallet.id == updatedWallet!.id) ? updatedWallet! : wallet
+        })
+
+        setWalletsList(updatedWalletsList)
     }
 
     async function createWallet(walletData: IWallet) {
@@ -103,6 +114,7 @@ export function useWallets() {
         tempWallet,
         setTempWallet,
         walletsList,
+        updateWalletBalance,
         getWalletsFromUser: decoratedGetWalletsFromUser,
         createWallet: decoratedCreateWallet,
         updateWallet: decoratedUpdateWallet,
