@@ -1,6 +1,6 @@
 import { TransactionSearchBox } from './TransactionSearchBox'
 
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useTransactions } from '../../hooks/useTransactions'
 import { useAuthContext } from '../../contexts/Auth'
@@ -9,7 +9,7 @@ import moment from 'moment'
 import styles from "./styles.module.css"
 import { useCategories } from '../../hooks/useCategories'
 import { useWallets } from '../../hooks/useWallets'
-import { ICategory, ITransaction, IWallet } from '../../services/types'
+import { ITransaction } from '../../type-defs'
 
 import { ITransactionsPageFilters, useTransactionEditorModalHookProps } from '../../type-defs'
 import { sortArrayOfObjects } from '../../helpers/helpers'
@@ -19,6 +19,8 @@ import { useModal } from '../../hooks/useModal'
 import { ModalSaveCancel } from '../../components/Modal'
 import { FormTransactionCRUD } from '../../components/FormTransactionCRUD'
 
+import { useToastNotification } from '../../hooks/useToastNotification'
+
 
 function TransactionsPage() {
     // Route params
@@ -26,19 +28,19 @@ function TransactionsPage() {
     const urlQuery = new URLSearchParams(location.search)
 
     const { loggedUser } = useAuthContext()
-    const { walletsList, setWalletsList } = useWallets()
+    const { walletsList, updateWalletBalance } = useWallets()
     const { categoriesList } = useCategories()
-    const { transactionsList, getTransactionsFromWallet, clearTransactionsList, updateTransaction, newTransaction, deleteTransaction, draftTransaction, setDraftTransaction } = useTransactions()
+    const { transactionsList, getTransactionsFromWallet, clearList, updateTransaction, createTransaction, deleteTransaction, tempTransaction, setTempTransaction, walletBalanceAfterLastTransaction } = useTransactions()
 
     const transactionModal = useTransactionEditorModal({
-        walletsList,
-        setWalletsList,
+        updateWalletBalance,
         categoriesList,
-        draftTransaction,
-        setDraftTransaction,
-        deleteTransaction,
+        tempTransaction,
+        setTempTransaction,
+        createTransaction,
         updateTransaction,
-        newTransaction
+        deleteTransaction,
+        walletBalanceAfterLastTransaction
     })
     
     const [searchFilters, setSearchFilters] = useState<ITransactionsPageFilters>( setInitialFilterValues() )
@@ -135,10 +137,14 @@ function TransactionsPage() {
 
     function refreshTransactionList() {
         if (searchFilters.wallet) {
-            getTransactionsFromWallet(searchFilters.wallet.id!, searchFilters.startDate.toISOString().slice(0, 10), searchFilters.endDate.toISOString().slice(0, 10))
+            const startDate = searchFilters.startDate.toISOString().slice(0, 10)
+            const endDate = searchFilters.endDate.toISOString().slice(0, 10)
+            const wallet = searchFilters.wallet.id!
+
+            getTransactionsFromWallet(wallet, startDate, endDate)
         }
         else {
-            clearTransactionsList()
+            clearList()
         }
     }
 
@@ -232,8 +238,10 @@ function sumTotalIncomesAndExpenses(transactionsList: Array<ITransaction>) {
     return { totalIncomes, totalExpenses }
 }
 
-function useTransactionEditorModal({walletsList, setWalletsList, categoriesList, draftTransaction, setDraftTransaction, updateTransaction, newTransaction, deleteTransaction}: useTransactionEditorModalHookProps) {
-    const {loggedUser, setActiveWallet} = useAuthContext()
+function useTransactionEditorModal({updateWalletBalance, categoriesList, tempTransaction, setTempTransaction, updateTransaction, createTransaction, deleteTransaction, walletBalanceAfterLastTransaction}: useTransactionEditorModalHookProps) {
+    const { loggedUser } = useAuthContext()
+
+    const {showSuccessNotification} = useToastNotification()
     
     const {isOpen, closeModal, showModal} = useModal()
     const [modalState, setModalState] = useState({
@@ -242,18 +250,6 @@ function useTransactionEditorModal({walletsList, setWalletsList, categoriesList,
         transactionValuesHasChanged: false
     })
 
-    function updateWalletBalance(walletId: string, newBalance: number) {
-        const wallet = walletsList.find(item => { return item.id == walletId })
-        wallet!.actualBalance = newBalance
-
-        const newList = walletsList.map(item => {
-            return (item.id == wallet!.id) ? wallet! : item
-        })
-
-        setActiveWallet(wallet!.id!)
-        setWalletsList(newList)
-    }
-    
     function handleCreateNewTransaction() {
         setModalState({
             ...modalState,
@@ -261,7 +257,7 @@ function useTransactionEditorModal({walletsList, setWalletsList, categoriesList,
             isEditing: false
         })
 
-        setDraftTransaction({
+        setTempTransaction({
             fromUser: loggedUser?.id,
             fromWallet: loggedUser!.activeWallet?.id,
         })
@@ -276,27 +272,30 @@ function useTransactionEditorModal({walletsList, setWalletsList, categoriesList,
             isEditing: true
         })
 
-        setDraftTransaction({ ...transaction })
-
+        setTempTransaction({ ...transaction })
         showModal()
     }
     
     async function handleModalSaveButtonClick() {
-        const success = (modalState.isEditing) ? await updateTransaction(draftTransaction!) : await newTransaction(draftTransaction!)
+        const success = (modalState.isEditing) ? await updateTransaction(tempTransaction?.id!, tempTransaction!) : await createTransaction(tempTransaction!)
 
         if (success) {
-            // alert("Transação adicionada com sucesso")
-            updateWalletBalance(success.fromWallet!, success.currentWalletBalance!)
+            const successMessage = (modalState.isEditing) ? "Os dados da transação foram alterados" : "A transação foi adicionada à lista"
+
+            showSuccessNotification(successMessage)
+            updateWalletBalance(tempTransaction?.fromWallet!, walletBalanceAfterLastTransaction)
+            setTempTransaction(null)
             closeModal()
         }
     }
 
     async function handleModalDeleteButtonClick(transaction: ITransaction) {
-        const success = await deleteTransaction(transaction)
+        const success = await deleteTransaction(transaction.id!)
 
         if (success) {
-            // alert("Transação excluída com sucesso")
-            updateWalletBalance(success.fromWallet!, success.currentWalletBalance!)
+            showSuccessNotification("A transação foi removida")
+            updateWalletBalance(tempTransaction?.fromWallet!, walletBalanceAfterLastTransaction)
+            setTempTransaction(null)
             closeModal()
         }
     }
@@ -313,14 +312,14 @@ function useTransactionEditorModal({walletsList, setWalletsList, categoriesList,
                     },
                     cancelButton: { onClick: closeModal },
                     deleteButton: {
-                        onClick: () => { handleModalDeleteButtonClick(draftTransaction!) },
+                        onClick: () => { handleModalDeleteButtonClick(tempTransaction!) },
                         enabled: modalState.isEditing
                     }
                 }}
             >
                 <FormTransactionCRUD
-                    transactionData={draftTransaction}
-                    setTransactionData={setDraftTransaction}
+                    transactionData={tempTransaction}
+                    setTransactionData={setTempTransaction}
                     setTransactionValuesHasChanged={(value: boolean) => { setModalState({ ...modalState, transactionValuesHasChanged: value }) }}
                     categoriesList={categoriesList}
                 />
