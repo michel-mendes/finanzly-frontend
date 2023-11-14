@@ -37,6 +37,28 @@ export interface ITransaction {
     csvImportId?:           string;
     currentWalletBalance?:  number;
 }
+
+export interface IReportData {
+    totalIncomes: {
+        byDate: {
+            [date: string]: number
+        },
+        byCategory: {
+            [category: string]: number
+        },
+        total: number
+    },
+    totalExpenses: {
+        byDate: {
+            [date: string]: number
+        },
+        byCategory: {
+            [category: string]: number
+        },
+        total: number
+    },
+    currencySymbol: string
+}
 ////////////////////////////////////////////////////
 
 
@@ -54,6 +76,13 @@ export interface IRegisterProps {
     firstName:  string
     email:      string
     password:   string
+}
+
+export interface IAuthenticatedUser {
+    id: string;
+    firstName: string;
+    role: string;
+    activeWallet: IWallet | null;
 }
 
 export interface ILoginContextProps extends PropsWithChildren {
@@ -75,12 +104,6 @@ export interface ILoginContextProps extends PropsWithChildren {
     }
 }
 
-export interface IAuthenticatedUser {
-    id: string;
-    firstName: string;
-    role: string;
-    activeWallet: IWallet | null;
-}
 
 export interface IAuthContextProps extends PropsWithChildren {
     loggedUser: IAuthenticatedUser | null,
@@ -90,6 +113,53 @@ export interface IAuthContextProps extends PropsWithChildren {
     getLoggedUser: () => void,
     setActiveWallet: (walletId: string) => void;
 }
+
+
+
+// Dashboard Page
+////////////////////////////////////////////////////
+export interface IBarChartData {
+    day: string,
+    incomes: number,
+    expenses: number
+}
+
+export interface IDonutChartData {
+    id: string,
+    label: string,
+    value: number
+}
+
+export interface IChartsData {
+    barChartsData: Array<IBarChartData>,
+    donutChartsData: {
+        currencySymbol: string,
+        incomes: {
+            totalValue: number,
+            list: Array<IDonutChartData>
+        },
+        expenses: {
+            totalValue: number,
+            list: Array<IDonutChartData>
+        }
+    },
+    isLoadingData: boolean
+}
+
+export interface IModalCategoriesList {
+    categoryName: string
+    value: number
+}
+
+export interface IModalProps {
+    categoriesList: Array<IModalCategoriesList>
+    currencySymbol: string
+    startDate: string
+    endDate: string
+}
+////////////////////////////////////////////////////
+
+
 
 export interface ITransactionsPageFilters {
     wallet: IWallet | null,

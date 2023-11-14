@@ -120,7 +120,7 @@ button:disabled {
   opacity: .25;
   cursor: not-allowed;
 }
-/*** Submit button ***/
+/*** Normal button ***/
 .btn-normal {
   border-color: #7c6dca;
   background:#f0edfe;
