@@ -31,5 +31,8 @@ export const appConfigs = {
     transactionGetByIdEndpoint: `${baseApiUrl}${import.meta.env.VITE_TRANSACTION_GET_BY_ID}`,
     transactionGetFromWallet: `${baseApiUrl}${import.meta.env.VITE_TRANSACTION_GET_FROM_WALLET}`,
     transactionUpdateEndpoint: `${baseApiUrl}${import.meta.env.VITE_TRANSACTION_PUT}`,
-    transactionDeleteEndpoint: `${baseApiUrl}${import.meta.env.VITE_TRANSACTION_DELETE}`
+    transactionDeleteEndpoint: `${baseApiUrl}${import.meta.env.VITE_TRANSACTION_DELETE}`,
+
+    // Report Endpoint
+    reportGetEndpoint: `${baseApiUrl}${import.meta.env.VITE_REPORT_GET}`
 }
