@@ -1,20 +1,17 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import axios from "axios"
 import { useAuthContext } from "../../contexts/Auth"
-import { appConfigs } from "../../../config/app-configs"
 import { BsGrid3X3GapFill, BsListUl } from "react-icons/bs"
 import { BsFillPieChartFill } from "react-icons/bs"
 import { IoWalletSharp, IoLogOut } from "react-icons/io5"
 import { RxHamburgerMenu } from "react-icons/rx"
 import { BsGearFill } from "react-icons/bs"
+import { FaDownload } from "react-icons/fa"
 
 import styles from "./styles.module.css"
 
-const { userLogoutEnpoint } = appConfigs
-
 function AppSideMenu() {
-    const { loggedUser, logoutUser } = useAuthContext()
+    const { logoutUser } = useAuthContext()
 
     const [isExpanded, setIsExpanded] = useState(false)
 
@@ -59,6 +56,13 @@ function AppSideMenu() {
                         <Link to="/transactions" className={styles.menu_item}>
                             <i><BsListUl /></i>
                             <span>Transações</span>
+                        </Link>
+                    </li>
+
+                    <li title="Importar transações">
+                        <Link to="/import" className={styles.menu_item}>
+                            <i><FaDownload /></i>
+                            <span>Importar transações</span>
                         </Link>
                     </li>
                 </div>
