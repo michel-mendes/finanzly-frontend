@@ -17,7 +17,7 @@ function CategoriesList({ categoriesList, onClickItem }: ICategoriesListProps) {
                     return (
 
                         <ul className={styles.list} category-type={categoryType} key={categoryType}>
-                            <p>{(categoryType == "C") ? "Entrada / Receita" : "Saída / Despesa"}</p>
+                            <p>{(categoryType == "C") ? "Entrada / Recebimento" : "Saída / Pagamento"}</p>
                             {
                                 categoriesList.map(category => {
                                     return (category.transactionType !== categoryType) ? null : (

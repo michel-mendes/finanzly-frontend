@@ -83,6 +83,7 @@ export interface IAuthenticatedUser {
     firstName: string;
     role: string;
     activeWallet: IWallet | null;
+    firstDayOfMonth: number;
 }
 
 export interface ILoginContextProps extends PropsWithChildren {

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect} from "react"
 import { useNavigate } from "react-router-dom"
 import { IoArrowBack } from "react-icons/io5"
 
@@ -80,6 +80,10 @@ function CategoriesPage() {
             closeModal()
         }
     }
+
+    useEffect(() => {
+        document.title = "Categorias Finanzly"
+    }, [])
 
     return (
         <div className={styles.page_container}>

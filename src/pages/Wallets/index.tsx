@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
 // Auth context
@@ -42,6 +42,9 @@ function WalletsPage() {
   // New and updating wallet management
   const [isEditingWallet, setIsEditingWallet] = useState(false)
 
+  useEffect(() => {
+    document.title = "Carteiras Finanzly"
+  }, [])
 
   return (
     <div className={styles.page_container}>

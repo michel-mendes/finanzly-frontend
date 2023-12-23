@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { useEffect, useRef, useState, createRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { IoArrowBack } from 'react-icons/io5'
 import { TiDelete } from 'react-icons/ti'
 import { useNavigate } from 'react-router-dom'
@@ -31,9 +31,9 @@ function ImportTransactionsPage() {
 
     const {loggedUser} = useAuthContext()
     const [selectedBank, setSelectedBank] = useState("n/a")
-    const [activeWallet, setActiveWallet] = useState("")
+    // const [activeWallet, setActiveWallet] = useState("")
     const { categoriesList } = useCategories()
-    const {newTransaction} = useTransactions()
+    const {createTransaction} = useTransactions()
     const [transactionsList, setTransactionsList] = useState<IImportedTransaction[]>([])
 
     // Get inputs for validations
@@ -180,7 +180,7 @@ function ImportTransactionsPage() {
             return {
                 ...transaction,
                 fromCategory: category?.id,
-                fromWallet: activeWallet,
+                fromWallet: loggedUser?.activeWallet?.id,
                 fromUser: loggedUser?.id
             }
         })
@@ -188,7 +188,7 @@ function ImportTransactionsPage() {
         for (const transaction of newList) {
             if (transaction.transactionAlreadyExists) continue
 
-            const result = await newTransaction(transaction)
+            const result = await createTransaction(transaction)
             insertedCount++
 
             if (!result) return
@@ -202,10 +202,9 @@ function ImportTransactionsPage() {
         updateInputs(transactionsList)
     }, [transactionsList])
     
-    // Get the query string "wallet" on page load
+
     useEffect(() => {
-        const queryString = new URLSearchParams(window.location.search)
-        setActiveWallet(queryString.get("wallet") || "")
+        document.title = "Importar transações Finanzly"
     }, [])
 
     return (
@@ -213,6 +212,10 @@ function ImportTransactionsPage() {
             <PageHeaderDesktop>
                 <div className={styles.header_content}>
                     <i onClick={() => { navigate("/transactions") }}>{<IoArrowBack />}</i>
+
+                    <div>
+                        <span>Importando para a carteira: {loggedUser?.activeWallet?.walletName}</span>
+                    </div>
 
                     <div className={styles.button_container}>
                         <div className={styles.select}>

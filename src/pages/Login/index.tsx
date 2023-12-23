@@ -1,3 +1,5 @@
+import {useEffect} from "react"
+
 import { Navigate } from "react-router-dom"
 import moment from "moment"
 
@@ -26,25 +28,29 @@ function LoginPage() {
     const end = moment(Date.now()).endOf('month').toISOString(true).split("T")[0]
     const activeWallet = (loggedUser.activeWallet) ? `&wallet=${loggedUser.activeWallet.id}` : ``
 
-    return <Navigate to={`/dashboard?start=${start}&end=${end}${activeWallet}`}/>
+    return <Navigate to={`/dashboard?start=${start}&end=${end}${activeWallet}`} />
   }
- 
+
+  useEffect(() => {
+    document.title = "Login Finanzly"
+  }, [])
+
   return (
     <LoginContextProvider>
-      
-      <div className={ styles.page_container }>
-        <div className={ styles.login_content }>
-          
+
+      <div className={styles.page_container}>
+        <div className={styles.login_content}>
+
         </div>
 
-        <div className={ styles.login_box }>
-          <div className={ styles.logo_container }>
-            <img src={ walletIcon } alt="Image of a wallet" />
-            <span>MyWallet App</span>
+        <div className={styles.login_box}>
+          <div className={styles.logo_container}>
+            <img src={walletIcon} alt="Image of a wallet" />
+            <span>Finanzly App</span>
           </div>
 
-          <RegisterOrLoginCard  frontContent={ <LoginContent /> } backContent={ <RegisterContent /> } />
-          
+          <RegisterOrLoginCard frontContent={<LoginContent />} backContent={<RegisterContent />} />
+
         </div>
       </div>
 
