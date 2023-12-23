@@ -1,3 +1,4 @@
+import moment from "moment";
 import { useState, useEffect, MutableRefObject } from "react";
 
 // Private interfaces
@@ -111,9 +112,9 @@ export function useEscapeKeyListener(toggleShowElement: (value: boolean) => void
             toggleShowElement(false)
         }
     }
-    
+
     useEffect(() => {
-        
+
         // Adds event to document
         document.addEventListener("keydown", handleKeyDown)
 
@@ -123,4 +124,22 @@ export function useEscapeKeyListener(toggleShowElement: (value: boolean) => void
         }
     }, [])
 
+}
+
+export function getStartAndEndOfMonth(firstDayOfMonth: number) {
+    const currentDay = moment(Date.now()).startOf("day").date()
+    const startDate = moment(Date.now()).startOf("day")
+    const endDate = moment(Date.now()).startOf("day")
+
+    if (currentDay < firstDayOfMonth) {
+        startDate.subtract(1, "month").add(firstDayOfMonth - currentDay, "day").toISOString(true)
+        endDate.add((firstDayOfMonth - currentDay) - 1, "day").toISOString(true)
+
+        return { startDate, endDate }
+    } else {
+        startDate.subtract(currentDay - firstDayOfMonth, "day").toISOString(true)
+        endDate.subtract((currentDay - firstDayOfMonth) + 1, "day").add(1, "month").toISOString(true)
+
+        return { startDate, endDate }
+    }
 }
