@@ -1,25 +1,32 @@
-import { TransactionSearchBox } from './TransactionSearchBox'
-
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useTransactions } from '../../hooks/useTransactions'
-import { useAuthContext } from '../../contexts/Auth'
+import { CiImport } from "react-icons/ci"
 import moment from 'moment'
 
-import styles from "./styles.module.css"
+// Types
+import { ITransaction, ITransactionsPageFilters, useTransactionEditorModalHookProps } from '../../type-defs'
+
+// Context
+import { useAuthContext } from '../../contexts/Auth'
+
+// Helper functions
+import { getStartAndEndOfMonth, sortArrayOfObjects } from '../../helpers/helpers'
+
+// Hooks
 import { useCategories } from '../../hooks/useCategories'
 import { useWallets } from '../../hooks/useWallets'
-import { ITransaction } from '../../type-defs'
-
-import { ITransactionsPageFilters, useTransactionEditorModalHookProps } from '../../type-defs'
-import { sortArrayOfObjects } from '../../helpers/helpers'
-import {CiImport} from "react-icons/ci"
-
 import { useModal } from '../../hooks/useModal'
-import { ModalSaveCancel } from '../../components/Modal'
-import { FormTransactionCRUD } from '../../components/FormTransactionCRUD'
-
+import { useTransactions } from '../../hooks/useTransactions'
 import { useToastNotification } from '../../hooks/useToastNotification'
+
+// Components
+import { TransactionSearchBox } from './TransactionSearchBox'
+import { FormTransactionCRUD } from '../../components/FormTransactionCRUD'
+import { ModalSaveCancel } from '../../components/Modal'
+
+// Styles
+import styles from "./styles.module.css"
+
 
 
 function TransactionsPage() {
@@ -42,17 +49,21 @@ function TransactionsPage() {
         deleteTransaction,
         walletBalanceAfterLastTransaction
     })
-    
-    const [searchFilters, setSearchFilters] = useState<ITransactionsPageFilters>( setInitialFilterValues() )
-    
+
+    const [searchFilters, setSearchFilters] = useState<ITransactionsPageFilters>(setInitialFilterValues())
+
     const [filteredAndSortedTransactions, setFilteredAndSortedTransactions] = useState<Array<ITransaction>>([])
 
-    
+
     // Filter and sort transactions everytime "transactionsList" and/or "searchFilters" changes
     useEffect(filterAndSortTransactions, [transactionsList, searchFilters])
 
     // Refreshes transactions list everytime the user changes the active wallet or search filters
     useEffect(refreshTransactionList, [searchFilters])
+
+    useEffect(() => {
+        document.title = "Transações Finanzly"
+    }, [])
 
     return (
         <div className={styles.page_container}>
@@ -65,7 +76,7 @@ function TransactionsPage() {
                         filters={searchFilters}
                         setFilters={setSearchFilters}
                         walletsList={walletsList}
-                        onSearchButtonClick={() => {}}
+                        onSearchButtonClick={() => { }}
                         customWidth={"80%"}
                     />
 
@@ -106,7 +117,7 @@ function TransactionsPage() {
     // Page helper functions
     function filterAndSortTransactions() {
         const filteredTransactions = transactionsList.filter((transaction) => {
-            const categoryName = categoriesList.find((category) => {return (category.id == transaction.fromCategory)})?.categoryName?.toUpperCase() || ""
+            const categoryName = categoriesList.find((category) => { return (category.id == transaction.fromCategory) })?.categoryName?.toUpperCase() || ""
             const description = transaction.description?.toUpperCase() || ""
             const extraInfo = transaction.extraInfo?.toUpperCase() || ""
 
@@ -126,9 +137,11 @@ function TransactionsPage() {
     }
 
     function setInitialFilterValues(): ITransactionsPageFilters {
+        const { startDate: monthStartDate, endDate: monthEndDate } = getStartAndEndOfMonth(loggedUser?.firstDayOfMonth!)
+
         // Gets "startDate" and "endDate" from URL Query String OR sets to first and last day of current month
-        const startDate = (urlQuery.get("startDate")) ? moment(urlQuery.get("startDate")).startOf('day').toDate() : moment(new Date).startOf("month").startOf('day').toDate()
-        const endDate = (urlQuery.get("endDate")) ? moment(urlQuery.get("endDate")).startOf('day').toDate() : moment(new Date).endOf("month").startOf("day").toDate()
+        const startDate = (urlQuery.get("startDate")) ? moment(urlQuery.get("startDate")).startOf('day').toDate() : moment(monthStartDate).startOf('day').toDate()
+        const endDate = (urlQuery.get("endDate")) ? moment(urlQuery.get("endDate")).startOf('day').toDate() : moment(monthEndDate).startOf("day").toDate()
         const category = urlQuery.get("category") || ""
         const userActiveWallet = loggedUser?.activeWallet || null
 
@@ -159,7 +172,7 @@ function TransactionsPage() {
                         return (
 
                             // Transaction row
-                            <tr key={transaction.id} onClick={() => {transactionModal.handleEditExistingTransaction(transaction)}}>
+                            <tr key={transaction.id} onClick={() => { transactionModal.handleEditExistingTransaction(transaction) }}>
 
                                 <td className={styles.description_cell}>
                                     <span>
@@ -174,7 +187,7 @@ function TransactionsPage() {
                                 <td className={styles.imported_transaction_cell}>
                                     <span>{transaction.importedTransaction && <CiImport />}</span>
                                 </td>
-                                
+
                                 <td className={styles.category_cell}>
                                     <span>{myCategory?.categoryName}</span>
                                 </td>
@@ -238,12 +251,12 @@ function sumTotalIncomesAndExpenses(transactionsList: Array<ITransaction>) {
     return { totalIncomes, totalExpenses }
 }
 
-function useTransactionEditorModal({updateWalletBalance, categoriesList, tempTransaction, setTempTransaction, updateTransaction, createTransaction, deleteTransaction, walletBalanceAfterLastTransaction}: useTransactionEditorModalHookProps) {
+function useTransactionEditorModal({ updateWalletBalance, categoriesList, tempTransaction, setTempTransaction, updateTransaction, createTransaction, deleteTransaction, walletBalanceAfterLastTransaction }: useTransactionEditorModalHookProps) {
     const { loggedUser } = useAuthContext()
 
-    const {showSuccessNotification} = useToastNotification()
-    
-    const {isOpen, closeModal, showModal} = useModal()
+    const { showSuccessNotification } = useToastNotification()
+
+    const { isOpen, closeModal, showModal } = useModal()
     const [modalState, setModalState] = useState({
         title: "",
         isEditing: false,
@@ -275,7 +288,7 @@ function useTransactionEditorModal({updateWalletBalance, categoriesList, tempTra
         setTempTransaction({ ...transaction })
         showModal()
     }
-    
+
     async function handleModalSaveButtonClick() {
         const success = (modalState.isEditing) ? await updateTransaction(tempTransaction?.id!, tempTransaction!) : await createTransaction(tempTransaction!)
 
@@ -327,7 +340,7 @@ function useTransactionEditorModal({updateWalletBalance, categoriesList, tempTra
         )
     }
 
-    return {isOpen, closeModal, showModal, modalState, setModalState, handleCreateNewTransaction, handleEditExistingTransaction, renderModalComponent}
+    return { isOpen, closeModal, showModal, modalState, setModalState, handleCreateNewTransaction, handleEditExistingTransaction, renderModalComponent }
 }
 
 export { TransactionsPage }
