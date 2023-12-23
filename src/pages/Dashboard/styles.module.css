@@ -1,40 +1,84 @@
 .page_container {
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 
   /* Margin added because of app side menu bar */
   padding-left: 50px;
+
+  background-color: #e4e4e4;
+  overflow: hidden;
+}
+
+.date_range_container {
+  margin: 10px 20px 0 20px;
+  background-color: rgba(255, 255, 255, 0.45);
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+.charts_container {
+  flex: 1;
+  /* display: flex; */
+  position: relative;
+}
+
+.bar_chart_container {
+  /* border-radius: 20px; */
+  background-color: rgba(255, 255, 255, 0.45);
+  /* box-shadow: -5px -5px 9px rgba(255,255,255,0.45), 5px 5px 9px rgba(94,104,121,0.3); */
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  right: 20px;
+  height: calc(50% - 20px);
 }
 
 .donut_charts_container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    /* border: red 2px solid; */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  /* border-radius: 20px; */
+  background-color: rgba(255, 255, 255, 0.45);
+  /* box-shadow: -5px -5px 9px rgba(255,255,255,0.45), 5px 5px 9px rgba(94,104,121,0.3); */
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+
+  position: absolute;
+  bottom: 10px;
+  left: 20px;
+  right: 20px;
+  height: calc(50% - 20px);
 }
 
 .donut_container {
-    /* display: flex;
+  /* display: flex;
     flex-direction: column; */
-    /* flex: 0 1 auto; */
+  /* flex: 0 1 auto; */
 
-    height: 200px;
-    width: 50%;
-    position: relative;
-    cursor: pointer;
-    /* border: 1px solid blue; */
+  height: 200px;
+  width: 50%;
+  position: relative;
+  cursor: pointer;
+  /* border: 1px solid blue; */
 }
 
 .skeleton_loading_effect {
-    color: transparent;
-    border-radius: 0.5rem;
-    animation: skeleton-loading 1s linear infinite alternate;
+  color: transparent;
+  border-radius: 0.5rem;
+  animation: skeleton-loading 1s linear infinite alternate;
 }
 
 @keyframes skeleton-loading {
-    0% {
-      background-color: hsl(200, 20%, 80%);
-    }
-    100% {
-      background-color: hsl(200, 20%, 95%);
-    }
+  0% {
+    background-color: hsl(200, 20%, 80%);
   }
+
+  100% {
+    background-color: hsl(200, 20%, 95%);
+  }
+}

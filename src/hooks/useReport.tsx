@@ -29,15 +29,19 @@ export function useReport(initialValues: IUseReportProps) {
 
     const [loadingReport, setLoadingReport] = useState(true)
 
-    async function getReportData() {
+    async function getReportData(reportDates?: { startDate: string, endDate: string }) {
         // 
         if (!reportProps.wallet) return false
-        
+
         try {
+            // alert(reportDates?.startDate)
+            const startDate = reportDates?.startDate || reportProps.startDate
+            const endDate = reportDates?.endDate || reportProps.endDate
+
             setLoadingReport(true)
 
-            const response: IReportData = (await api.get(`${reportGetEndpoint}?start=${reportProps.startDate}&end=${reportProps.endDate}&wallet=${reportProps.wallet.id}`)).data
-            const barChartsData = formatBarChartData(reportProps.startDate, reportProps.endDate, response)
+            const response: IReportData = (await api.get(`${reportGetEndpoint}?start=${startDate}&end=${endDate}&wallet=${reportProps.wallet.id}`)).data
+            const barChartsData = formatBarChartData(startDate, endDate, response)
             const totalIncomesByCategory = formatDonutChartData(response.totalIncomes.byCategory)
             const totalExpensesByCategory = formatDonutChartData(response.totalExpenses.byCategory)
 
@@ -73,23 +77,25 @@ export function useReport(initialValues: IUseReportProps) {
         setReportProps({ ...reportProps, endDate: validateDate(date) })
     }
 
+    function setReportDates(startDate: string | Date, endDate: string | Date) {
+        setReportProps({ ...reportProps, startDate: validateDate(startDate), endDate: validateDate(endDate) })
+    }
+
     function setReportWallet(wallet: IWallet) {
         setReportProps({ ...reportProps, wallet })
     }
 
-    const reportStartDate = () => { return reportProps.startDate }
-    const reportEndDate = () => { return reportProps.endDate }
 
-    
     return {
-        reportStartDate,
-        reportEndDate,
+        reportStartDate: reportProps.startDate,
+        reportEndDate: reportProps.endDate,
         setReportStartDate,
         setReportEndDate,
+        setReportDates,
         setReportWallet,
         getReportData,
         chartData,
-        loadingReport
+        loadingReport,
     }
 }
 

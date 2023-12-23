@@ -1,8 +1,6 @@
 import { ResponsiveBar } from "@nivo/bar"
 import { ResponsivePie } from "@nivo/pie"
 
-import moment from "moment"
-
 import { IBarChartData, IDonutChartData } from "../../type-defs"
 
 export function renderResponsiveBarChart(data: Array<IBarChartData>) {
@@ -145,53 +143,4 @@ export function renderResponsivePieChart(data: Array<IDonutChartData>) {
                             />
                         } */
     )
-}
-
-export function formatLineChartData(startDate: string, endDate: string, data: any) {
-    const datesData: any = []
-    const firstDate = moment(startDate).startOf("day").valueOf()
-    const lastDate = moment(endDate).startOf("day").valueOf()
-    let loopDate = firstDate
-
-    while (loopDate <= lastDate) {
-        const dayData = {
-            date: `${String(moment(loopDate).date()).padStart(2, "0")}`,
-            receitas: 0,
-            despesas: 0
-        }
-
-        for (const date in data.totalIncomes.byDate) {
-            if (loopDate == moment(date).valueOf()) {
-                dayData.receitas = data.totalIncomes.byDate[date]
-                break
-            }
-        }
-
-        for (const date in data.totalExpenses.byDate) {
-            if (loopDate == moment(date).valueOf()) {
-                dayData.despesas = data.totalExpenses.byDate[date]
-                break
-            }
-        }
-
-        datesData.push(dayData)
-
-        loopDate += 86400000 // 24 hours
-    }
-
-    return datesData
-}
-
-export function formatDonutChartData(data: any) {
-    const categoriesData: Array<IDonutChartData> = []
-
-    for (let category in data) {
-        categoriesData.push({
-            id: category,
-            label: category,
-            value: Number(data[category])
-        })
-    }
-
-    return categoriesData
 }
