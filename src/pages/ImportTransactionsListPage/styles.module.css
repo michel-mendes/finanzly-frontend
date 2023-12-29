@@ -1,0 +1,258 @@
+.page_container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 20px;
+
+    /* Margin added because of app side menu bar */
+    padding-left: calc(50px + 20px);
+
+    background-color: #e4e4e4;
+    overflow: hidden;
+}
+
+.transactions_table {
+    display: flex;
+    flex-direction: column;
+    
+    height: 100%;
+    overflow: hidden;
+
+    border-radius: 4px;
+    background: #FFF;
+    box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.25);
+}
+
+.table_header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-shrink: 0;
+
+    width: 100%;
+    height: 40px;
+    padding: 9px 0px 8px 0px;
+    background: #6284A4;
+
+    color: #FFF;
+    text-align: center;
+    font-family: Poppins;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.header_column_number {
+    width: 50px
+}
+
+.header_column_date {
+    width: 160px;
+    flex-shrink: 0;
+}
+
+.header_column_description {
+    width: 560px;
+    flex-shrink: 0;
+}
+
+.header_column_value {
+    width: 100px;
+    flex-shrink: 0;
+}
+
+.header_column_category {
+    width: 227px;
+    flex-shrink: 0;
+}
+
+.header_column_type {
+    width: 163px;
+    flex-shrink: 0;
+}
+
+.table_body {
+    flex: 1;
+    overflow: auto;
+}
+
+.existing_transaction_overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    background: rgba(255, 255, 255, 0.50);
+    backdrop-filter: blur(3px);
+}
+
+.table_row {
+    height: 56px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 12px;
+    position: relative;
+}
+.table_row:nth-last-child(n+2) {
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.50);
+}
+.table_row:nth-child(even) {
+    background-color: #EAEAEA;
+}
+.table_row input {
+    font-family: inherit;
+    font-size: inherit;
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+.table_row input::-webkit-outer-spin-button,
+.table_row input::-webkit-inner-spin-button { /* Chrome, Safari, Edge, Opera */
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.table_row input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.data_column_number {
+    width: 50px;
+}
+.data_column_date {
+    width: 160px;
+}
+.data_column_date input {
+    text-align: center;
+}
+.data_column_description {
+    width: 560px;
+    display: flex;
+    flex-direction: column;
+}
+.data_column_description input:first-child {
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.50);
+}
+.data_column_value {
+    width: 100px;
+}
+.data_column_value input {
+    width: 100%;
+    text-align: right;
+}
+.data_column_category {
+    width: 227px;
+}
+.data_column_category input {
+    text-align: center;
+}
+.data_column_type {
+    padding-right: 14px;
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.data_column_type p {
+    width: 111px;
+}
+.data_column_type img {
+    cursor: pointer;
+}
+.table_row[transaction-type="D"] .data_column_type {
+    color: #C64646;
+}
+.table_row[transaction-type="C"] .data_column_type {
+    color: #4646C6;
+}
+
+
+/* Table footer */
+.table_footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    width: 100%;
+    height: 57px;
+    padding: 10px 20px;
+
+    background: #6284A4;
+}
+
+.backup_text_container {
+    display: flex;
+    width: 172px;
+    height: 37px;
+    padding: 7px 10px 6px 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+
+    color: #ffffff;
+}
+
+.send_transactions_button {
+    display: flex;
+    align-items: center;
+    height: 37px;
+    padding: 7px 14px 6px 0px;
+
+    border-radius: 3px;
+    background: #EFEFEF;
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
+
+    cursor: pointer;
+}
+.send_transactions_button > p {
+    width: 150px;
+    color: #000;
+    text-align: center;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;    
+}
+.send_transactions_button > img {
+    width: 24px;
+    height: 24px;
+}
+
+
+
+
+
+
+
+
+
+
+.table tr[transaction-type="D"] span {
+    color: red;
+    font-weight: bold;
+}
+
+.table tr[transaction-type="C"] {
+    color: blue;
+    font-weight: bold;
+}
+
+.table tr[transaction-already-exists="true"] {
+    opacity: .3;
+    border: 2px dashed red;
+}
