@@ -82,7 +82,6 @@ function TransactionSearchBox({ filters, setFilters, walletsList, onSearchButton
 
                             <div className={styles.value_column}>
                                 <SearchDropDown
-                                    fieldName="fromCategory"
                                     placeholder="Escolha a carteira"
                                     results={walletsList}
                                     value={tempFilters.wallet?.walletName || filters.wallet?.walletName || ""}

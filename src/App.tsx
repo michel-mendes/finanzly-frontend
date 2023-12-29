@@ -11,10 +11,10 @@ import { WalletsPage } from './pages/Wallets'
 import { CategoriesPage } from './pages/Categories'
 import { TransactionsPage } from './pages/Transactions'
 import { ImportTransactionsPage } from './pages/ImportTransactions'
+import { ImportTransactionsListPage } from './pages/ImportTransactionsListPage'
 
 // Shared Components
 import { LoadingOverlay } from './components/LoadingPageOverlay'
-import { FloatingTopNavigationBar } from './components/FloatingTopNavigationBar'
 import { AppSideMenu } from './components/AppSideMenu'
 
 function App() {
@@ -36,14 +36,15 @@ function App() {
 
         {/* Define app routes */}
         <Routes>
-          <Route path='/'             element={<Navigate to="/login" />} />
-          <Route path='/login'        element={<LoginPage />} />
-          <Route path='/dashboard'    element={loggedUser ? <DashboardPage /> : <Navigate to="/login" />} />
-          <Route path='/wallets'      element={loggedUser ? <WalletsPage /> : <Navigate to="/login" />} />
-          <Route path='/categories'   element={loggedUser ? <CategoriesPage /> : <Navigate to="/login" />} />
-          <Route path='/transactions' element={loggedUser ? <TransactionsPage /> : <Navigate to="/login" />} />
-          <Route path='/import'       element={loggedUser ? <ImportTransactionsPage /> : <Navigate to="/login" />} />
-          <Route path='*'             element={<><h1>Página não encontrada <br /> Usuário está logado: {loggedUser ? "SIM" : "NAO"}</h1><br></br><h2>Dados do usuário:</h2><pre>{JSON.stringify(loggedUser, undefined, 4)}</pre></>} />
+          <Route path='/'                     element={<Navigate to="/login" />} />
+          <Route path='/login'                element={<LoginPage />} />
+          <Route path='/dashboard'            element={loggedUser ? <DashboardPage /> : <Navigate to="/login" />} />
+          <Route path='/wallets'              element={loggedUser ? <WalletsPage /> : <Navigate to="/login" />} />
+          <Route path='/categories'           element={loggedUser ? <CategoriesPage /> : <Navigate to="/login" />} />
+          <Route path='/transactions'         element={loggedUser ? <TransactionsPage /> : <Navigate to="/login" />} />
+          <Route path='/import'               element={loggedUser ? <ImportTransactionsPage /> : <Navigate to="/login" />} />
+          <Route path='/import/transactions'  element={loggedUser ? <ImportTransactionsListPage /> : <Navigate to="/login" />} />
+          <Route path='*'                     element={<><h1>Página não encontrada <br /> Usuário está logado: {loggedUser ? "SIM" : "NAO"}</h1><br></br><h2>Dados do usuário:</h2><pre>{JSON.stringify(loggedUser, undefined, 4)}</pre></>} />
         </Routes>
       </BrowserRouter>
     </>
