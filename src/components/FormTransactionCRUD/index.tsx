@@ -52,7 +52,6 @@ function FormTransactionCRUD({ transactionData, setTransactionData, setTransacti
 
                 <div className={styles.column_value}>
                     <SearchDropDown
-                        fieldName="fromCategory"
                         placeholder="Escolha a categoria"
                         results={categoriesList}
                         value={selectedCategoryName || ""}

@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback, CSSProperties } from "react"
-import { RiArrowDropDownFill } from "react-icons/ri"
-import { AiOutlineSearch } from "react-icons/ai";
-import { RiEqualizerLine } from "react-icons/ri";
-import { RiArrowDownSLine } from "react-icons/ri";
+
+import dropDownArrow from "../../assets/dropDown-arrow.svg"
+import zoomIcon from "../../assets/zoom-icon.svg"
 
 import styles from "./styles.module.css"
 
 interface ISearchDropDownProps<Type> {
-    fieldName: string;
     placeholder: string;
     results?: Type[];
     renderItem(item: Type): JSX.Element;
@@ -18,7 +16,7 @@ interface ISearchDropDownProps<Type> {
     searcheableProperty: keyof Type;
 }
 
-    function SearchDropDown<Type extends object>({ results = [], renderItem, value, placeholder, fieldName, onChange, onSelect, dropdownPxWidth, searcheableProperty }: ISearchDropDownProps<Type>) {
+function SearchDropDown<Type extends object>({ results = [], renderItem, value, placeholder, onChange, onSelect, dropdownPxWidth, searcheableProperty }: ISearchDropDownProps<Type>) {
 
     const [focusedIndex, setFocusedIndex] = useState(-1)
     const [showDropDown, setShowDropDown] = useState(false)
@@ -28,10 +26,10 @@ interface ISearchDropDownProps<Type> {
 
     const resultContainer = useRef<HTMLDivElement>(null)
 
-    const dropdownStyleValue: CSSProperties = (dropdownPxWidth) ? {minWidth: dropdownPxWidth} : {}
+    const dropdownStyleValue: CSSProperties = (dropdownPxWidth) ? { minWidth: dropdownPxWidth } : {}
 
     function handleSelection(selected: Type) {
-        const selectedItem = results.find(item => {return item == selected})
+        const selectedItem = results.find(item => { return item == selected })
 
         if (!selectedItem) { return resetSearchComplete() }
 
@@ -101,21 +99,15 @@ interface ISearchDropDownProps<Type> {
         if (value) setDefaultValue(value)
     }, [value])
 
-    const inputId = `input_${fieldName}`
-
     return (
-        <div className={styles.container}>
+        <div className={styles.container} onClick={toggleShowPopup}>
             {/* <div tabIndex={0} onBlur={resetSearchComplete}> */}
-            <div tabIndex={0} className={styles.placeholder_container} onClick={toggleShowPopup}>
+            <div tabIndex={0} className={styles.placeholder_container}>
                 {
-                    !defaultValue && (<span>{placeholder}</span>)
+                    defaultValue ? <span>{defaultValue}</span> : <span>{placeholder}</span>
                 }
 
-                <span>{defaultValue}</span>
-
-                <div className={styles.dropdown_arrow}>
-                    <RiArrowDownSLine />
-                </div>
+                <img src={dropDownArrow} alt="Dropdown Arrow" />
             </div>
 
             {/* Search reaults container */}
@@ -124,10 +116,6 @@ interface ISearchDropDownProps<Type> {
                     <div className={styles.dropdown_container} style={dropdownStyleValue}>
 
                         <div className={styles.search_bar_container}>
-                            <div className={styles.button}>
-                                <AiOutlineSearch />
-                            </div>
-
                             <input
                                 type="text"
                                 onChange={(event) => { setSearchText(event.currentTarget.value) }}
@@ -135,6 +123,8 @@ interface ISearchDropDownProps<Type> {
                                 value={searchText}
                                 autoFocus
                             />
+
+                            <img className={styles.search_icon} src={zoomIcon} alt="Search icon" />
                         </div>
 
                         <div className={styles.results_container}>
@@ -146,7 +136,7 @@ interface ISearchDropDownProps<Type> {
                                 })
                                     .map((result, index) => {
                                         const iAmFocused = index == focusedIndex
-                                        const focusedStyle: CSSProperties = (iAmFocused) ? {fontWeight: "bold", backgroundColor: "#f2f7f2"} : {}
+                                        const focusedStyle: CSSProperties = (iAmFocused) ? { fontWeight: "bold", backgroundColor: "#f2f7f2" } : {}
                                         return (
                                             <div
                                                 key={index}
@@ -163,10 +153,6 @@ interface ISearchDropDownProps<Type> {
                                         )
                                     })
                             }
-                        </div>
-
-                        <div className={styles.results_counter_container}>
-                            <span>{results.length} itens</span>
                         </div>
                     </div>
                 )
