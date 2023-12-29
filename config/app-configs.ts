@@ -32,6 +32,9 @@ export const appConfigs = {
     transactionGetFromWallet: `${baseApiUrl}${import.meta.env.VITE_TRANSACTION_GET_FROM_WALLET}`,
     transactionUpdateEndpoint: `${baseApiUrl}${import.meta.env.VITE_TRANSACTION_PUT}`,
     transactionDeleteEndpoint: `${baseApiUrl}${import.meta.env.VITE_TRANSACTION_DELETE}`,
+    
+    // Import Endpoint
+    importPostEndpoint: `${baseApiUrl}${import.meta.env.VITE_IMPORT_POST}`,
 
     // Report Endpoint
     reportGetEndpoint: `${baseApiUrl}${import.meta.env.VITE_REPORT_GET}`
