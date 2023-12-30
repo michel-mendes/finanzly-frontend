@@ -22,6 +22,7 @@ import checkIcon from "../../assets/check-green-icon.svg"
 import threeDotsIcon from "../../assets/three-dots-icon.svg"
 import rightArrowIcon from "../../assets/right-arrow-icon.svg"
 import alertIcon from "../../assets/alert.svg"
+import closeIcon from "../../assets/close.svg"
 
 // Stylesheet
 import style from "./style.module.css";
@@ -70,6 +71,11 @@ function ImportTransactionsPage() {
         navigate("/import/transactions")
     }
 
+    function deletePendingImports() {
+        localStorage.removeItem(userStorageKey)
+        setThereArePendingImports(null)
+    }
+
     async function sendCsvFile() {
         try {
             setImportStatus("AwaitingServerResponse")
@@ -98,6 +104,11 @@ function ImportTransactionsPage() {
         <div className={style.page_container}>
 
             <div className={style.container}>
+
+                {/* Overlay rendered only if there are saved imports pending to be sent to the server */}
+                {
+                    renderPendingImportsOverlay()
+                }
 
                 <h2 className={style.page_title}>Importação de Transações</h2>
                 <p className={style.short_page_description}>Escolha abaixo a carteira destino, instituição financeira a que as transações pertencem e o arquivo em que estão:</p>
@@ -146,29 +157,17 @@ function ImportTransactionsPage() {
                     </div>
                 </div>
 
-                { renderStartImportButton() }
-
-                {/* {
-                    thereArePendingImports && (
-                        <div className={style.alert_existing_imports}>
-                            <div className={style.text}>
-                                <img alt="Alert icon" src={alertIcon} />
-                                <p>Há importações pendentes de serem salvas, deseja continuar?</p>
-                            </div>
-
-                            <div className={style.response}>
-                                <p onClick={redirectToImportTransactions}>SIM</p>
-                                <p onClick={() => {localStorage.removeItem(userStorageKey); setThereArePendingImports(null)}}>NÃO</p>
-                            </div>
-                        </div>
-                    )
-                } */}
+                {
+                    renderStartImportButton()
+                }
 
             </div>
 
         </div>
 
     )
+
+
 
     // Page helper functions
     function renderStartImportButton() {
@@ -201,13 +200,45 @@ function ImportTransactionsPage() {
         )
     }
 
-    function renderExistingImportsOverlay() {
+    function renderPendingImportsOverlay() {
         return (
             <>
                 {
                     thereArePendingImports && (
-                        <div>
-                            
+                        <div className={style.pending_imports_overlay}>
+                            <div className={style.modal_content}>
+                                <img className={style.modal_alert_icon} src={alertIcon} alt="" />
+                                <p>Existem importações pendentes que ainda não foram salvas.</p>
+
+                                <div className={style.details_container}>
+                                    <div>
+                                        <span>Carteira destino:</span>
+                                        <p>Uma carteira qualquer</p>
+                                    </div>
+
+                                    <div>
+                                        <span>Transações:</span>
+                                        <p>1185</p>
+                                    </div>
+                                    
+                                    <div>
+                                        <span>Último vez salvo:</span>
+                                        <p>30/12/2023</p>
+                                    </div>
+                                </div>
+
+                                <div className={style.buttons_container}>
+                                    <div className={style.start_import_button} onClick={redirectToImportTransactions}>
+                                        <img alt="check icon" src={checkIcon} />
+                                        <p>SIM</p>
+                                    </div>
+
+                                    <div className={style.start_import_button} onClick={deletePendingImports}>
+                                        <img alt="close icon" src={closeIcon} />
+                                        <p>NÃO</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     )
                 }
