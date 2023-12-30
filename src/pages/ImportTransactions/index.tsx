@@ -4,6 +4,7 @@ import axios from "axios";
 
 // Custom hooks
 import { useToastNotification } from "../../hooks/useToastNotification";
+import { useWallets } from "../../hooks/useWallets";
 
 // App config
 import { appConfigs } from "../../../config/app-configs";
@@ -24,6 +25,7 @@ import alertIcon from "../../assets/alert.svg"
 
 // Stylesheet
 import style from "./style.module.css";
+import { IWallet } from "../../type-defs";
 
 interface IBankData {
     id: string,
@@ -42,8 +44,9 @@ const { importPostEndpoint } = appConfigs
 
 function ImportTransactionsPage() {
     const { loggedUser } = useAuthContext()
+    const { walletsList } = useWallets()
     const userStorageKey = `import${loggedUser?.id}`
-    const [thereArePendingImports, setThereArePendingImports] = useState<string | null>( localStorage.getItem(userStorageKey) )
+    const [thereArePendingImports, setThereArePendingImports] = useState<string | null>(localStorage.getItem(userStorageKey))
 
     const navigate = useNavigate()
 
@@ -51,6 +54,7 @@ function ImportTransactionsPage() {
 
     const selectFileInput = useRef<HTMLInputElement>(null)
     const [isFileSelected, setIsFileSelected] = useState(false)
+    const [selectedWallet, setSelectedWallet] = useState<IWallet | null>(loggedUser?.activeWallet || null)
     const [selectedBank, setSelectedBank] = useState<IBankData | null>(null)
     const [importStatus, setImportStatus] = useState<"ToBeSent" | "AwaitingServerResponse" | "Ready">("ToBeSent")
 
@@ -96,7 +100,21 @@ function ImportTransactionsPage() {
             <div className={style.container}>
 
                 <h2 className={style.page_title}>Importação de Transações</h2>
-                <p className={style.short_page_description}>Escolha abaixo a instituição a que as transações pertencem e o arquivo em que estão:</p>
+                <p className={style.short_page_description}>Escolha abaixo a carteira destino, instituição financeira a que as transações pertencem e o arquivo em que estão:</p>
+
+                <div className={style.dropdown_container}>
+                    <p>Carteira destino</p>
+
+                    <SearchDropDown
+                        placeholder="Selecione a carteira"
+                        results={walletsList}
+                        value={selectedWallet?.walletName || ""}
+                        renderItem={(item) => <p>{item.walletName}</p>}
+                        onSelect={(item) => { setSelectedWallet(item) }}
+                        searcheableProperty="walletName"
+                        dropdownPxWidth={400}
+                    />
+                </div>
 
                 <label htmlFor="dropdownField" className={style.dropdown_container}>
                     <p>Instituição financeira</p>
@@ -106,9 +124,7 @@ function ImportTransactionsPage() {
                         results={bankList}
                         value={selectedBank?.bankName}
                         renderItem={(item) => <p>{item.bankName}</p>}
-                        onSelect={(item) => {
-                            setSelectedBank(item)
-                        }}
+                        onSelect={(item) => { setSelectedBank(item) }}
                         searcheableProperty="bankName"
                     />
                 </label>
@@ -130,31 +146,9 @@ function ImportTransactionsPage() {
                     </div>
                 </div>
 
-                {
-                    importStatus == "AwaitingServerResponse" ? (
+                { renderStartImportButton() }
 
-                        <div className={style.start_import_button}>
-                            <p>Carregando, aguarde...</p>
-                        </div>
-
-                    ) : importStatus == "ToBeSent" ? (
-
-                        <div className={style.start_import_button} aria-disabled={(isFileSelected && selectedBank) ? false : true} onClick={sendCsvFile}>
-                            <p>Iniciar importação</p>
-                            <img alt="Right arrow icon" src={rightArrowIcon} />
-                        </div>
-
-                    ) : /* isLoading == "Ready" */ (
-
-                        <div className={style.start_import_button} onClick={redirectToImportTransactions}>
-                            <p>Visualizar</p>
-                            <img alt="Right arrow icon" src={rightArrowIcon} />
-                        </div>
-
-                    )
-                }
-
-                {
+                {/* {
                     thereArePendingImports && (
                         <div className={style.alert_existing_imports}>
                             <div className={style.text}>
@@ -168,13 +162,59 @@ function ImportTransactionsPage() {
                             </div>
                         </div>
                     )
-                }
+                } */}
 
             </div>
 
         </div>
 
     )
+
+    // Page helper functions
+    function renderStartImportButton() {
+        return (
+            <>
+                {
+                    importStatus == "AwaitingServerResponse" ? (
+
+                        <div className={style.start_import_button}>
+                            <p>Carregando, aguarde...</p>
+                        </div>
+
+                    ) : importStatus == "ToBeSent" ? (
+
+                        <div className={style.start_import_button} aria-disabled={(isFileSelected && selectedBank && selectedWallet) ? false : true} onClick={sendCsvFile}>
+                            <p>Iniciar importação</p>
+                            <img alt="Right arrow icon" src={rightArrowIcon} />
+                        </div>
+
+                    ) : /* isLoading == "Ready" */ (
+
+                        <div className={style.start_import_button} onClick={redirectToImportTransactions}>
+                            <p>Visualizar</p>
+                            <img alt="Right arrow icon" src={rightArrowIcon} />
+                        </div>
+
+                    )
+                }
+            </>
+        )
+    }
+
+    function renderExistingImportsOverlay() {
+        return (
+            <>
+                {
+                    thereArePendingImports && (
+                        <div>
+                            
+                        </div>
+                    )
+                }
+            </>
+        )
+    }
+
 }
 
 export { ImportTransactionsPage }
