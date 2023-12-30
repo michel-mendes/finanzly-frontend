@@ -77,7 +77,7 @@ function TransactionSearchBox({ filters, setFilters, walletsList, onSearchButton
                     <div className={styles.popup_container}>
                         <h3>Refine sua pesquisa utilizando os campos abaixo</h3>
 
-                        <label className={styles.fields_row}>
+                        <div className={styles.fields_row}>
                             <span className={styles.name_column}>Carteira</span>
 
                             <div className={styles.value_column}>
@@ -93,7 +93,7 @@ function TransactionSearchBox({ filters, setFilters, walletsList, onSearchButton
                                     dropdownPxWidth={400}
                                 />
                             </div>
-                        </label>
+                        </div>
 
                         <label className={styles.fields_row}>
                             <span className={styles.name_column}>Contém as palavras</span>
