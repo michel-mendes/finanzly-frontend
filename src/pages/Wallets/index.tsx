@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
 
 // Auth context
 import { useAuthContext } from "../../contexts/Auth"
@@ -18,16 +17,14 @@ import { FormWalletCRUD } from "../../components/FormWalletCRUD"
 import { useWallets } from "../../hooks/useWallets"
 import { useToastNotification } from "../../hooks/useToastNotification"
 
-// Components
-import { PageHeaderDesktop } from "../../components/PageHeaderDesktop"
-import { IoArrowBack } from "react-icons/io5"
+// Icons
+import addIcon from "../../assets/add.svg"
 
 // Styling
 import styles from "./styles.module.css"
 
 
 function WalletsPage() {
-  const navigate = useNavigate()
   const { walletsList, tempWallet, setTempWallet, loadingWallets, deleteWallet, updateWallet, createWallet, awaitingResponse } = useWallets()
 
   const { showSuccessNotification } = useToastNotification()
@@ -49,17 +46,22 @@ function WalletsPage() {
   return (
     <div className={styles.page_container}>
 
-      <PageHeaderDesktop>
-        <div className={styles.header_content}>
-          <i onClick={() => { navigate("/dashboard") }}>{<IoArrowBack />}</i>
-          <span>Minhas carteiras</span>
-          <button onClick={() => { handleOpenWalletModal() }}>Nova carteira</button>
-        </div>
-      </PageHeaderDesktop>
+      <div className={styles.list_container}>
 
-      <ul className={styles.list}>
-        <WalletsList isLoading={loadingWallets} walletsList={walletsList} handleOpenWalletModal={handleOpenWalletModal} />
-      </ul>
+        <div className={styles.header}>
+          <p className={styles.header_title}>Minhas carteiras</p>
+
+          <div className={styles.add_button} onClick={() => { handleOpenWalletModal() }}>
+            <img alt="check icon" src={addIcon} />
+            <p>Nova carteira</p>
+          </div>
+        </div>
+
+        <ul className={styles.list}>
+          <WalletsList isLoading={loadingWallets} walletsList={walletsList} handleOpenWalletModal={handleOpenWalletModal} />
+        </ul>
+
+      </div>
 
       <ModalSaveCancel
         isOpen={isOpen}
@@ -134,12 +136,12 @@ function WalletsList(props: { walletsList: IWallet[], isLoading: boolean, handle
         {
           walletsList.map(wallet => {
             return (
-              <li key={wallet.id} onClick={() => { handleOpenWalletModal(wallet) }}>
+              <li className={styles.wallet_item} key={wallet.id} onClick={() => { handleOpenWalletModal(wallet) }}>
                 <img src={wallet.iconPath} alt="ícone do banco" />
 
                 <div>
-                  <span className={styles.wallet_name}>{wallet.walletName}</span>
-                  <span>{wallet.currencySymbol} {wallet.actualBalance?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  <p className={styles.wallet_name}>{wallet.walletName}</p>
+                  <p>{wallet.currencySymbol} {wallet.actualBalance?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                 </div>
               </li>
             )
