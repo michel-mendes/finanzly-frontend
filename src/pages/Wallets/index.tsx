@@ -54,7 +54,7 @@ function WalletsPage() {
         <div className={styles.header}>
           <p className={styles.header_title}>Minhas carteiras</p>
 
-          <CustomButton caption="Nova categoria" icon={addIcon} handleClick={() => { handleOpenWalletModal() }}/>
+          <CustomButton caption="Nova carteira" icon={addIcon} handleClick={() => { handleOpenWalletModal() }}/>
         </div>
 
         <ul className={styles.list}>

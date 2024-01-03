@@ -1,6 +1,4 @@
-import { useState, useEffect} from "react"
-import { useNavigate } from "react-router-dom"
-import { IoArrowBack } from "react-icons/io5"
+import { useState, useEffect } from "react"
 
 // Interfaces
 import { ICategory } from "../../type-defs"
@@ -13,7 +11,7 @@ import { useModal } from "../../hooks/useModal"
 import { useToastNotification } from "../../hooks/useToastNotification"
 
 // Components
-import { PageHeaderDesktop } from "../../components/PageHeaderDesktop"
+import { CustomButton } from "../../components/CustomButton"
 import { CategoriesList } from "./CategoriesList"
 import { ModalSaveCancel } from "../../components/Modal"
 import { LoadingOverlay } from "../../components/LoadingPageOverlay"
@@ -22,15 +20,18 @@ import { LoadingOverlay } from "../../components/LoadingPageOverlay"
 import { useAuthContext } from "../../contexts/Auth"
 import { useCategories } from "../../hooks/useCategories"
 
+// Icons
+import addIcon from "../../assets/add.svg"
+
+// Stylesheet
 import styles from "./styles.module.css"
 
 function CategoriesPage() {
     const { loggedUser } = useAuthContext()
-    const navigate = useNavigate()
 
-    const {showSuccessNotification} = useToastNotification()
+    const { showSuccessNotification } = useToastNotification()
 
-    const {categoriesList, loadingCategories, awaitingResponse, tempCategory, setTempCategory, createCategory, updateCategory, deleteCategory} = useCategories()
+    const { categoriesList, loadingCategories, awaitingResponse, tempCategory, setTempCategory, createCategory, updateCategory, deleteCategory } = useCategories()
 
     const { isOpen, showModal, closeModal } = useModal()
 
@@ -41,7 +42,7 @@ function CategoriesPage() {
     function handleOpenModal(categoryToEdit: ICategory | null = null) {
         setIsEditing(categoryToEdit !== null)
         setModalTitle((categoryToEdit !== null) ? "Alterar categoria" : "Nova categoria")
-        
+
         if (!categoryToEdit) {
             setTempCategory({
                 categoryName: "",
@@ -58,7 +59,7 @@ function CategoriesPage() {
     }
 
     async function handleModalSaveClick() {
-        const success = (!isEditing) ? (await createCategory({...tempCategory!, fromUser: loggedUser?.id})) : (await updateCategory(tempCategory!.id!, tempCategory!))
+        const success = (!isEditing) ? (await createCategory({ ...tempCategory!, fromUser: loggedUser?.id })) : (await updateCategory(tempCategory!.id!, tempCategory!))
 
         if (success) {
             setTempCategory(null)
@@ -87,18 +88,23 @@ function CategoriesPage() {
 
     return (
         <div className={styles.page_container}>
-            <PageHeaderDesktop>
-                <div className={styles.header_content}>
-                    <i onClick={() => { navigate("/dashboard") }}>{<IoArrowBack />}</i>
-                    <span>Minhas categorias</span>
-                    <button onClick={() => { handleOpenModal() }}>Nova categoria</button>
-                </div>
-            </PageHeaderDesktop>
 
             <div className={styles.list_container}>
-                {
-                    loadingCategories ? <LoadingOverlay /> : <CategoriesList categoriesList={categoriesList} onClickItem={handleOpenModal} />
-                }
+
+                <div className={styles.header}>
+                    <p className={styles.header_title}>Minhas categorias</p>
+
+                    <CustomButton caption="Nova categoria" icon={addIcon} handleClick={() => { handleOpenModal() }} />
+                </div>
+
+                <ul className={styles.list}>
+                    {
+                        loadingCategories
+                        ? <LoadingOverlay />
+                        : <CategoriesList categoriesList={categoriesList} onClickItem={handleOpenModal} />
+                    }
+                </ul>
+
             </div>
 
             <ModalSaveCancel isOpen={isOpen} modalTitle={modalTitle} modalButtons={{
