@@ -6,6 +6,9 @@ import { useAuthContext } from "../../contexts/Auth"
 // Types
 import { IWallet } from "../../type-defs"
 
+// Components
+import { CustomButton } from "../../components/CustomButton"
+
 // Modal
 import { ModalSaveCancel } from "../../components/Modal"
 import { useModal } from "../../hooks/useModal"
@@ -51,10 +54,7 @@ function WalletsPage() {
         <div className={styles.header}>
           <p className={styles.header_title}>Minhas carteiras</p>
 
-          <div className={styles.add_button} onClick={() => { handleOpenWalletModal() }}>
-            <img alt="check icon" src={addIcon} />
-            <p>Nova carteira</p>
-          </div>
+          <CustomButton caption="Nova categoria" icon={addIcon} handleClick={() => { handleOpenWalletModal() }}/>
         </div>
 
         <ul className={styles.list}>

@@ -1,0 +1,36 @@
+@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+
+.button {
+    font: inherit;
+    cursor: pointer;
+
+    display: flex;
+    text-wrap: nowrap;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+
+    border: none;
+    border-radius: 3px;
+    outline: none;
+    height: 37px;
+    padding-left: 10px;
+    padding-right: 10px;
+    box-shadow: 0px 0px 4px #00000040;
+
+    transition: filter .10s;
+}
+
+.button:active {
+    box-shadow: 0px 0px 4px #00000040 inset;
+}
+
+.button:hover {
+    box-shadow: 0px 0px 4px 1px #00000040;
+    filter: brightness(.95);
+    transition: filter .10s;
+}
+
+.button.icon_right_side {
+    flex-direction: row-reverse;
+}
