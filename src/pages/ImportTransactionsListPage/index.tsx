@@ -1,9 +1,13 @@
 import moment from 'moment'
 import { useEffect, useRef, useState } from 'react'
 
+// Hooks
 import { useAuthContext } from '../../contexts/Auth'
 import { useCategories } from '../../hooks/useCategories'
 import { useTransactions } from '../../hooks/useTransactions'
+
+// Types
+import { IImportedTransaction, ILocalImportBackup } from '../../type-defs'
 
 import checkIcon from "../../assets/check-green-icon.svg"
 import downloadIcon from "../../assets/download_icon.svg"
@@ -12,21 +16,9 @@ import deleteIcon from "../../assets/delete.svg"
 import styles from "./styles.module.css"
 
 
-interface IImportedTransaction {
-    fromCategory: string;
-    fromWallet: string;
-    fromUser: string;
-    date: number;
-    description: string;
-    extraInfo: string,
-    value: number;
-    transactionType: string;
-    csvImportId: string;
-    transactionAlreadyExists: boolean;
-}
-
 function ImportTransactionsListPage() {
     const { loggedUser } = useAuthContext()
+    const userStorageKey = `import${loggedUser?.id}`
 
     const { categoriesList } = useCategories()
     const { createTransaction } = useTransactions()
@@ -163,6 +155,7 @@ function ImportTransactionsListPage() {
         }
 
         alert(`Foram importadas ${insertedCount} transações`)
+        localStorage.removeItem(userStorageKey)
     }
 
     // Updates the REF inputs everytime the transactions list is changed
@@ -171,11 +164,14 @@ function ImportTransactionsListPage() {
     }, [transactionsList])
 
 
+    // Get local backup on load page
     useEffect(() => {
-        const pendingImportTransactions = JSON.parse(localStorage.getItem(`import${loggedUser?.id}`) || "") || null;
+        const localBackup = localStorage.getItem(userStorageKey);
+        const pendingTransactions = (localBackup) ? (JSON.parse(localBackup) as ILocalImportBackup).transactionsList : []
 
-        (pendingImportTransactions !== null) && setTransactionsList(pendingImportTransactions)
-        document.title = "Importar transações Finanzly"
+        setTransactionsList( pendingTransactions )
+
+        document.title = "Lista de transações importadas Finanzly"
     }, [])
 
     return (

@@ -188,3 +188,30 @@ export interface useTransactionEditorModalHookProps {
     deleteTransaction(transactionId: string): Promise<boolean>,
     walletBalanceAfterLastTransaction: number;
 }
+
+
+// Import transactions
+export interface ILocalImportBackup {
+    wallet: IWallet,
+    transactionsCount: number,
+    lastSaved: Date,
+    transactionsList: Array<IImportedTransaction>
+}
+
+export interface IBankData {
+    id: string,
+    bankName: string
+}
+
+export interface IImportedTransaction {
+    fromCategory: string;
+    fromWallet: string;
+    fromUser: string;
+    date: number;
+    description: string;
+    extraInfo: string,
+    value: number;
+    transactionType: string;
+    csvImportId: string;
+    transactionAlreadyExists: boolean;
+}

@@ -24,14 +24,13 @@ import rightArrowIcon from "../../assets/right-arrow-icon.svg"
 import alertIcon from "../../assets/alert.svg"
 import closeIcon from "../../assets/close.svg"
 
+// Types
+import { IWallet } from "../../type-defs";
+import { IImportedTransaction, IBankData, ILocalImportBackup } from "../../type-defs";
+
 // Stylesheet
 import style from "./style.module.css";
-import { IWallet } from "../../type-defs";
 
-interface IBankData {
-    id: string,
-    bankName: string
-}
 
 const bankList: Array<IBankData> = [
     { id: "inter-mobile", bankName: "Banco Inter (Mobile)" },
@@ -47,7 +46,9 @@ function ImportTransactionsPage() {
     const { loggedUser } = useAuthContext()
     const { walletsList } = useWallets()
     const userStorageKey = `import${loggedUser?.id}`
-    const [thereArePendingImports, setThereArePendingImports] = useState<string | null>(localStorage.getItem(userStorageKey))
+
+    // Get from user local storage
+    const [pendingImports, setPendingImports] = useState( getLocalBackup() )
 
     const navigate = useNavigate()
 
@@ -73,7 +74,7 @@ function ImportTransactionsPage() {
 
     function deletePendingImports() {
         localStorage.removeItem(userStorageKey)
-        setThereArePendingImports(null)
+        setPendingImports(null)
     }
 
     async function sendCsvFile() {
@@ -85,11 +86,17 @@ function ImportTransactionsPage() {
             formData.append("bank", selectedBank!.id)
             formData.append("csvFile", selectFileInput.current!.files![0])
 
-            const resp = (await axios.post(importPostEndpoint, formData, { withCredentials: true })).data
+            const resp: Array<IImportedTransaction> = (await axios.post(importPostEndpoint, formData, { withCredentials: true })).data
             selectFileInput.current!.value = ""
             setIsFileSelected(false)
 
-            localStorage.setItem(userStorageKey, JSON.stringify(resp))
+            const localBackup: ILocalImportBackup = {
+                wallet: selectedWallet!,
+                transactionsCount: resp.length,
+                lastSaved: new Date(),
+                transactionsList: resp
+            }
+            localStorage.setItem(userStorageKey, JSON.stringify(localBackup))
 
             showSuccessNotification("Análise concluída")
             setImportStatus("Ready")
@@ -97,6 +104,14 @@ function ImportTransactionsPage() {
             showErrorNotification("Desculpe, houve um erro ao analisar o arquivo")
             setImportStatus("ToBeSent")
         }
+    }
+
+    function getLocalBackup(): ILocalImportBackup | null {
+        const localBackup = localStorage.getItem(userStorageKey)
+
+        if ( !localBackup ) return null
+        
+        return JSON.parse(localBackup) as ILocalImportBackup
     }
 
     return (
@@ -204,7 +219,7 @@ function ImportTransactionsPage() {
         return (
             <>
                 {
-                    thereArePendingImports && (
+                    pendingImports && (
                         <div className={style.pending_imports_overlay}>
                             <div className={style.modal_content}>
                                 <img className={style.modal_alert_icon} src={alertIcon} alt="" />
@@ -213,17 +228,17 @@ function ImportTransactionsPage() {
                                 <div className={style.details_container}>
                                     <div>
                                         <span>Carteira destino:</span>
-                                        <p>Uma carteira qualquer</p>
+                                        <p>{pendingImports.wallet.walletName}</p>
                                     </div>
 
                                     <div>
-                                        <span>Transações:</span>
-                                        <p>1185</p>
+                                        <span>Quantidade de transações:</span>
+                                        <p>{Number(pendingImports.transactionsCount).toLocaleString()}</p>
                                     </div>
                                     
                                     <div>
-                                        <span>Último vez salvo:</span>
-                                        <p>30/12/2023</p>
+                                        <span>Última vez salvo:</span>
+                                        <p>{new Date(pendingImports.lastSaved).toLocaleDateString()} - {new Date(pendingImports.lastSaved).toLocaleTimeString()}</p>
                                     </div>
                                 </div>
 
