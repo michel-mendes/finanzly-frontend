@@ -16,6 +16,7 @@ function CategoriesList({ categoriesList, onClickItem }: ICategoriesListProps) {
             {
                 categoriesList.map(category => {
                     const sideColorClass = (category.transactionType == "C") ? styles.side_color_blue : styles.side_color_red
+                    const categoryTypeTextColor = (category.transactionType == "C") ? styles.text_blue : styles.text_red
 
                     return (
                         <li className={styles.category_item} key={category.id} onClick={(!onClickItem) ? undefined : (event) => { event.stopPropagation(); onClickItem(category) }}>
@@ -25,7 +26,7 @@ function CategoriesList({ categoriesList, onClickItem }: ICategoriesListProps) {
 
                             <div className={styles.details_container}>
                                 <p>{category.categoryName}</p>
-                                <p>{(category.transactionType == "C") ? "Recebimento" : "Pagamento"}</p>
+                                <p className={categoryTypeTextColor}>{(category.transactionType == "C") ? "Recebimento" : "Pagamento"}</p>
                             </div>
                         </li>
                     )

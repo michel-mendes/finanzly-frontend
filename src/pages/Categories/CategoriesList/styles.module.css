@@ -1,5 +1,6 @@
 .category_item {
     position: relative;
+    overflow: hidden;
     
     display: flex;
     justify-content: space-between;
@@ -35,4 +36,21 @@
 .category_icon {
     width: 42px;
     height: 42px;
+}
+
+.details_container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.text_red {
+    color: #C64646;
+    font-weight: bold;
+}
+
+.text_blue {
+    color: #4646C6;
+    font-weight: bold;
 }
