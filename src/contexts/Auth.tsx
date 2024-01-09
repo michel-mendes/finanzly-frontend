@@ -11,10 +11,10 @@ const AuthContext = createContext<IAuthContextProps | null>(null)
 
 function AuthContextProvider({ children  }: IAuthContextProps) {
 
-    const {loadingUser, loggedUser, loginUser, logoutUser, getLoggedUser, setActiveWallet} = useUsers()
+    const {loadingUser, loggedUser, loginUser, logoutUser, getLoggedUser, setActiveWallet, editUser} = useUsers()
 
     return (
-        <AuthContext.Provider value={{ loadingUser, loggedUser, loginUser, logoutUser, getLoggedUser, setActiveWallet }}>
+        <AuthContext.Provider value={{ loadingUser, loggedUser, loginUser, logoutUser, getLoggedUser, setActiveWallet, editUser }}>
             {children}
         </AuthContext.Provider>
     )

@@ -17,6 +17,7 @@ import { api } from "../helpers/apiCall";
 import { handleError } from "../helpers/errorHandler";
 
 const {
+    userEditEndpoint,
     userLoginEnpoint,
     userLogoutEnpoint,
     getUserLoggedEndpoint,
@@ -35,6 +36,21 @@ export function useUsers() {
         decoratedGetLoggedUser()
     }, [])
 
+    async function editUser(userData: IAuthenticatedUser) {
+        try {
+            const {firstName, lastName, firstDayOfMonth} = userData
+
+            // Send changes to server
+            await api.put(`${userEditEndpoint}${loggedUser?.id}`, {firstName, lastName, firstDayOfMonth})
+
+            showSuccessNotification("Dados atualizados com suceso")
+
+            setLoggedUser({...loggedUser, firstName, lastName, firstDayOfMonth})
+        } catch (error: any) {
+            showErrorNotification( handleError(error).message )
+        }
+    }
+    
     async function loginUser({ email, password }: ILoginProps) {
         try {
             const user: IAuthenticatedUser = (await api.post(userLoginEnpoint, { email, password })).data
@@ -87,6 +103,7 @@ export function useUsers() {
         loginUser,
         logoutUser,
         getLoggedUser: decoratedGetLoggedUser,
+        editUser,
         setActiveWallet
     }
 }

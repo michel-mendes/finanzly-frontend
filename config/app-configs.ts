@@ -3,6 +3,7 @@ const baseApiUrl = import.meta.env.VITE_API_BASE_URL
 export const appConfigs = {
     
     // Users endpoints
+    userEditEndpoint: baseApiUrl + import.meta.env.VITE_USER_PUT,
     userLoginEnpoint: baseApiUrl + import.meta.env.VITE_USER_LOGIN_ENDPOINT,
     userLogoutEnpoint: baseApiUrl + import.meta.env.VITE_USER_LOGOUT_ENDPOINT,
     getUserLoggedEndpoint: baseApiUrl + import.meta.env.VITE_GET_LOGGED_USER_ENDPOINT,

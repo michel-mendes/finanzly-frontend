@@ -79,11 +79,12 @@ export interface IRegisterProps {
 }
 
 export interface IAuthenticatedUser {
-    id: string;
-    firstName: string;
-    role: string;
-    activeWallet: IWallet | null;
-    firstDayOfMonth: number;
+    id?: string;
+    firstName?: string;
+    lastName?: string;
+    role?: string;
+    activeWallet?: IWallet | null;
+    firstDayOfMonth?: number;
 }
 
 export interface ILoginContextProps extends PropsWithChildren {
@@ -113,6 +114,7 @@ export interface IAuthContextProps extends PropsWithChildren {
     logoutUser: () => void,
     getLoggedUser: () => void,
     setActiveWallet: (walletId: string) => void;
+    editUser: (userData: IAuthenticatedUser) => void;
 }
 
 

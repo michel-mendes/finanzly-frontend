@@ -71,7 +71,7 @@ function AppSideMenu() {
                 {/* Menu links for user management */}
                 <div>
                     <li title={"Configurações"}>
-                        <Link to={"javascript:void(0);"} className={styles.menu_item}>
+                        <Link to={"/profile"} className={styles.menu_item}>
                             <i><BsGearFill /></i>
                             <span>{`Configurações`}</span>
                         </Link>
