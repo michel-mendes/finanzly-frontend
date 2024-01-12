@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useAuthContext } from "../../contexts/Auth"
 import { BsGrid3X3GapFill, BsListUl } from "react-icons/bs"
 import { BsFillPieChartFill } from "react-icons/bs"
@@ -8,10 +8,18 @@ import { RxHamburgerMenu } from "react-icons/rx"
 import { BsGearFill } from "react-icons/bs"
 import { FaDownload } from "react-icons/fa"
 
+// Icons
+import dashboardIcon from "../../assets/dashboard.svg"
+import walletIcon from "../../assets/wallet.svg"
+import categoryIcon from "../../assets/category.svg"
+import transactionsIcon from "../../assets/transactions.svg"
+import profileIcon from "../../assets/profile.svg"
+
 import styles from "./styles.module.css"
 
 function AppSideMenu() {
     const { logoutUser } = useAuthContext()
+    const navigate = useNavigate()
 
     const [isExpanded, setIsExpanded] = useState(false)
 
@@ -22,6 +30,7 @@ function AppSideMenu() {
     const menuExpandedOrNot = (isExpanded) ? `${styles.side_menu} ${styles.expanded}` : styles.side_menu
 
     return (
+        <>
         <div className={menuExpandedOrNot}>
             <ul>
 
@@ -87,6 +96,31 @@ function AppSideMenu() {
 
             </ul>
         </div>
+
+        <div className={styles.mobile_navbar}>
+            <div className={styles.mobile_navlink} onClick={() => {navigate("/dashboard")}}>
+                <img src={dashboardIcon} alt="" />
+                <p>Dashboard</p>
+            </div>
+            <div className={styles.mobile_navlink} onClick={() => {navigate("/wallets")}}>
+                <img src={walletIcon} alt="" />
+                <p>Carteiras</p>
+            </div>
+            <div className={styles.mobile_navlink} onClick={() => {navigate("/categories")}}>
+                <img src={categoryIcon} alt="" />
+                <p>Categorias</p>
+            </div>
+            <div className={styles.mobile_navlink} onClick={() => {navigate("/transactions")}}>
+                <img src={transactionsIcon} alt="" />
+                <p>Transações</p>
+            </div>
+            <div className={styles.mobile_navlink} onClick={() => {navigate("/profile")}}>
+                <img src={profileIcon} alt="" />
+                <p>Perfil</p>
+            </div>
+        </div>
+
+        </>
     )
 }
 
