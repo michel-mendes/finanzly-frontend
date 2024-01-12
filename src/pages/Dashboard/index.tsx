@@ -77,135 +77,139 @@ function DashboardPage() {
     return (
         <div className={styles.page_container}>
 
-            <div className={styles.date_range_container}>
-                <p className={loadingWalletEffect}>{loggedUser.activeWallet?.walletName}</p>
+            <div className={styles.dashboard_container}>
 
-                <span className={loadingWalletEffect}>
-                    <div style={{ display: "flex", alignItems: "center", margin: "auto", gap: "10px", width: "300px" }}>
-                        <span style={{ fontSize: 20, cursor: "pointer" }} onClick={() => { changeReportDates("priorMonth") }}>
-                            <FaRegArrowAltCircleLeft />
-                        </span>
+                <div className={styles.date_range_container}>
+                    <p className={loadingWalletEffect}>{loggedUser.activeWallet?.walletName}</p>
 
-                        <InputEdit
-                            fieldName="reportStartDate"
-                            inputType="date"
-                            placeholder=""
-                            value={reportStartDate}
-                            onChange={(value) => { setReportStartDate(moment(value).toISOString(true).split("T")[0]) }}
-                        />
+                    <span className={loadingWalletEffect}>
+                        <div style={{ display: "flex", alignItems: "center", margin: "auto", gap: "10px", width: "300px" }}>
+                            <span style={{ fontSize: 20, cursor: "pointer" }} onClick={() => { changeReportDates("priorMonth") }}>
+                                <FaRegArrowAltCircleLeft />
+                            </span>
 
-                        <span> - </span>
+                            <InputEdit
+                                fieldName="reportStartDate"
+                                inputType="date"
+                                placeholder=""
+                                value={reportStartDate}
+                                onChange={(value) => { setReportStartDate(moment(value).toISOString(true).split("T")[0]) }}
+                            />
 
-                        <InputEdit
-                            fieldName="reportEndDate"
-                            inputType="date"
-                            placeholder=""
-                            value={reportEndDate}
-                            onChange={(value) => { setReportEndDate(moment(value).toISOString(true).split("T")[0]) }}
-                        />
+                            <span> - </span>
 
-                        <span style={{ fontSize: 20, cursor: "pointer" }} onClick={() => { changeReportDates("nextMonth") }}>
-                            <FaRegArrowAltCircleRight />
-                        </span>
+                            <InputEdit
+                                fieldName="reportEndDate"
+                                inputType="date"
+                                placeholder=""
+                                value={reportEndDate}
+                                onChange={(value) => { setReportEndDate(moment(value).toISOString(true).split("T")[0]) }}
+                            />
+
+                            <span style={{ fontSize: 20, cursor: "pointer" }} onClick={() => { changeReportDates("nextMonth") }}>
+                                <FaRegArrowAltCircleRight />
+                            </span>
+                        </div>
+
+                        <button className="btn btn-info" onClick={handleOnClickRefreshButton}>
+                            Atualizar
+                        </button>
+                    </span>
+                </div>
+
+                <div className={styles.charts_container}>
+                    <div className={styles.bar_chart_container}>
+                        <section className={loadingChartDataEffect} style={{ height: "200px" }}>
+                            {
+                                loadingChartDataEffect ? null : (
+                                    <>
+                                        {
+                                            renderResponsiveBarChart(chartData.barChartsData)
+                                        }
+                                    </>
+                                )
+                            }
+                        </section>
                     </div>
 
-                    <button className="btn btn-info" onClick={handleOnClickRefreshButton}>
-                        Atualizar
-                    </button>
-                </span>
-            </div>
+                    <div>
+                        <section className={styles.donut_charts_container}>
+                            <div className={`${styles.donut_container} ${loadingChartDataEffect}`} onClick={() => {
+                                showModalWithCategoriesAndValues(chartData.donutChartsData.incomes.list, setModalCategoriesList, showModal)
+                            }}>
+                                {/* <div style={{height: "200px", border: "1px solid black", position: "relative" }}> */}
+                                {
+                                    loadingChartDataEffect ? null : (
+                                        <>
+                                            {
+                                                renderResponsivePieChart(chartData.donutChartsData.incomes.list)
+                                            }
 
-            <div className={styles.charts_container}>
-                <div className={styles.bar_chart_container}>
-                    <section className={loadingChartDataEffect} style={{ height: "200px" }}>
-                        {
-                            loadingChartDataEffect ? null : (
-                                <>
-                                    {
-                                        renderResponsiveBarChart(chartData.barChartsData)
-                                    }
-                                </>
-                            )
-                        }
-                    </section>
+                                            <div style={{
+                                                position: "absolute",
+                                                top: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                left: 0,
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                fontSize: 13,
+                                                color: "black",
+                                                // background: "#FFFFFF33",
+                                                textAlign: "center",
+                                                // This is important to preserve the chart interactivity
+                                                pointerEvents: "none"
+                                            }}>
+                                                <span>Receitas</span>
+                                                <span>{chartData.donutChartsData.currencySymbol} {chartData.donutChartsData.incomes.totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                            </div>
+                                        </>
+                                    )}
+                                {/* </div> */}
+                            </div>
+
+                            <div className={`${styles.donut_container} ${loadingChartDataEffect}`} onClick={() => {
+                                showModalWithCategoriesAndValues(chartData.donutChartsData.expenses.list, setModalCategoriesList, showModal)
+                            }}>
+                                {/* <div style={{ height: "200px", border: "1px solid black", position: "relative" }}> */}
+                                {
+                                    loadingChartDataEffect ? null : (
+                                        <>
+                                            {
+                                                renderResponsivePieChart(chartData.donutChartsData.expenses.list)
+                                            }
+
+                                            <div style={{
+                                                position: "absolute",
+                                                top: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                left: 0,
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                fontSize: 13,
+                                                color: "black",
+                                                // background: "#FFFFFF33",
+                                                textAlign: "center",
+                                                // This is important to preserve the chart interactivity
+                                                pointerEvents: "none"
+                                            }}>
+                                                <span>Despesas</span>
+                                                <span>{chartData.donutChartsData.currencySymbol} {chartData.donutChartsData.expenses.totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                            </div>
+                                        </>
+                                    )}
+                                {/* </div> */}
+                            </div>
+
+                        </section>
+                    </div>
                 </div>
 
-                <div>
-                    <section className={styles.donut_charts_container}>
-                        <div className={`${styles.donut_container} ${loadingChartDataEffect}`} onClick={() => {
-                            showModalWithCategoriesAndValues(chartData.donutChartsData.incomes.list, setModalCategoriesList, showModal)
-                        }}>
-                            {/* <div style={{height: "200px", border: "1px solid black", position: "relative" }}> */}
-                            {
-                                loadingChartDataEffect ? null : (
-                                    <>
-                                        {
-                                            renderResponsivePieChart(chartData.donutChartsData.incomes.list)
-                                        }
-
-                                        <div style={{
-                                            position: "absolute",
-                                            top: 0,
-                                            right: 0,
-                                            bottom: 0,
-                                            left: 0,
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            fontSize: 13,
-                                            color: "black",
-                                            // background: "#FFFFFF33",
-                                            textAlign: "center",
-                                            // This is important to preserve the chart interactivity
-                                            pointerEvents: "none"
-                                        }}>
-                                            <span>Receitas</span>
-                                            <span>{chartData.donutChartsData.currencySymbol} {chartData.donutChartsData.incomes.totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                        </div>
-                                    </>
-                                )}
-                            {/* </div> */}
-                        </div>
-
-                        <div className={`${styles.donut_container} ${loadingChartDataEffect}`} onClick={() => {
-                            showModalWithCategoriesAndValues(chartData.donutChartsData.expenses.list, setModalCategoriesList, showModal)
-                        }}>
-                            {/* <div style={{ height: "200px", border: "1px solid black", position: "relative" }}> */}
-                            {
-                                loadingChartDataEffect ? null : (
-                                    <>
-                                        {
-                                            renderResponsivePieChart(chartData.donutChartsData.expenses.list)
-                                        }
-
-                                        <div style={{
-                                            position: "absolute",
-                                            top: 0,
-                                            right: 0,
-                                            bottom: 0,
-                                            left: 0,
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            fontSize: 13,
-                                            color: "black",
-                                            // background: "#FFFFFF33",
-                                            textAlign: "center",
-                                            // This is important to preserve the chart interactivity
-                                            pointerEvents: "none"
-                                        }}>
-                                            <span>Despesas</span>
-                                            <span>{chartData.donutChartsData.currencySymbol} {chartData.donutChartsData.expenses.totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                        </div>
-                                    </>
-                                )}
-                            {/* </div> */}
-                        </div>
-
-                    </section>
-                </div>
             </div>
 
             <ModalSaveCancel

@@ -40,6 +40,7 @@
     flex: 1;
     overflow: auto;
 }
+
 .table_container table {
     border-collapse: collapse;
     width: 100%;
@@ -53,6 +54,7 @@
     z-index: 1;
     background-color: #ffffff;
 }
+
 .table_container thead::before {
     content: "";
     border: 2px solid #c0c0c0;
@@ -67,15 +69,18 @@
     padding-top: 5px;
     padding-bottom: 5px;
 }
+
 .table_container tbody tr {
     background-color: #ffffff;
     border: 1px solid #c0c0c0;
     border-left: none;
     position: relative;
 }
+
 .table_container tbody tr:first-child {
     border-top: 1px solid transparent;
 }
+
 .table_container tbody tr:nth-child(even) {
     background-color: #ececec;
 }
@@ -84,6 +89,7 @@
     filter: brightness(95%);
     cursor: pointer;
 }
+
 .table_container tbody td:first-child::before {
     content: "";
     position: absolute;
@@ -91,11 +97,13 @@
     right: 0;
     bottom: 0;
     left: 0;
-    border: 2px solid #00000000; /* Transparent border */
+    border: 2px solid #00000000;
+    /* Transparent border */
     margin: -1px;
     margin-left: 0px;
     transition: border .2s;
 }
+
 .table_container tbody td:hover::before {
     content: "";
     position: absolute;
@@ -117,13 +125,14 @@
     border-left: 1px solid #c0c0c0;
 }
 
-.description_cell > span {
+.description_cell>span {
     display: flex;
     justify-content: left;
     align-items: center;
     gap: 10px;
     padding-left: 5px;
 }
+
 .description_cell .extra_info {
     color: #909090;
     font-style: italic;
@@ -138,23 +147,28 @@
     width: 0;
     white-space: nowrap;
 }
-.category_cell > span {
+
+.category_cell>span {
     padding-left: 5px;
     padding-right: 5px;
 }
 
-.date_cell, .value_cell {
+.date_cell,
+.value_cell {
     width: 100px;
 }
-.value_cell > span {
+
+.value_cell>span {
     display: flex;
     gap: 5px;
     justify-content: right;
     padding-right: 5px;
 }
+
 .value_cell[category-type="D"] {
     color: #ff0000;
 }
+
 .value_cell[category-type="C"] {
     color: #0000FF;
 }
@@ -183,15 +197,30 @@
     flex-basis: 400px;
     flex-direction: row;
 }
+
 .footer_total_values>span {
-    display:flex;
+    display: flex;
     flex-direction: column;
 }
+
 .footer_total_values .total_incomes {
     color: #0000FF;
     font-weight: bold;
 }
+
 .footer_total_values .total_expenses {
     color: #FF0000;
     font-weight: bold;
+}
+
+@media (max-width: 480px) {
+    .transactions_container {
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        margin: 0;
+        padding-bottom: 80px;
+    }
 }
