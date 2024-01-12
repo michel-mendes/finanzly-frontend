@@ -24,6 +24,14 @@
   -webkit-text-size-adjust: 100%;
 }
 
+/* Prevent user to scroll up and refresh/reload pages in mobile */
+html {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* ------------------------------------------------------------ */
+
 a,
 .link {
   cursor: pointer;
@@ -31,6 +39,7 @@ a,
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover,
 .link:hover {
   color: #535bf2;
@@ -42,7 +51,7 @@ body {
   display: flex;
   place-items: center;
   min-width: 320px;
-  min-height: 100vh;
+  /* min-height: 100vh; */
 }
 
 h1 {
@@ -100,78 +109,91 @@ button:disabled {
 
 /*** Buttons :) ***/
 .btn {
-  border:2px solid transparent;
+  border: 2px solid transparent;
   border-radius: 8px;
-  background:none;
-  box-shadow:1px 1px 2px rgba(21, 21, 21, 0.1);
-  cursor:pointer;
-  font-size:1.2em;
+  background: none;
+  box-shadow: 1px 1px 2px rgba(21, 21, 21, 0.1);
+  cursor: pointer;
+  font-size: 1.2em;
   /* padding: 0.6em 1.2em; */
   font-family: inherit;
-  margin:0 1rem;
-  padding:.25rem 2rem;
-  transition:all .15s ease-in-out;
+  margin: 0 1rem;
+  padding: .25rem 2rem;
+  transition: all .15s ease-in-out;
 
   border-color: #c0c0c0;
   background-color: #f0f0f0;
 }
-.btn:focus, .btn:hover {
-  box-shadow:1px 1px 2px rgba(21, 21, 21, 0.2);
+
+.btn:focus,
+.btn:hover {
+  box-shadow: 1px 1px 2px rgba(21, 21, 21, 0.2);
 }
+
 .btn:disabled {
   opacity: .25;
   cursor: not-allowed;
 }
+
 /*** Normal button ***/
 .btn-normal {
   border-color: #7c6dca;
-  background:#f0edfe;
+  background: #f0edfe;
   color: #7c6dca;
   /* color:hsl(0, 0%, 23%); */
 }
+
 .btn-normal:hover {
-  color:#f0edfe;
+  color: #f0edfe;
   background: #7c6dca;
 }
+
 /*** Submit button ***/
 .btn-submit {
-  border-color: hsl(141,100%,22%);
-  background: hsl(110,21%,93%);
-  color:hsl(141,100%,22%);
+  border-color: hsl(141, 100%, 22%);
+  background: hsl(110, 21%, 93%);
+  color: hsl(141, 100%, 22%);
 }
+
 .btn-submit:hover {
-  color: hsl(111,21%,86%);
-  background:hsl(141,100%,22%);
+  color: hsl(111, 21%, 86%);
+  background: hsl(141, 100%, 22%);
 }
+
 /*** Info button ***/
 .btn-info {
-  border-color: hsl(214,100%,44%);
-  background: hsl(212,48%,94%);
-  color:hsl(214,100%,44%);
+  border-color: hsl(214, 100%, 44%);
+  background: hsl(212, 48%, 94%);
+  color: hsl(214, 100%, 44%);
 }
+
 .btn-info:hover {
-  color: hsl(212,49%,88%);
-  background: hsl(214,100%,44%);
+  color: hsl(212, 49%, 88%);
+  background: hsl(214, 100%, 44%);
 }
+
 /*** Warning button ***/
 .btn-warning {
   border-color: hsl(40, 77%, 49%);
-  background:hsl(39, 100%, 92%);
-  color:hsl(40, 77%, 49%);
+  background: hsl(39, 100%, 92%);
+  color: hsl(40, 77%, 49%);
 }
+
 .btn-warning:hover {
-  color:hsl(39, 100%, 88%);
+  color: hsl(39, 100%, 88%);
   background: hsl(40, 77%, 49%);
 }
+
 /*** Delete button ***/
 .btn-delete {
-  border-color: hsl(0,91%,38%);
-  background: hsl(0,50%,95%);
-  color:hsl(0,91%,38%);
+  border-color: hsl(0, 91%, 38%);
+  background: hsl(0, 50%, 95%);
+  color: hsl(0, 91%, 38%);
 }
+
 .btn-delete:hover {
-  color: hsl(0,50%,90%);
-  background: hsl(0,91%,38%);
+  color: hsl(0, 50%, 90%);
+  background: hsl(0, 91%, 38%);
 }
 
 @media (prefers-color-scheme: light) {
@@ -180,9 +202,11 @@ button:disabled {
     color: #000000;
     background-color: #ffffff;
   }
+
   a:hover {
     color: #747bff;
   }
+
   /* button {
     background-color: #465161;
   } */

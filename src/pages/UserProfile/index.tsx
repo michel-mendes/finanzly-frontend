@@ -13,12 +13,13 @@ import { useAuthContext } from "../../contexts/Auth"
 // Icons
 import defaultAvatar from "../../assets/user_default_avatar.svg"
 import checkIcon from "../../assets/check-green-icon.svg"
+import exitIcon from "../../assets/exit.svg"
 
 // Stylesheet
 import style from "./style.module.css"
 
 function UserProfilePage() {
-    const { loggedUser, editUser } = useAuthContext()
+    const { loggedUser, editUser, logoutUser } = useAuthContext()
 
     const [userData, setUserData] = useState<IAuthenticatedUser>({
         firstName: "",
@@ -58,6 +59,7 @@ function UserProfilePage() {
 
                     <div className={style.button_container}>
                         <CustomButton caption="Salvar alterações" icon={checkIcon} handleClick={() => { editUser(userData) }} />
+                        <CustomButton caption="Sair" icon={exitIcon} handleClick={logoutUser} />
                     </div>
 
                 </div>

@@ -23,6 +23,10 @@ import { useToastNotification } from '../../hooks/useToastNotification'
 import { TransactionSearchBox } from './TransactionSearchBox'
 import { FormTransactionCRUD } from '../../components/FormTransactionCRUD'
 import { ModalSaveCancel } from '../../components/Modal'
+import { CustomButton } from '../../components/CustomButton'
+
+// Icons
+import addIcon from "../../assets/add.svg"
 
 // Styles
 import styles from "./styles.module.css"
@@ -80,7 +84,7 @@ function TransactionsPage() {
                         customWidth={"80%"}
                     />
 
-                    <button className='btn btn-normal' onClick={transactionModal.handleCreateNewTransaction}>Nova transação</button>
+                    <CustomButton caption='Nova transação' icon={addIcon} handleClick={transactionModal.handleCreateNewTransaction} />
                 </div>
 
                 <div className={styles.table_container}>

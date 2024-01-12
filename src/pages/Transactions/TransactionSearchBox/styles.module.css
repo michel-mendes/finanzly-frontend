@@ -133,4 +133,5 @@
     display: flex;
     justify-content: right;
     padding: 10px;
+    gap: 20px;
 }

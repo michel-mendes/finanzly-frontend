@@ -12,10 +12,14 @@ import { ITransactionSearchBoxProps, ITransactionsPageFilters } from "../../../t
 // Components
 import { SearchDropDown } from "../../../components/SearchDropDown"
 import { InputEdit } from "../../../components/InputEdit"
+import { CustomButton } from "../../../components/CustomButton"
 
 // Helper functions
 import { useClickOutsideComponentListener, useEscapeKeyListener } from "../../../helpers/helpers"
 
+// Icons
+import closeIcon from "../../../assets/close.svg"
+import searchIcon from "../../../assets/search.svg"
 
 import styles from "./styles.module.css"
 
@@ -156,7 +160,8 @@ function TransactionSearchBox({ filters, setFilters, walletsList, onSearchButton
                         </label>
 
                         <div className={styles.search_button_container}>
-                            <button onClick={handlePopupSearchButtonClick} className="btn btn-normal">Pesquisar</button>
+                            <CustomButton caption="Cancelar" icon={closeIcon} handleClick={() => toggleShowPopup(false)} />
+                            <CustomButton caption="Pesquisar" icon={searchIcon} handleClick={handlePopupSearchButtonClick} />
                         </div>
                     </div>
                 )
