@@ -4,6 +4,7 @@
     font: inherit;
     cursor: pointer;
 
+    position: relative;
     display: flex;
     text-wrap: nowrap;
     flex-direction: row;
@@ -31,6 +32,28 @@
     transition: filter .10s;
 }
 
+.overlay_color {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: .90;
+    border-radius: 3px;
+    z-index: 0;
+}
+
 .button.icon_right_side {
     flex-direction: row-reverse;
 }
+
+.button span {
+    width: 100%;
+    z-index: 1;
+}
+
+@media (prefers-color-scheme: light) {
+    .button {
+      filter: brightness(.9);
+    }
+  }

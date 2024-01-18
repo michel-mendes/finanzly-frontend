@@ -1,11 +1,10 @@
-import { redirect } from "react-router-dom"
 import { FormEvent } from "react"
-import { appConfigs } from "../../../../../config/app-configs"
-import axios, { AxiosError } from "axios"
+import { AxiosError } from "axios"
 
 // Components
 import { LoginFlipCard as ForgotOrLoginCard } from "../../components/FlipCard"
 import { AlertBox } from "../../../../components/AlertBox"
+import { CustomButton } from "../../../../components/CustomButton"
 
 // Icons
 import { FiMail, FiUser } from "react-icons/fi"
@@ -28,16 +27,13 @@ export {
   RegisterContent
 }
 
-const loginUrl = appConfigs.userLoginEnpoint
-
 function LoginContent({ handleFlip }: IFlipCardContentProps) {
   return (
     <>
       <ForgotOrLoginCard frontContent={<FormContent />} backContent={<ForgotPasswordContent />} />
 
       <div className={styles.create_account_container}>
-        <span>Ainda não tem uma conta?</span>
-        <span className="link" onClick={() => { handleFlip!() }}>CRIAR CONTA</span>
+        <CustomButton caption="Ainda não tenho uma conta" captionAlignment="center" handleClick={() => { handleFlip!() }} />
       </div>
     </>
   )
@@ -124,7 +120,7 @@ function FormContent({ handleFlip }: IFlipCardContentProps) {
         </label>
 
         <div className={styles.forgot_password_container}>
-          <span className="link" onClick={() => { handleFlip!(true) }}><TfiLock /> Esqueceu sua senha?</span>
+          <span className="link" onClick={() => { handleFlip!(true) }}><TfiLock /> Esqueci minha senha</span>
         </div>
 
         {
@@ -132,7 +128,7 @@ function FormContent({ handleFlip }: IFlipCardContentProps) {
         }
 
         <div className={styles.login_button_container}>
-          <button type="submit" onClick={(event) => { event.stopPropagation() }} className="btn btn-info">ENTRAR</button>
+          <CustomButton caption="ENTRAR" captionAlignment="center" icon="" handleClick={(event) => { event.stopPropagation() }} />
         </div>
 
       </form>
