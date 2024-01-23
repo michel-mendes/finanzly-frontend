@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { Navigate, useNavigate } from "react-router-dom"
-import { FaRegArrowAltCircleLeft, FaRegArrowAltCircleRight } from "react-icons/fa";
 import moment from "moment"
 
 // Helpers functions
@@ -12,14 +11,14 @@ import { IDonutChartData, IModalCategoriesList, IModalProps } from "../../type-d
 // Components
 import { InputEdit } from "../../components/InputEdit"
 
-// styles
-import styles from "./styles.module.css"
-
 // Page helpers
 import { renderResponsiveBarChart, renderResponsivePieChart } from "./useCharts"
 
 // Hooks
 import { useReport } from "../../hooks/useReport"
+import { useWallets } from "../../hooks/useWallets";
+import { useCategories } from "../../hooks/useCategories";
+import { useTransactions } from "../../hooks/useTransactions";
 
 // Auth context
 import { useAuthContext } from "../../contexts/Auth"
@@ -27,12 +26,27 @@ import { useAuthContext } from "../../contexts/Auth"
 // Modal
 import { useModal } from "../../hooks/useModal"
 import { ModalSaveCancel } from "../../components/Modal"
+import { SearchDropDown } from "../../components/SearchDropDown";
+import { CustomButton } from "../../components/CustomButton";
 
+// Icons
+import refreshIcon from "../../assets/refresh.svg"
+import calendarIcon from "../../assets/calendar-thin.svg"
+import moneyBagIcon from "../../assets/money-bag-outline.svg"
+import arrowCircleUpIcon from "../../assets/arrow-circle-up-outline.svg"
+import arrowCircleDownIcon from "../../assets/arrow-circle-down-outline.svg"
+
+// styles
+import styles from "./styles.module.css"
 
 
 function DashboardPage() {
-    const { loggedUser, loadingUser } = useAuthContext()
+    const { loggedUser, setActiveWallet, loadingUser } = useAuthContext()
     const { showModal, closeModal, isOpen } = useModal()
+
+    const { walletsList } = useWallets()
+    const { categoriesList } = useCategories()
+    const { transactionsList, getTransactionsFromWallet } = useTransactions()
 
     const {
         reportStartDate, reportEndDate,
@@ -46,22 +60,17 @@ function DashboardPage() {
 
     const [modalCategoriesList, setModalCategoriesList] = useState<Array<IModalCategoriesList>>([])
 
-    const loadingWalletEffect = (loadingUser) ? styles.skeleton_loading_effect : ""
-    const loadingChartDataEffect = (loadingReport) ? styles.skeleton_loading_effect : ""
+    const [periodBalance, setPeriodBalance] = useState(0)
+    const walletBalanceContainerColor = (periodBalance < 0) ? "#F46D43" : "#1F78B4"
+
 
     function handleOnClickRefreshButton() {
         setReportStartDate(moment(reportStartDate).toISOString(true).split("T")[0])
         setReportEndDate(moment(reportEndDate).toISOString(true).split("T")[0])
 
+        getTransactionsFromWallet(loggedUser?.activeWallet?.id!, reportStartDate, reportEndDate)
         getReportData()
     }
-
-    useEffect(() => {
-        document.title = "Dashboard Finanzly"
-    }, [])
-
-
-    if (!loggedUser) return <Navigate to="/login" />
 
     function changeReportDates(period: "priorMonth" | "nextMonth") {
         const changeMonthStartDate = (period == "priorMonth") ? moment(reportStartDate).subtract(1, "month") : moment(reportStartDate).add(1, "month")
@@ -74,139 +83,189 @@ function DashboardPage() {
         getReportData({ startDate: newStartDate, endDate: newEndDate })
     }
 
+    useEffect(() => {
+        document.title = "Dashboard Finanzly"
+    }, [])
+
+    useEffect(() => {
+        setPeriodBalance( Number(chartData.donutChartsData.incomes.totalValue) - Number(chartData.donutChartsData.expenses.totalValue) )
+    }, [chartData])
+
+    if (!loggedUser) return <Navigate to="/login" />
+
     return (
         <div className={styles.page_container}>
 
             <div className={styles.dashboard_container}>
 
-                <div className={styles.date_range_container}>
-                    <p className={loadingWalletEffect}>{loggedUser.activeWallet?.walletName}</p>
+                <div className={styles.balance_section}>
 
-                    <span className={loadingWalletEffect}>
-                        <div style={{ display: "flex", alignItems: "center", margin: "auto", gap: "10px", width: "300px" }}>
-                            <span style={{ fontSize: 20, cursor: "pointer" }} onClick={() => { changeReportDates("priorMonth") }}>
-                                <FaRegArrowAltCircleLeft />
-                            </span>
+                    {/* Wallet and date range section */}
 
-                            <InputEdit
-                                fieldName="reportStartDate"
-                                inputType="date"
-                                placeholder=""
-                                value={reportStartDate}
-                                onChange={(value) => { setReportStartDate(moment(value).toISOString(true).split("T")[0]) }}
+                    <div className={styles.wallet_dates_container}>
+                        <div className={styles.wallet_selector}>
+                            <p>Resumo da carteira</p>
+
+                            <SearchDropDown
+                                placeholder="Selecione a carteira"
+                                results={walletsList}
+                                value={loggedUser?.activeWallet?.walletName || ""}
+                                renderItem={(item) => <p>{item.walletName}</p>}
+                                onSelect={(item) => { setActiveWallet(item.id!) }}
+                                searcheableProperty="walletName"
+                                dropdownPxWidth={400}
                             />
-
-                            <span> - </span>
-
-                            <InputEdit
-                                fieldName="reportEndDate"
-                                inputType="date"
-                                placeholder=""
-                                value={reportEndDate}
-                                onChange={(value) => { setReportEndDate(moment(value).toISOString(true).split("T")[0]) }}
-                            />
-
-                            <span style={{ fontSize: 20, cursor: "pointer" }} onClick={() => { changeReportDates("nextMonth") }}>
-                                <FaRegArrowAltCircleRight />
-                            </span>
                         </div>
 
-                        <button className="btn btn-info" onClick={handleOnClickRefreshButton}>
-                            Atualizar
-                        </button>
-                    </span>
-                </div>
+                        <div className={styles.dates_selector}>
+                            <div className={styles.date_input_container}>
+                                <p>Data início</p>
 
-                <div className={styles.charts_container}>
-                    <div className={styles.bar_chart_container}>
-                        <section className={loadingChartDataEffect} style={{ height: "200px" }}>
-                            {
-                                loadingChartDataEffect ? null : (
-                                    <>
-                                        {
-                                            renderResponsiveBarChart(chartData.barChartsData)
-                                        }
-                                    </>
-                                )
-                            }
-                        </section>
+                                <InputEdit
+                                    fieldName="reportStartDate"
+                                    inputType="date"
+                                    placeholder=""
+                                    value={reportStartDate}
+                                    onChange={(value) => { setReportStartDate(moment(value).toISOString(true).split("T")[0]) }}
+                                />
+                            </div>
+
+                            <div className={styles.date_input_container}>
+                                <p>Data fim</p>
+
+                                <InputEdit
+                                    fieldName="reportEndDate"
+                                    inputType="date"
+                                    placeholder=""
+                                    value={reportEndDate}
+                                    onChange={(value) => { setReportEndDate(moment(value).toISOString(true).split("T")[0]) }}
+                                />
+                            </div>
+
+                            <div className={styles.buttons_container}>
+                                {/* <CustomButton caption={`${moment(reportStartDate).toDate().toLocaleDateString()} até ${moment(reportEndDate).toDate().toLocaleDateString()}`} icon={calendarIcon} iconDirection="right" /> */}
+                                <CustomButton caption="" icon={refreshIcon} handleClick={handleOnClickRefreshButton} />
+                            </div>
+                        </div>
                     </div>
 
-                    <div>
-                        <section className={styles.donut_charts_container}>
-                            <div className={`${styles.donut_container} ${loadingChartDataEffect}`} onClick={() => {
-                                showModalWithCategoriesAndValues(chartData.donutChartsData.incomes.list, setModalCategoriesList, showModal)
-                            }}>
-                                {/* <div style={{height: "200px", border: "1px solid black", position: "relative" }}> */}
-                                {
-                                    loadingChartDataEffect ? null : (
-                                        <>
-                                            {
-                                                renderResponsivePieChart(chartData.donutChartsData.incomes.list)
-                                            }
 
-                                            <div style={{
-                                                position: "absolute",
-                                                top: 0,
-                                                right: 0,
-                                                bottom: 0,
-                                                left: 0,
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                fontSize: 13,
-                                                color: "black",
-                                                // background: "#FFFFFF33",
-                                                textAlign: "center",
-                                                // This is important to preserve the chart interactivity
-                                                pointerEvents: "none"
-                                            }}>
-                                                <span>Receitas</span>
-                                                <span>{chartData.donutChartsData.currencySymbol} {chartData.donutChartsData.incomes.totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                            </div>
-                                        </>
-                                    )}
-                                {/* </div> */}
+                    {/* User balance, incomes and expenses section */}
+
+                    <div className={styles.values_container}>
+                        <div className={styles.balance_container} style={{background: walletBalanceContainerColor}}>
+                            <div className={styles.container_overlay}>
+                                <div>
+                                    <p className={styles.balance_title} style={{color: walletBalanceContainerColor}}>Balanço do período</p>
+                                    <p className={styles.container_value}>{loggedUser.activeWallet?.currencySymbol} {periodBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                                </div>
+
+                                <img src={moneyBagIcon} alt="Balance icon" />
+                            </div>
+                        </div>
+
+                        <div className={styles.incomes_container}>
+                            <div className={styles.container_overlay}>
+                                <div>
+                                    <p className={styles.incomes_title}>Recebimentos</p>
+                                    <p className={styles.container_value}>{loggedUser.activeWallet?.currencySymbol} {Number(chartData.donutChartsData.incomes.totalValue).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                </div>
+
+                                <img src={arrowCircleDownIcon} alt="Incomes icon" />
+                            </div>
+                        </div>
+
+                        <div className={styles.expenses_container}>
+                            <div className={styles.container_overlay}>
+                                <div>
+                                    <p className={styles.expenses_title}>Pagamentos</p>
+                                    <p className={styles.container_value}>{loggedUser.activeWallet?.currencySymbol} {Number(chartData.donutChartsData.expenses.totalValue).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                </div>
+
+                                <img src={arrowCircleUpIcon} alt="Expenses icon" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Incomes by category chart */}
+
+                    <div className={styles.categorized_incomes_container}>
+                        <div className={styles.container_header}>
+                            <div>
+                                <p className={styles.header_title}>Recebimentos</p>
+                                <p>Seus recebimentos separados por categoria</p>
                             </div>
 
-                            <div className={`${styles.donut_container} ${loadingChartDataEffect}`} onClick={() => {
-                                showModalWithCategoriesAndValues(chartData.donutChartsData.expenses.list, setModalCategoriesList, showModal)
-                            }}>
-                                {/* <div style={{ height: "200px", border: "1px solid black", position: "relative" }}> */}
-                                {
-                                    loadingChartDataEffect ? null : (
-                                        <>
-                                            {
-                                                renderResponsivePieChart(chartData.donutChartsData.expenses.list)
-                                            }
+                            <a href="#" rel="noopener noreferrer" onClick={() => {showModalWithCategoriesAndValues(chartData.donutChartsData.incomes.list, setModalCategoriesList, showModal)}}>Ver todas</a>
+                        </div>
 
-                                            <div style={{
-                                                position: "absolute",
-                                                top: 0,
-                                                right: 0,
-                                                bottom: 0,
-                                                left: 0,
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                fontSize: 13,
-                                                color: "black",
-                                                // background: "#FFFFFF33",
-                                                textAlign: "center",
-                                                // This is important to preserve the chart interactivity
-                                                pointerEvents: "none"
-                                            }}>
-                                                <span>Despesas</span>
-                                                <span>{chartData.donutChartsData.currencySymbol} {chartData.donutChartsData.expenses.totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                            </div>
-                                        </>
-                                    )}
-                                {/* </div> */}
+                        <div className={styles.container_body}>
+                            {renderResponsivePieChart(chartData.donutChartsData.incomes.list, "paired", loggedUser.activeWallet?.currencySymbol)}
+                        </div>
+                    </div>
+
+
+
+                    {/* Expenses by category chart */}
+
+                    <div className={styles.categorized_expenses_container}>
+                        <div className={styles.container_header}>
+                            <div>
+                                <p className={styles.header_title}>Pagamentos</p>
+                                <p>Seus pagamentos separados por categoria</p>
                             </div>
 
-                        </section>
+                            <a href="#" rel="noopener noreferrer" onClick={() => {showModalWithCategoriesAndValues(chartData.donutChartsData.expenses.list, setModalCategoriesList, showModal)}}>Ver todas</a>
+                        </div>
+
+                        <div className={styles.container_body}>
+                            {renderResponsivePieChart(chartData.donutChartsData.expenses.list, "spectral", loggedUser.activeWallet?.currencySymbol)}
+                        </div>
+                    </div>
+
+                </div>
+
+                {/* Last transactions from wallet */}
+                
+                <div className={styles.last_transactions_section}>
+                    <div className={styles.container_header}>
+                        <div>
+                            <p className={styles.header_title}>Últimas transações no período</p>
+                            <p>Suas últimas transações em {loggedUser.activeWallet?.walletName}</p>
+                        </div>
+                    </div>
+
+                    <div className={styles.transactions_list}>
+                       {
+                            (transactionsList.length > 0) && transactionsList.map((transaction, index) => {
+                                const myCategory = categoriesList.find(category => { return (category.id == transaction.fromCategory) })
+                                const valueTextColor = (Number(transaction.creditValue) > 0) ? "#1CC88A" : "#E74A3B"
+                                
+                                // Returns only the last 10 transactions
+                                if (index < 9) return (
+                                    <div className={styles.transaction_list_item}>
+                                        <div className={styles.transaction_icon_container}>
+                                            <img className={styles.category_icon} src={myCategory?.iconPath} alt="Category icon" />
+                                        </div>
+                                        <div className={styles.transaction_details_container}>
+                                            <p className={styles.transaction_category_name}>{myCategory?.categoryName}</p>
+                                            <p>{transaction.description}</p>
+                                        </div>
+                                        <div className={styles.transaction_date_value_container}>
+                                            <p>{moment(transaction.date).toDate().toLocaleDateString()}</p>
+                                            <p className={styles.transaction_value} style={{color: valueTextColor}}>{loggedUser.activeWallet?.currencySymbol} {Number(transaction.value).toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})}</p>
+                                        </div>
+                                    </div>
+                                )
+                            })
+                       }
+
+                        {/* Render a footer fader effect */}
+                       {
+                            (transactionsList.length > 0) && (
+                                <div className={styles.transactions_bottom_fader}></div>
+                            )
+                       }
                     </div>
                 </div>
 
@@ -259,11 +318,6 @@ function ModalCategoriesList({ categoriesList, currencySymbol, endDate, startDat
                                         <span>{Number(item.value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                     </td>
                                 </tr>
-
-                                // <p style={{ display: "flex", justifyContent: "space-between", width: "300px", cursor: "pointer" }} key={itemIndex} onClick={() => { handleCategoryClick(item.categoryName) }}>
-                                //     <span>{item.categoryName}</span>
-                                //     <span>{currencySymbol} {Number(item.value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                // </p>
                             )
                         })
                     }

@@ -1,5 +1,6 @@
 import { ResponsiveBar } from "@nivo/bar"
 import { ResponsivePie } from "@nivo/pie"
+import {ColorSchemeId} from "@nivo/colors/dist/types/schemes/all"
 
 import { IBarChartData, IDonutChartData } from "../../type-defs"
 
@@ -88,24 +89,32 @@ export function renderResponsiveBarChart(data: Array<IBarChartData>) {
     )
 }
 
-export function renderResponsivePieChart(data: Array<IDonutChartData>) {
+export function renderResponsivePieChart(data: Array<IDonutChartData>, scheme: ColorSchemeId, currencySymbol?: string) {
+    currencySymbol = (currencySymbol) ? `${currencySymbol} ` : ""
+
     return (
         <ResponsivePie
             data={data}
-            margin={{ top: 35, right: 20, bottom: 35, left: 20 }}
-            // innerRadius={0.5}
+                        
+            margin={{ top: 15, right: 0, bottom: 15, left: 0 }}
 
-            innerRadius={0.8}
+            innerRadius={0.1}
             enableArcLabels={false}
-            arcLinkLabel={d => `${d.id}`}
-            // arcLabelsComponent={({ datum, label, style }) => {
-            //     return (<></>)
-            // }}
+            
+            enableArcLinkLabels={true}
+            arcLinkLabel={(pieItem) => { return `${pieItem.id} (${currencySymbol}${Number(pieItem.value).toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})})` }}
+            arcLinkLabelsSkipAngle={45}
+            arcLinkLabelsDiagonalLength={5}
+            arcLinkLabelsStraightLength={5}
+            arcLinkLabelsTextOffset={5}
+
             activeInnerRadiusOffset={8}
 
+            // sortByValue={true}
             padAngle={0.7}
             cornerRadius={3}
             activeOuterRadiusOffset={8}
+            colors={{scheme}}
             borderWidth={1}
             borderColor={{
                 from: 'color',
@@ -116,22 +125,35 @@ export function renderResponsivePieChart(data: Array<IDonutChartData>) {
                     ]
                 ]
             }}
-            arcLinkLabelsSkipAngle={10} // default 10
-            arcLinkLabelsTextColor="#333333"
-            arcLinkLabelsThickness={2}
-            arcLinkLabelsColor={{ from: 'color' }}
-            arcLabelsSkipAngle={361} // default 10
-            arcLabelsTextColor={{
-                from: 'color',
-                modifiers: [
-                    [
-                        'darker',
-                        2
-                    ]
-                ]
-            }}
-            arcLinkLabelsStraightLength={5}
+
             valueFormat={value => `${Number(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+
+            legends={[{
+                anchor: 'bottom-right',
+                direction: 'column',
+                justify: false,
+                translateX: -10,
+                translateY: 5,
+                itemsSpacing: 5,
+                itemWidth: 100,
+                itemHeight: 17,
+                itemTextColor: '#999',
+                itemDirection: 'right-to-left',
+                itemOpacity: 1,
+                symbolSize: 18,
+                symbolShape: 'circle',
+
+
+                effects: [
+                    {
+                        on: 'hover',
+                        style: {
+                            itemTextColor: '#000'
+                        }
+                    }
+                ],
+                onClick: (data, event) => {alert(data.label + " - " + data.fill)}
+            }]}
         />
         /* {
                             <Pie {...commonProperties}

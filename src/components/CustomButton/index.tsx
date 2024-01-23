@@ -6,7 +6,7 @@ import style from "./style.module.css"
 interface ICustomButtonProps {
     icon?: string,
     iconDirection?: "left" | "right",
-    caption: string,
+    caption?: string,
     captionAlignment?: "left" | "center" | "right",
     handleClick?: MouseEventHandler<HTMLButtonElement>;
 }
@@ -24,7 +24,7 @@ function CustomButton({ caption, handleClick, icon, iconDirection, captionAlignm
         >
             {icon && <img src={icon} alt="Button icon" />}
 
-            <span>{caption}</span>
+            {caption && <span>{caption}</span>}
 
         </button>
     )
