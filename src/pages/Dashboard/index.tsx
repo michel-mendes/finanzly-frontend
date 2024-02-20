@@ -3,7 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom"
 import moment from "moment"
 
 // Helpers functions
-import { getStartAndEndOfMonth } from "../../helpers/helpers";
+import { getStartAndEndOfMonth, sortArrayOfObjects } from "../../helpers/helpers";
 
 // Types
 import { IDonutChartData, IModalCategoriesList, IModalProps } from "../../type-defs"
@@ -12,7 +12,7 @@ import { IDonutChartData, IModalCategoriesList, IModalProps } from "../../type-d
 import { InputEdit } from "../../components/InputEdit"
 
 // Page helpers
-import { renderResponsiveBarChart, renderResponsivePieChart } from "./useCharts"
+import { renderResponsivePieChart } from "./useCharts"
 
 // Hooks
 import { useReport } from "../../hooks/useReport"
@@ -31,7 +31,6 @@ import { CustomButton } from "../../components/CustomButton";
 
 // Icons
 import refreshIcon from "../../assets/refresh.svg"
-import calendarIcon from "../../assets/calendar-thin.svg"
 import moneyBagIcon from "../../assets/money-bag-outline.svg"
 import arrowCircleUpIcon from "../../assets/arrow-circle-up-outline.svg"
 import arrowCircleDownIcon from "../../assets/arrow-circle-down-outline.svg"
@@ -280,6 +279,7 @@ function DashboardPage() {
                     }
                 }}
             >
+                <span>Clique na categoria para ver detalhes de cada transação</span><br /><br />
                 <ModalCategoriesList
                     categoriesList={modalCategoriesList}
                     currencySymbol={chartData.donutChartsData.currencySymbol}
@@ -293,28 +293,27 @@ function DashboardPage() {
 
 function ModalCategoriesList({ categoriesList, currencySymbol, endDate, startDate }: IModalProps) {
     const navigate = useNavigate()
+    const sortedList = sortArrayOfObjects(categoriesList, "value", false)
 
     function handleCategoryClick(categoryName: string) {
         navigate(`/transactions?startDate=${startDate}&endDate=${endDate}&category=${categoryName}`)
     }
 
     return (
-        <div>
+        <div className={styles.categories_list_modal}>
             <table style={{ width: "650px", fontSize: "1.2em" }}>
                 <tbody>
                     {
-                        categoriesList.map((item, itemIndex) => {
+                        sortedList.map((item, itemIndex) => {
                             return (
                                 <tr key={itemIndex} onClick={() => { handleCategoryClick(item.categoryName) }} style={{ cursor: "pointer" }}>
                                     <td style={{ textAlign: "left" }}>
                                         <span>{item.categoryName}</span>
                                     </td>
 
-                                    <td>
-                                        {currencySymbol}
-                                    </td>
-
                                     <td style={{ textAlign: "right" }}>
+                                        <span>{currencySymbol}</span>
+                                        <span>&nbsp;&nbsp;</span>
                                         <span>{Number(item.value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                     </td>
                                 </tr>

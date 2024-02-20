@@ -271,3 +271,16 @@
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, rgba(255, 255, 255, 0.46) 9%, #FFF 85.5%);
   /* border: 2px solid red; */
 }
+
+.categories_list_modal tr {
+  height: 25px;
+}
+
+.categories_list_modal td {
+  vertical-align: middle;
+  padding: 5px;
+}
+
+.categories_list_modal tr:nth-child(odd) {
+  background-color: #e0e0e0;
+}
