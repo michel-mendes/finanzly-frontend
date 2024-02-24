@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+    permissions: write-all
     runs-on: ubuntu-latest
     environment: Finanzly_Frontend_Production_Env # <---- Ambiente configurado com o segredo API_BASE_URL
 
