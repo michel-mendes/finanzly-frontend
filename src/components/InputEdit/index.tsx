@@ -1,4 +1,4 @@
-import { CSSProperties, HTMLInputTypeAttribute, MutableRefObject, RefObject, useRef } from "react"
+import { CSSProperties, HTMLInputTypeAttribute, RefObject } from "react"
 import styles from "./styles.module.css"
 
 interface IInputProps {

@@ -28,7 +28,7 @@ import styles from "./styles.module.css"
 
 
 function WalletsPage() {
-  const { walletsList, tempWallet, setTempWallet, loadingWallets, deleteWallet, updateWallet, createWallet, awaitingResponse } = useWallets()
+  const { walletsList, tempWallet, setTempWallet, loadingWallets, deleteWallet, updateWallet, createWallet } = useWallets()
 
   const { showSuccessNotification } = useToastNotification()
 

@@ -20,7 +20,7 @@ function ToastNotification({ message, type, id }: IToastNotificationProps) {
 
     const [dismissedNotification, setDismissedNotification] = useState(false)
 
-    const timerId = useRef<number>(0)
+    const timerId = useRef<NodeJS.Timeout>()
     const progressBarRef = useRef<HTMLDivElement>(null)
 
     function handleDismissNotification() {

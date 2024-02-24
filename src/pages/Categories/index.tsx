@@ -31,7 +31,7 @@ function CategoriesPage() {
 
     const { showSuccessNotification } = useToastNotification()
 
-    const { categoriesList, loadingCategories, awaitingResponse, tempCategory, setTempCategory, createCategory, updateCategory, deleteCategory } = useCategories()
+    const { categoriesList, loadingCategories, tempCategory, setTempCategory, createCategory, updateCategory, deleteCategory } = useCategories()
 
     const { isOpen, showModal, closeModal } = useModal()
 

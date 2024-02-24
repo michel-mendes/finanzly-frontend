@@ -24,7 +24,7 @@ function loadIconsList(iconType: TIconTypes): IGlobImport {
 
 }
 
-function IconsContainer({iconTypes, selectedIcon, setSelectedIcon}: IIconsContainerProps) {
+function IconsContainer({iconTypes, setSelectedIcon}: IIconsContainerProps) {
 
     const [iconsList, setIconsList] = useState<IGlobImport>({})
     

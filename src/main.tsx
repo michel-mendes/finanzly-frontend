@@ -17,6 +17,7 @@ ReactDOM.createRoot(document.getElementById('App') as HTMLElement).render(
         logoutUser={() => { }}
         getLoggedUser={() => { }}
         setActiveWallet={() => { }}
+        editUser={() => { }}
       >
         <App />
       </AuthContextProvider>

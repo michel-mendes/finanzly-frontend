@@ -152,7 +152,8 @@ export function renderResponsivePieChart(data: Array<IDonutChartData>, scheme: C
                         }
                     }
                 ],
-                onClick: (data, event) => {alert(data.label + " - " + data.fill)}
+                onClick: (data) => {alert(data.label + " - " + data.fill)}
+                // onClick: (data, event) => {alert(data.label + " - " + data.fill)}
             }]}
         />
         /* {

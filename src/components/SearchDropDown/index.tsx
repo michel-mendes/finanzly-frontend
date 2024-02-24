@@ -16,7 +16,7 @@ interface ISearchDropDownProps<Type> {
     searcheableProperty: keyof Type;
 }
 
-function SearchDropDown<Type extends object>({ results = [], renderItem, value, placeholder, onChange, onSelect, dropdownPxWidth, searcheableProperty }: ISearchDropDownProps<Type>) {
+function SearchDropDown<Type extends object>({ results = [], renderItem, value, placeholder, onSelect, dropdownPxWidth, searcheableProperty }: ISearchDropDownProps<Type>) {
 
     const [focusedIndex, setFocusedIndex] = useState(-1)
     const [showDropDown, setShowDropDown] = useState(false)
@@ -74,12 +74,12 @@ function SearchDropDown<Type extends object>({ results = [], renderItem, value, 
         setFocusedIndex(nextIndexCount)
     }
 
-    type changeHandler = React.ChangeEventHandler<HTMLInputElement>
+    // type changeHandler = React.ChangeEventHandler<HTMLInputElement>
 
-    const handleChange: changeHandler = (event) => {
-        setDefaultValue(event.target.value)
-        if (onChange) { onChange(event) }
-    }
+    // const handleChange: changeHandler = (event) => {
+    //     setDefaultValue(event.target.value)
+    //     if (onChange) { onChange(event) }
+    // }
 
     useEffect(() => {
         if (!resultContainer.current) return

@@ -40,7 +40,7 @@ import styles from "./styles.module.css"
 
 
 function DashboardPage() {
-    const { loggedUser, setActiveWallet, loadingUser } = useAuthContext()
+    const { loggedUser, setActiveWallet } = useAuthContext()
     const { showModal, closeModal, isOpen } = useModal()
 
     const { walletsList } = useWallets()
@@ -49,8 +49,8 @@ function DashboardPage() {
 
     const {
         reportStartDate, reportEndDate,
-        setReportStartDate, setReportEndDate, setReportDates,
-        chartData, getReportData, loadingReport
+        setReportStartDate, setReportEndDate,
+        chartData, getReportData
     } = useReport({
         initialStartDate: getStartAndEndOfMonth(loggedUser?.firstDayOfMonth!).startDate.toJSON().slice(0, 10),
         initialEndDate: getStartAndEndOfMonth(loggedUser?.firstDayOfMonth!).endDate.toJSON().slice(0, 10),
@@ -71,16 +71,16 @@ function DashboardPage() {
         getReportData()
     }
 
-    function changeReportDates(period: "priorMonth" | "nextMonth") {
-        const changeMonthStartDate = (period == "priorMonth") ? moment(reportStartDate).subtract(1, "month") : moment(reportStartDate).add(1, "month")
-        const changeMonthEndDate = (period == "priorMonth") ? moment(reportEndDate).subtract(1, "month") : moment(reportEndDate).add(1, "month")
+    // function changeReportDates(period: "priorMonth" | "nextMonth") {
+    //     const changeMonthStartDate = (period == "priorMonth") ? moment(reportStartDate).subtract(1, "month") : moment(reportStartDate).add(1, "month")
+    //     const changeMonthEndDate = (period == "priorMonth") ? moment(reportEndDate).subtract(1, "month") : moment(reportEndDate).add(1, "month")
 
-        const newStartDate = changeMonthStartDate.toISOString(true).split("T")[0]
-        const newEndDate = changeMonthEndDate.toISOString(true).split("T")[0]
+    //     const newStartDate = changeMonthStartDate.toISOString(true).split("T")[0]
+    //     const newEndDate = changeMonthEndDate.toISOString(true).split("T")[0]
 
-        setReportDates(newStartDate, newEndDate)
-        getReportData({ startDate: newStartDate, endDate: newEndDate })
-    }
+    //     setReportDates(newStartDate, newEndDate)
+    //     getReportData({ startDate: newStartDate, endDate: newEndDate })
+    // }
 
     useEffect(() => {
         document.title = "Dashboard Finanzly"

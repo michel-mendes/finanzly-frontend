@@ -1,4 +1,3 @@
-import React, { useState, ChangeEventHandler } from 'react'
 import styles from "./styles.module.css"
 
 interface IRadioValuesProps {
