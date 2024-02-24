@@ -46,7 +46,9 @@ function App() {
           <Route path='/import'               element={loggedUser ? <ImportTransactionsPage /> : <Navigate to="/login" />} />
           <Route path='/import/transactions'  element={loggedUser ? <ImportTransactionsListPage /> : <Navigate to="/login" />} />
           <Route path='/profile'              element={loggedUser ? <UserProfilePage /> : <Navigate to="/login" />} />
-          <Route path='*'                     element={<><h1>Página não encontrada <br /> Usuário está logado: {loggedUser ? "SIM" : "NAO"}</h1><br></br><h2>Dados do usuário:</h2><pre>{JSON.stringify(loggedUser, undefined, 4)}</pre></>} />
+          
+          <Route path='/finanzly-frontend'    element={<Navigate to="/login" />} />
+          <Route path='*'                     element={<h1>Página não encontrada</h1>} />
         </Routes>
       </BrowserRouter>
     </>
