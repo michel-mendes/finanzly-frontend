@@ -1,4 +1,4 @@
-const baseApiUrl = import.meta.env.VITE_API_BASE_URL
+const baseApiUrl = __API_BASE_URL__
 
 export const appConfigs = {
     

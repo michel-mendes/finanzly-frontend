@@ -30,7 +30,7 @@ function IconsContainer({iconTypes, selectedIcon, setSelectedIcon}: IIconsContai
     
     useEffect(() => {
         setIconsList(loadIconsList(iconTypes))
-        console.log(loadIconsList(iconTypes))
+        // console.log(loadIconsList(iconTypes))
     }, [])
 
     return (
