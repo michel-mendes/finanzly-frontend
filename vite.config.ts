@@ -5,9 +5,14 @@ import react from '@vitejs/plugin-react'
 export default ({ mode }: UserConfig) => {
   const env = { ...process.env, ...loadEnv(mode, process.cwd(), '') }
 
+  // Terminate app if missing "API_BASE_URL" environment var
+  if (!env.API_BASE_URL) {
+    console.log("Missing environment variable 'API_BASE_URL' or '.env' file containing 'API_BASE_URL'")
+    process.exit()
+  }
+
   return defineConfig({
     plugins: [react()],
-    base: "/finanzly-frontend",
     server: {
       host: true,
       port: 3001

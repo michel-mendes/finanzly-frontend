@@ -1,5 +1,4 @@
 {
-  "homepage": "https://michel-mendes.github.io/finanzly-frontend",
   "name": "finanzly_frontend",
   "private": true,
   "version": "0.0.0",
@@ -8,9 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@nivo/bar": "^0.83.0",
@@ -25,7 +22,7 @@
     "react-router-dom": "^6.8.1"
   },
   "devDependencies": {
-    "@types/node": "^20.11.20",
+    "@types/node": "^20.11.23",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/react-router-dom": "^5.3.3",
@@ -35,7 +32,6 @@
     "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
-    "gh-pages": "^6.1.1",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
   }
