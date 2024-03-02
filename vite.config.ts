@@ -11,6 +11,15 @@ export default ({ mode }: UserConfig) => {
     process.exit()
   }
 
+  // Ping the server every 14 minutes to keep it up
+  if (env.FRONTEND_URL) {
+    pingServer(`${env.API_BASE_URL}/ping`, env.FRONTEND_URL)
+
+    setInterval(() => {
+      pingServer(`${env.API_BASE_URL}/ping`, env.FRONTEND_URL)
+    }, 840000)
+  }
+
   return defineConfig({
     plugins: [react()],
     server: {
@@ -21,4 +30,14 @@ export default ({ mode }: UserConfig) => {
       __API_BASE_URL__: JSON.stringify(env.API_BASE_URL)
     }
   })
+}
+
+
+// Helper function
+async function pingServer(apiUrl: string, origin: string) {
+  try {
+    await (await fetch(apiUrl, { headers: { origin } })).text()
+  } catch (error: any) {
+    console.log(`Error sending ping to server: "${error}"`)
+  }
 }

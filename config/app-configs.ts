@@ -38,5 +38,8 @@ export const appConfigs = {
     importPostEndpoint: `${baseApiUrl}/upload/`,
 
     // Report Endpoint
-    reportGetEndpoint: `${baseApiUrl}/report/`
+    reportGetEndpoint: `${baseApiUrl}/report/`,
+
+    // Ping endpoint
+    pingEndpoint: `${baseApiUrl}/ping`
 }
