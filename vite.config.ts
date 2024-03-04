@@ -11,18 +11,6 @@ export default ({ mode }: UserConfig) => {
     process.exit()
   }
 
-  // Ping the server every 14 minutes to keep it up
-  if (env.FRONTEND_URL) {
-    console.log("Optional pig is set, every 14 minutes a ping will be sent to server")
-    pingServer(`${env.API_BASE_URL}/ping`, env.FRONTEND_URL)
-
-    setInterval(() => {
-      pingServer(`${env.API_BASE_URL}/ping`, env.FRONTEND_URL)
-    }, 840000)
-  } else {
-    console.log("Optional ping not set")
-  }
-
   return defineConfig({
     plugins: [react()],
     server: {
@@ -33,14 +21,4 @@ export default ({ mode }: UserConfig) => {
       __API_BASE_URL__: JSON.stringify(env.API_BASE_URL)
     }
   })
-}
-
-
-// Helper function
-async function pingServer(apiUrl: string, origin: string) {
-  try {
-    await (await fetch(apiUrl, { headers: { origin } })).text()
-  } catch (error: any) {
-    console.log(`Error sending ping to server: "${error}"`)
-  }
 }
