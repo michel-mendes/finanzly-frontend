@@ -17,6 +17,17 @@ export default ({ mode }: UserConfig) => {
       host: true,
       port: 3001
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes("node_modules")) {
+              return id.toString().split("node_modules/")[1].split("/")[0].toString()
+            }
+          }
+        }
+      }
+    },
     define: {
       __API_BASE_URL__: JSON.stringify(env.API_BASE_URL)
     }
