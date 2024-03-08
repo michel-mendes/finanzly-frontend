@@ -8,6 +8,7 @@ import { IWallet } from "../../type-defs"
 
 // Components
 import { CustomButton } from "../../components/CustomButton"
+import { LoadingOverlay } from "../../components/LoadingPageOverlay"
 
 // Modal
 import { ModalSaveCancel } from "../../components/Modal"
@@ -54,7 +55,7 @@ function WalletsPage() {
         <div className={styles.header}>
           <p className={styles.header_title}>Minhas carteiras</p>
 
-          <CustomButton caption="Nova carteira" icon={addIcon} handleClick={() => { handleOpenWalletModal() }}/>
+          <CustomButton caption="Nova carteira" icon={addIcon} handleClick={() => { handleOpenWalletModal() }} />
         </div>
 
         <ul className={styles.list}>
@@ -127,28 +128,26 @@ function WalletsList(props: { walletsList: IWallet[], isLoading: boolean, handle
 
   return (
 
-    (isLoading) ? (
-      <>
-        <span>CARREGANDO...</span>
-      </>
-    ) : (
-      <>
-        {
-          walletsList.map(wallet => {
-            return (
-              <li className={styles.wallet_item} key={wallet.id} onClick={() => { handleOpenWalletModal(wallet) }}>
-                <img src={wallet.iconPath} alt="ícone do banco" />
+    (isLoading)
+      ? <LoadingOverlay />
+      : (
+        <>
+          {
+            walletsList.map(wallet => {
+              return (
+                <li className={styles.wallet_item} key={wallet.id} onClick={() => { handleOpenWalletModal(wallet) }}>
+                  <img src={wallet.iconPath} alt="ícone do banco" />
 
-                <div>
-                  <p className={styles.wallet_name}>{wallet.walletName}</p>
-                  <p>{wallet.currencySymbol} {wallet.actualBalance?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                </div>
-              </li>
-            )
-          })
-        }
-      </>
-    )
+                  <div>
+                    <p className={styles.wallet_name}>{wallet.walletName}</p>
+                    <p>{wallet.currencySymbol} {wallet.actualBalance?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                  </div>
+                </li>
+              )
+            })
+          }
+        </>
+      )
   )
 
 }

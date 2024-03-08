@@ -6,10 +6,11 @@ import moment from "moment"
 import { getStartAndEndOfMonth, sortArrayOfObjects } from "../../helpers/helpers";
 
 // Types
-import { IDonutChartData, IModalCategoriesList, IModalProps } from "../../type-defs"
+import { IDonutChartData, IModalCategoriesList, IModalProps, ITransaction, ICategory, IAuthenticatedUser } from "../../type-defs"
 
 // Components
 import { InputEdit } from "../../components/InputEdit"
+import { LoadingOverlay } from "../../components/LoadingPageOverlay";
 
 // Page helpers
 import { renderResponsivePieChart } from "./useCharts"
@@ -45,12 +46,12 @@ function DashboardPage() {
 
     const { walletsList } = useWallets()
     const { categoriesList } = useCategories()
-    const { transactionsList, getTransactionsFromWallet } = useTransactions()
+    const { transactionsList, getTransactionsFromWallet, loadingTransactions } = useTransactions()
 
     const {
         reportStartDate, reportEndDate,
-        setReportStartDate, setReportEndDate,
-        chartData, getReportData
+        setReportStartDate, setReportEndDate, setReportWallet,
+        chartData, getReportData, loadingReport
     } = useReport({
         initialStartDate: getStartAndEndOfMonth(loggedUser?.firstDayOfMonth!).startDate.toJSON().slice(0, 10),
         initialEndDate: getStartAndEndOfMonth(loggedUser?.firstDayOfMonth!).endDate.toJSON().slice(0, 10),
@@ -58,6 +59,7 @@ function DashboardPage() {
     })
 
     const [modalCategoriesList, setModalCategoriesList] = useState<Array<IModalCategoriesList>>([])
+    const [modalTotalCategoryValue, setModalTotalCategoryValue] = useState<number>(0)
 
     const [periodBalance, setPeriodBalance] = useState(0)
     const walletBalanceContainerColor = (periodBalance < 0) ? "#F46D43" : "#1F78B4"
@@ -84,10 +86,11 @@ function DashboardPage() {
 
     useEffect(() => {
         document.title = "Dashboard Finanzly"
+        handleOnClickRefreshButton()
     }, [])
 
     useEffect(() => {
-        setPeriodBalance( Number(chartData.donutChartsData.incomes.totalValue) - Number(chartData.donutChartsData.expenses.totalValue) )
+        setPeriodBalance(Number(chartData.donutChartsData.incomes.totalValue) - Number(chartData.donutChartsData.expenses.totalValue))
     }, [chartData])
 
     if (!loggedUser) return <Navigate to="/login" />
@@ -110,7 +113,7 @@ function DashboardPage() {
                                 results={walletsList}
                                 value={loggedUser?.activeWallet?.walletName || ""}
                                 renderItem={(item) => <p>{item.walletName}</p>}
-                                onSelect={(item) => { setActiveWallet(item.id!) }}
+                                onSelect={(item) => { setActiveWallet(item.id!), setReportWallet(item) }}
                                 searcheableProperty="walletName"
                                 dropdownPxWidth={400}
                             />
@@ -152,11 +155,11 @@ function DashboardPage() {
                     {/* User balance, incomes and expenses section */}
 
                     <div className={styles.values_container}>
-                        <div className={styles.balance_container} style={{background: walletBalanceContainerColor}}>
+                        <div className={styles.balance_container} style={{ background: walletBalanceContainerColor }}>
                             <div className={styles.container_overlay}>
                                 <div>
-                                    <p className={styles.balance_title} style={{color: walletBalanceContainerColor}}>Balanço do período</p>
-                                    <p className={styles.container_value}>{loggedUser.activeWallet?.currencySymbol} {periodBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                                    <p className={styles.balance_title} style={{ color: walletBalanceContainerColor }}>Balanço do período</p>
+                                    <p className={styles.container_value}>{loggedUser.activeWallet?.currencySymbol} {periodBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                                 </div>
 
                                 <img src={moneyBagIcon} alt="Balance icon" />
@@ -195,11 +198,15 @@ function DashboardPage() {
                                 <p>Seus recebimentos separados por categoria</p>
                             </div>
 
-                            <a href="#" rel="noopener noreferrer" onClick={() => {showModalWithCategoriesAndValues(chartData.donutChartsData.incomes.list, setModalCategoriesList, showModal)}}>Ver todas</a>
+                            <a href="#" rel="noopener noreferrer" onClick={() => { showModalWithCategoriesAndValues(chartData.donutChartsData.incomes.list, setModalCategoriesList, setModalTotalCategoryValue, showModal) }}>Ver todas</a>
                         </div>
 
                         <div className={styles.container_body}>
-                            {renderResponsivePieChart(chartData.donutChartsData.incomes.list, "paired", loggedUser.activeWallet?.currencySymbol)}
+                            {
+                                loadingReport
+                                    ? <LoadingOverlay />
+                                    : renderResponsivePieChart(chartData.donutChartsData.incomes.list, "paired", loggedUser.activeWallet?.currencySymbol)
+                            }
                         </div>
                     </div>
 
@@ -214,18 +221,22 @@ function DashboardPage() {
                                 <p>Seus pagamentos separados por categoria</p>
                             </div>
 
-                            <a href="#" rel="noopener noreferrer" onClick={() => {showModalWithCategoriesAndValues(chartData.donutChartsData.expenses.list, setModalCategoriesList, showModal)}}>Ver todas</a>
+                            <a href="#" rel="noopener noreferrer" onClick={() => { showModalWithCategoriesAndValues(chartData.donutChartsData.expenses.list, setModalCategoriesList, setModalTotalCategoryValue, showModal) }}>Ver todas</a>
                         </div>
 
                         <div className={styles.container_body}>
-                            {renderResponsivePieChart(chartData.donutChartsData.expenses.list, "spectral", loggedUser.activeWallet?.currencySymbol)}
+                            {
+                                loadingReport
+                                    ? <LoadingOverlay />
+                                    : renderResponsivePieChart(chartData.donutChartsData.expenses.list, "spectral", loggedUser.activeWallet?.currencySymbol)
+                            }
                         </div>
                     </div>
 
                 </div>
 
                 {/* Last transactions from wallet */}
-                
+
                 <div className={styles.last_transactions_section}>
                     <div className={styles.container_header}>
                         <div>
@@ -235,36 +246,18 @@ function DashboardPage() {
                     </div>
 
                     <div className={styles.transactions_list}>
-                       {
-                            (transactionsList.length > 0) && transactionsList.map((transaction, index) => {
-                                const myCategory = categoriesList.find(category => { return (category.id == transaction.fromCategory) })
-                                const valueTextColor = (Number(transaction.creditValue) > 0) ? "#1CC88A" : "#E74A3B"
-                                
-                                // Returns only the last 10 transactions
-                                if (index < 9) return (
-                                    <div className={styles.transaction_list_item}>
-                                        <div className={styles.transaction_icon_container}>
-                                            <img className={styles.category_icon} src={myCategory?.iconPath} alt="Category icon" />
-                                        </div>
-                                        <div className={styles.transaction_details_container}>
-                                            <p className={styles.transaction_category_name}>{myCategory?.categoryName}</p>
-                                            <p>{transaction.description}</p>
-                                        </div>
-                                        <div className={styles.transaction_date_value_container}>
-                                            <p>{moment(transaction.date).toDate().toLocaleDateString()}</p>
-                                            <p className={styles.transaction_value} style={{color: valueTextColor}}>{loggedUser.activeWallet?.currencySymbol} {Number(transaction.value).toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})}</p>
-                                        </div>
-                                    </div>
-                                )
-                            })
-                       }
+                        {
+                            loadingTransactions
+                                ? <LoadingOverlay />
+                                : renderReportLastTransactions(transactionsList, categoriesList, loggedUser)
+                        }
 
                         {/* Render a footer fader effect */}
-                       {
+                        {
                             (transactionsList.length > 0) && (
                                 <div className={styles.transactions_bottom_fader}></div>
                             )
-                       }
+                        }
                     </div>
                 </div>
 
@@ -282,6 +275,7 @@ function DashboardPage() {
                 <span>Clique na categoria para ver detalhes de cada transação</span><br /><br />
                 <ModalCategoriesList
                     categoriesList={modalCategoriesList}
+                    categoryTotalValues={modalTotalCategoryValue}
                     currencySymbol={chartData.donutChartsData.currencySymbol}
                     startDate={reportStartDate}
                     endDate={reportEndDate}
@@ -291,7 +285,35 @@ function DashboardPage() {
     )
 }
 
-function ModalCategoriesList({ categoriesList, currencySymbol, endDate, startDate }: IModalProps) {
+function renderReportLastTransactions(
+    transactionsList: Array<ITransaction>,
+    categoriesList: Array<ICategory>,
+    loggedUser: IAuthenticatedUser
+) {
+    return (transactionsList.length > 0) && transactionsList.map((transaction, index) => {
+        const myCategory = categoriesList.find(category => { return (category.id == transaction.fromCategory) })
+        const valueTextColor = (Number(transaction.creditValue) > 0) ? "#1CC88A" : "#E74A3B"
+
+        // Returns only the last 10 transactions
+        if (index < 9) return (
+            <div className={styles.transaction_list_item}>
+                <div className={styles.transaction_icon_container}>
+                    <img className={styles.category_icon} src={myCategory?.iconPath} alt="Category icon" />
+                </div>
+                <div className={styles.transaction_details_container}>
+                    <p className={styles.transaction_category_name}>{myCategory?.categoryName}</p>
+                    <p>{transaction.description}</p>
+                </div>
+                <div className={styles.transaction_date_value_container}>
+                    <p>{moment(transaction.date).toDate().toLocaleDateString()}</p>
+                    <p className={styles.transaction_value} style={{ color: valueTextColor }}>{loggedUser.activeWallet?.currencySymbol} {Number(transaction.value).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</p>
+                </div>
+            </div>
+        )
+    })
+}
+
+function ModalCategoriesList({ categoriesList, categoryTotalValues, currencySymbol, endDate, startDate }: IModalProps) {
     const navigate = useNavigate()
     const sortedList = sortArrayOfObjects(categoriesList, "value", false)
 
@@ -301,7 +323,7 @@ function ModalCategoriesList({ categoriesList, currencySymbol, endDate, startDat
 
     return (
         <div className={styles.categories_list_modal}>
-            <table style={{ width: "650px", fontSize: "1.2em" }}>
+            <table style={{ width: "100%", fontSize: "1.2em" }}>
                 <tbody>
                     {
                         sortedList.map((item, itemIndex) => {
@@ -320,22 +342,40 @@ function ModalCategoriesList({ categoriesList, currencySymbol, endDate, startDat
                             )
                         })
                     }
+                    <tr>
+                        <td style={{ textAlign: "left" }}>
+                            <span>Total</span>
+                        </td>
+                        <td style={{ textAlign: "right" }}>
+                            <span>{currencySymbol}</span>
+                            <span>&nbsp;&nbsp;</span>
+                            <span>{Number(categoryTotalValues).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</span>
+                        </td>
+                        {/* <td>{categoryTotalValues}</td> */}
+                    </tr>
                 </tbody>
             </table>
         </div>
     )
 }
 
-
-
-function showModalWithCategoriesAndValues(categoriesData: Array<IDonutChartData>, setModalCategoriesList: Function, showModal: Function) {
+function showModalWithCategoriesAndValues(
+    categoriesData: Array<IDonutChartData>,
+    setModalCategoriesList: Function,
+    setModalTotalCategoryValue: Function,
+    showModal: Function
+) {
+    let totalValue = 0
     const mappedCategoriesList: Array<IModalCategoriesList> = categoriesData.map(item => {
+        totalValue += item.value
+
         return {
             categoryName: item.label,
             value: item.value
         }
     })
 
+    setModalTotalCategoryValue(totalValue)
     setModalCategoriesList(mappedCategoriesList)
     showModal()
 }

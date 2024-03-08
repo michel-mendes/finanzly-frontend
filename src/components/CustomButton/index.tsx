@@ -8,10 +8,11 @@ interface ICustomButtonProps {
     iconDirection?: "left" | "right",
     caption?: string,
     captionAlignment?: "left" | "center" | "right",
+    disabled?: boolean,
     handleClick?: MouseEventHandler<HTMLButtonElement>;
 }
 
-function CustomButton({ caption, handleClick, icon, iconDirection, captionAlignment }: ICustomButtonProps) {
+function CustomButton({ caption, handleClick, icon, iconDirection, captionAlignment, disabled }: ICustomButtonProps) {
     const iconOnRightSide = iconDirection == "right" ? style.icon_right_side : ""
 
     return (
@@ -21,6 +22,7 @@ function CustomButton({ caption, handleClick, icon, iconDirection, captionAlignm
             style={{
                 textAlign: captionAlignment || "left"
             }}
+            disabled={disabled || false}
         >
             {icon && <img src={icon} alt="Button icon" />}
 

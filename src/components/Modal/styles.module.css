@@ -3,10 +3,8 @@
     flex-direction: column;
 
     background: white;
-    /* width: 70%; */
-    /* height: 70%; */
-    /* padding: 1.5em; */
     border-radius: 6px;
+    max-height: 95%;
 }
 
 .modal_box > div {
@@ -22,12 +20,18 @@
 
 .modal_body {
     flex: 1 auto;
+    overflow: auto;
+    position: relative;
 }
 
 .modal_footer {
     display: flex;
-    justify-content: right;
+    justify-content: space-between;
+    flex-wrap: wrap;
     gap: 10px;
+}
+.modal_footer > * {
+    flex: 1;
 }
 
 .modal_overlay {

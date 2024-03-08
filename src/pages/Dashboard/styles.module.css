@@ -15,47 +15,53 @@
   overflow: hidden;
 }
 
-/* .dashboard_container * {
-  border: 1px solid black;
-} */
-
 .dashboard_container {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 20px;
   
   width: 100%;
-  height: 100%;
+  height: 99%;
   padding: 20px;
 
   border-radius: 8px;
   background: #FFF;
   box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.25);
+
+  overflow: auto;
 }
 
 .balance_section {
-  flex: 1;
+  flex: 1.7;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-height: 90%;
+  max-height: 100%;
 }
 
 .wallet_dates_container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .wallet_selector {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
 .dates_selector {
+  flex: 1;
   display: flex;
   flex-direction: row;
   align-items: flex-end;
+  justify-content: center;
   gap: 10px;
 }
 
@@ -80,11 +86,18 @@
 .values_container {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
   justify-content: space-between;
+}
+.values_container > div {
+  min-width: 230px;
+  flex: 1 auto;
 }
 
 .balance_container {
-  width: 220px;
+  /* width: 220px; */
+  flex: 1;
   height: 70px;
   overflow: hidden;
 
@@ -101,7 +114,7 @@
 }
 
 .incomes_container {
-  width: 220px;
+  /* width: 220px; */
   height: 70px;
   overflow: hidden;
   
@@ -118,7 +131,7 @@
 }
 
 .expenses_container {
-  width: 220px;
+  /* width: 220px; */
   height: 70px;
   overflow: hidden;
 
@@ -193,7 +206,6 @@
 }
 
 .container_body {
-  /* border: 1px solid red; */
   position: absolute;
   top: 50px;
   right: 0;
@@ -202,13 +214,14 @@
 }
 
 .last_transactions_section {
-  width: 470px;
+  flex: 1;
+  min-width: 300px;
+  max-height: 100%;
   display: flex;
   flex-direction: column;
 }
 
 .transactions_list {
-  /* border: #E74A3B 2px solid; */
   height: 100%;
   overflow: hidden;
   position: relative;
@@ -269,7 +282,6 @@
   left: 0;
   right: 0;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, rgba(255, 255, 255, 0.46) 9%, #FFF 85.5%);
-  /* border: 2px solid red; */
 }
 
 .categories_list_modal tr {
@@ -279,8 +291,30 @@
 .categories_list_modal td {
   vertical-align: middle;
   padding: 5px;
+  border: 1px solid #000000;
 }
 
 .categories_list_modal tr:nth-child(odd) {
   background-color: #e0e0e0;
+}
+
+.categories_list_modal tr:last-child {
+  font-weight: bold;
+  border: 2px solid #000000;
+}
+
+@media (max-width: 480px) {
+  .dashboard_container {
+      width: auto;
+      position: fixed;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      padding: 10px;
+      padding-bottom: 83px;
+      border-radius: 0;
+      overflow: auto;
+      flex-wrap: wrap;
+  }
 }

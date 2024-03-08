@@ -7,7 +7,8 @@
     overflow: hidden;
     padding-left: 10px;
     padding-right: 10px;
-    background-color: white;
+    /* background-color: transparent; */
+    /* background-color: inherit; */
 
     border: 2px solid #e4ebe4;
     border-radius: 10px;
@@ -25,6 +26,7 @@
     outline: none;
     border: none;
     font: inherit;
+    background-color: inherit;
 }
 
 .input_container input[type="number"] {

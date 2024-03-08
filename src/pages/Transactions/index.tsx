@@ -24,6 +24,7 @@ import { TransactionSearchBox } from './TransactionSearchBox'
 import { FormTransactionCRUD } from '../../components/FormTransactionCRUD'
 import { ModalSaveCancel } from '../../components/Modal'
 import { CustomButton } from '../../components/CustomButton'
+import { LoadingOverlay } from '../../components/LoadingPageOverlay'
 
 // Icons
 import addIcon from "../../assets/add.svg"
@@ -41,7 +42,7 @@ function TransactionsPage() {
     const { loggedUser } = useAuthContext()
     const { walletsList, updateWalletBalance } = useWallets()
     const { categoriesList } = useCategories()
-    const { transactionsList, getTransactionsFromWallet, clearList, updateTransaction, createTransaction, deleteTransaction, tempTransaction, setTempTransaction, walletBalanceAfterLastTransaction } = useTransactions()
+    const { transactionsList, getTransactionsFromWallet, clearList, updateTransaction, createTransaction, deleteTransaction, tempTransaction, setTempTransaction, walletBalanceAfterLastTransaction, loadingTransactions, awaitingResponse } = useTransactions()
 
     const transactionModal = useTransactionEditorModal({
         updateWalletBalance,
@@ -51,7 +52,8 @@ function TransactionsPage() {
         createTransaction,
         updateTransaction,
         deleteTransaction,
-        walletBalanceAfterLastTransaction
+        walletBalanceAfterLastTransaction,
+        awaitingResponse
     })
 
     const [searchFilters, setSearchFilters] = useState<ITransactionsPageFilters>(setInitialFilterValues())
@@ -88,21 +90,27 @@ function TransactionsPage() {
                 </div>
 
                 <div className={styles.table_container}>
-                    <table>
-                        {/* Table header / columns */}
-                        <thead>
-                            <tr>
-                                <th colSpan={2}>Descrição</th>
-                                <th>Categoria</th>
-                                <th>Data</th>
-                                <th>Valor</th>
-                            </tr>
-                        </thead>
+                    {
+                        loadingTransactions
+                            ? <LoadingOverlay />
+                            : (
+                                <table>
+                                    {/* Table header / columns */}
+                                    <thead>
+                                        <tr>
+                                            <th colSpan={2}>Descrição</th>
+                                            <th>Categoria</th>
+                                            <th>Data</th>
+                                            <th>Valor</th>
+                                        </tr>
+                                    </thead>
 
-                        <tbody>
-                            {renderTableTransactions()}
-                        </tbody>
-                    </table>
+                                    <tbody>
+                                        {renderTableTransactions()}
+                                    </tbody>
+                                </table>
+                            )
+                    }
                 </div>
 
                 <div className={styles.transactions_container_footer}>
@@ -255,7 +263,7 @@ function sumTotalIncomesAndExpenses(transactionsList: Array<ITransaction>) {
     return { totalIncomes, totalExpenses }
 }
 
-function useTransactionEditorModal({ updateWalletBalance, categoriesList, tempTransaction, setTempTransaction, updateTransaction, createTransaction, deleteTransaction, walletBalanceAfterLastTransaction }: useTransactionEditorModalHookProps) {
+function useTransactionEditorModal({ updateWalletBalance, categoriesList, tempTransaction, setTempTransaction, updateTransaction, createTransaction, deleteTransaction, walletBalanceAfterLastTransaction, awaitingResponse }: useTransactionEditorModalHookProps) {
     const { loggedUser } = useAuthContext()
 
     const { showSuccessNotification } = useToastNotification()
@@ -325,15 +333,25 @@ function useTransactionEditorModal({ updateWalletBalance, categoriesList, tempTr
                 modalButtons={{
                     saveButton: {
                         onClick: handleModalSaveButtonClick,
-                        enabled: modalState.transactionValuesHasChanged
+                        enabled: modalState.transactionValuesHasChanged && !awaitingResponse
                     },
-                    cancelButton: { onClick: closeModal },
+                    cancelButton: {
+                        onClick: closeModal,
+                        enabled: !awaitingResponse
+                    },
                     deleteButton: {
                         onClick: () => { handleModalDeleteButtonClick(tempTransaction!) },
-                        enabled: modalState.isEditing
+                        enabled: modalState.isEditing && !awaitingResponse
                     }
                 }}
             >
+                {
+                    awaitingResponse && (
+                        <div className={styles.transaction_modal_loading_overlay}>
+                            <LoadingOverlay />
+                        </div>
+                    )
+                }
                 <FormTransactionCRUD
                     transactionData={tempTransaction}
                     setTransactionData={setTempTransaction}

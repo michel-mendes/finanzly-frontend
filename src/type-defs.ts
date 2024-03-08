@@ -156,6 +156,7 @@ export interface IModalCategoriesList {
 
 export interface IModalProps {
     categoriesList: Array<IModalCategoriesList>
+    categoryTotalValues: number
     currencySymbol: string
     startDate: string
     endDate: string
@@ -188,6 +189,7 @@ export interface useTransactionEditorModalHookProps {
     createTransaction(transactionData: ITransaction): Promise<boolean>,
     updateTransaction(transactionId: string, transactionData: ITransaction): Promise<boolean>,
     deleteTransaction(transactionId: string): Promise<boolean>,
+    awaitingResponse: boolean,
     walletBalanceAfterLastTransaction: number;
 }
 

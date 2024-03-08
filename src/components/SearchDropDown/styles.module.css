@@ -58,7 +58,7 @@
     top: calc(100% + 5px);
     left: 0;
     width: 100%;
-    max-height: 300px;
+    max-height: 550%;
     z-index: 1;
 
     border-radius: 2px;
@@ -117,7 +117,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    height: 30px;
+    min-height: 30px;
     padding-left: 30px;
 
     color: #000;
