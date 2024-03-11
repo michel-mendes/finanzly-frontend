@@ -3,6 +3,8 @@ const baseApiUrl = __API_BASE_URL__
 export const appConfigs = {
     
     // Users endpoints
+    userRegisterEndpoint: `${baseApiUrl}/users/register`,
+    userVerifyToken: `${baseApiUrl}/users/verify-user/`,
     userEditEndpoint: `${baseApiUrl}/users/`, // + userId
     userLoginEnpoint: `${baseApiUrl}/users/authenticate`,
     userLogoutEnpoint: `${baseApiUrl}/users/logout`,

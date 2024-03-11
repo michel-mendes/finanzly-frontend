@@ -17,6 +17,7 @@ import styles from "./styles.module.css"
 // Login context
 import { useLoginContext } from "../../../../contexts/LoginContext"
 import { useAuthContext } from "../../../../contexts/Auth"
+import { IRegisterProps } from "../../../../type-defs"
 
 interface IFlipCardContentProps {
   handleFlip?: Function
@@ -40,29 +41,44 @@ function LoginContent({ handleFlip }: IFlipCardContentProps) {
 }
 
 function RegisterContent({ handleFlip }: IFlipCardContentProps) {
+  const { registerUser } = useAuthContext()
+
+  async function handleLoginFormSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    const form = new FormData(event.currentTarget)
+    const registerData: IRegisterProps = {
+        firstName: form.get("firstName")?.toString() || "",
+        email: form.get("email")?.toString() || "",
+        password: form.get("password")?.toString() || ""
+    }
+
+    registerUser(registerData)
+  }
+
   return (
     <>
       <span className={styles.new_account_header}>Informe os dados abaixo para criar sua conta</span>
 
-      <form action="" method="post">
+      <form action="" method="post" onSubmit={handleLoginFormSubmit}>
 
         <label className={inputStyles.input_container} htmlFor="inputRegisterFirstName">
           <span>nome</span>
           <span><FiUser /></span>
-          <input type="text" name="" id="inputRegisterFirstName" placeholder=" " required />
+          <input type="text" name="firstName" id="inputRegisterFirstName" placeholder=" " required />
         </label>
 
         <label className={inputStyles.input_container} htmlFor="inputRegisterEmail">
           <span>e-mail</span>
           <span><FiMail /></span>
-          <input type="email" name="" id="inputRegisterEmail" placeholder=" " required />
+          <input type="email" name="email" id="inputRegisterEmail" placeholder=" " required />
         </label>
 
         <label className={inputStyles.input_container} htmlFor="inputRegisterPassword">
           <span>senha</span>
           <span><TfiLock /></span>
           <span></span>
-          <input type="password" name="" id="inputRegisterPassword" placeholder=" " required />
+          <input type="password" name="password" id="inputRegisterPassword" placeholder=" " required />
         </label>
 
         <div className={styles.create_account_button_container}>
@@ -81,18 +97,18 @@ function RegisterContent({ handleFlip }: IFlipCardContentProps) {
 }
 
 function FormContent({ handleFlip }: IFlipCardContentProps) {
-  const { loginData, setLoginData, loginError, setLoginError,  } = useLoginContext().props!
-  const {loginUser } = useAuthContext()
+  const { loginData, setLoginData, loginError, setLoginError, } = useLoginContext().props!
+  const { loginUser } = useAuthContext()
 
   // Helper function
   async function handleLoginFormSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     try {
-      loginUser({...loginData})
-      
+      loginUser({ ...loginData })
+
       // const response = await axios.post(loginUrl, loginData, { withCredentials: true })
-  
+
       setLoginError(null)
       // setLoggedUser!( response.data )
     } catch (error: any) {
@@ -124,7 +140,7 @@ function FormContent({ handleFlip }: IFlipCardContentProps) {
         </div>
 
         {
-          loginError ? <AlertBox alertMessage={loginError} alertType="error" onCloseButtonClick={() => { setLoginError(null) }}/> : null
+          loginError ? <AlertBox alertMessage={loginError} alertType="error" onCloseButtonClick={() => { setLoginError(null) }} /> : null
         }
 
         <div className={styles.login_button_container}>
@@ -165,7 +181,7 @@ function ForgotPasswordContent({ handleFlip }: IFlipCardContentProps) {
 
 // Helper functions
 function getErrorMessage(error: any): string {
-  
+
   if (error instanceof AxiosError) {
     return getBackendErrors(error)
   } else {
@@ -176,12 +192,12 @@ function getErrorMessage(error: any): string {
 
 function getBackendErrors(error: AxiosError<any>): string {
 
-  const backendValidationErrorArray = ( ( error.response ) && error.response.data ) ? error.response.data.errors : null
-  const backendGenericError =         ( ( error.response ) && error.response.data ) ? error.response.data.message : null
+  const backendValidationErrorArray = ((error.response) && error.response.data) ? error.response.data.errors : null
+  const backendGenericError = ((error.response) && error.response.data) ? error.response.data.message : null
 
-  if (backendValidationErrorArray)  { return Object.values(backendValidationErrorArray[0])[0] as string }
-  else if (backendGenericError)     { return backendGenericError }
-  else                              { return "Oops... Something went wrong, please try again later."}
+  if (backendValidationErrorArray) { return Object.values(backendValidationErrorArray[0])[0] as string }
+  else if (backendGenericError) { return backendGenericError }
+  else { return "Oops... Something went wrong, please try again later." }
   // else { return error.message }
 
 }

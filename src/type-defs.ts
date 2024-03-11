@@ -110,6 +110,8 @@ export interface ILoginContextProps extends PropsWithChildren {
 export interface IAuthContextProps extends PropsWithChildren {
     loggedUser: IAuthenticatedUser | null,
     loadingUser: boolean,
+    registerUser: (registerData: IRegisterProps) => void,
+    verifyUserToken: (token: string) => void,
     loginUser: (loginData: ILoginProps) => void,
     logoutUser: () => void,
     getLoggedUser: () => void,

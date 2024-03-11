@@ -8,7 +8,7 @@ import { decorateCustomHookFunction } from "../helpers/hookDecorator"
 import { useToastNotification } from "./useToastNotification";
 
 // Types
-import { IAuthenticatedUser, ILoginProps } from "../type-defs";
+import { IAuthenticatedUser, ILoginProps, IRegisterProps } from "../type-defs";
 
 // Services
 import { api } from "../helpers/apiCall";
@@ -17,6 +17,8 @@ import { api } from "../helpers/apiCall";
 import { handleError } from "../helpers/errorHandler";
 
 const {
+    userRegisterEndpoint,
+    userVerifyToken,
     userEditEndpoint,
     userLoginEnpoint,
     userLogoutEnpoint,
@@ -36,6 +38,26 @@ export function useUsers() {
         decoratedGetLoggedUser()
     }, [])
 
+    async function registerUser(userData: IRegisterProps) {
+        try {
+            await api.post(userRegisterEndpoint, userData)
+
+            showSuccessNotification(`Seja bem vindo(a) ${userData.firstName}. Por favor, faça a verificação de sua conta em seu email ${userData.email}.`)
+        } catch (error: any) {
+            showErrorNotification( handleError(error).message )
+        }
+    }
+
+    async function verifyUserToken(token: string) {
+        try {
+            await api.get(`${userVerifyToken}?token=${token}`)
+
+            showSuccessNotification(`Verificação bem sucedida, agora você pode fazer o login!`)
+        } catch (error: any) {
+            showErrorNotification( handleError(error).message )
+        }
+    }
+    
     async function editUser(userData: IAuthenticatedUser) {
         try {
             const {firstName, lastName, firstDayOfMonth} = userData
@@ -100,6 +122,8 @@ export function useUsers() {
     return {
         loadingUser,
         loggedUser,
+        registerUser,
+        verifyUserToken,
         loginUser,
         logoutUser,
         getLoggedUser: decoratedGetLoggedUser,
